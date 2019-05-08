@@ -1,0 +1,26 @@
+{
+  "name": "publiclab-grapher",
+  "version": "1.0.0",
+  "description": "Turns CSVs into graphs in a few simple steps; embeds onto other websites!",
+  "main": "src/PublicLab.Grapher.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/publiclab/simple-data-grapher.git"
+  },
+  "keywords": [
+    "Data-Grapher",
+    "Grapher",
+    "CSV",
+    "Graph"
+  ],
+  "author": "Public Lab",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/publiclab/simple-data-grapher/issues"
+  },
+  "homepage": "https://github.com/publiclab/simple-data-grapher#readme",
+  "dependencies": {}
+}
