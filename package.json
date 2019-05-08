@@ -22,5 +22,9 @@
     "url": "https://github.com/publiclab/simple-data-grapher/issues"
   },
   "homepage": "https://github.com/publiclab/simple-data-grapher#readme",
-  "dependencies": {}
+  "dependencies": {
+    "chartjs": "^0.3.24",
+    "jquery": "^3.4.1",
+    "papaparse": "^4.6.3"
+  }
 }
