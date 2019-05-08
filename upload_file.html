@@ -7,19 +7,21 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="upload_file.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.6.3/papaparse.min.js"></script>
+	<script src="parsing.js"></script>
 </head>
 <body>
 	<div class="main_container">
 		<div class="container_drag_drop">
 			<span class="btn btn-outline-primary btn-file">
 				<p class="drag_drop_heading"> <u> Choose a csv file </u> or drag & drop it here </p>
-				<input type="file" accept=".csv">
+				<input type="file" class="csv_file" accept=".csv">
 			</span>
 
 		</div>
 		<h6 class="or"><span>OR</span></h2>
 		<div class="container_remote_link">
-			<input type="text" class="remote_file" placeholder="url of remote file">
+			<input type="text" class="remote_file" placeholder="url of remote file" onchange="handleFileSelectremote(this.value);">
 		</div>
 		<div class="upload_button">
 			<button type="button" class="btn btn-primary">Upload CSV</button>
@@ -28,7 +30,4 @@
 
 </body>
 </html>
-<style>
 
-
-</style>
