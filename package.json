@@ -1,6 +1,6 @@
 {
   "name": "publiclab-grapher",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Turns CSVs into graphs in a few simple steps; embeds onto other websites!",
   "main": "src/PublicLab.Grapher.js",
   "scripts": {
