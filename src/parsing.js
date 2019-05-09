@@ -1,5 +1,6 @@
 //dynamic table for selecting column for X-Axis
 function sampleDataY(sampleData,headers){
+	document.getElementById('tabley').innerHTML="";
 	var trhead=document.createElement('tr');
 	for (var i=0;i<headers.length;i++){
 		var td=document.createElement('td');
@@ -33,6 +34,7 @@ function sampleDataY(sampleData,headers){
 
 }
 function sampleDataX(sampleData,headers){
+	document.getElementById('tablex').innerHTML="";
 	var trhead=document.createElement('tr');
 	for (var i=0;i<headers.length;i++){
 		var td=document.createElement('td');
