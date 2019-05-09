@@ -4,6 +4,7 @@
   "description": "Turns CSVs into graphs in a few simple steps; embeds onto other websites!",
   "main": "src/PublicLab.Grapher.js",
   "scripts": {
+    "build": "watch 'browserify src/PublicLab.Grapher.js -o dist/PublicLab.Grapher.js' src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,5 +27,9 @@
     "chartjs": "^0.3.24",
     "jquery": "^3.4.1",
     "papaparse": "^4.6.3"
+  },
+  "devDependencies": {
+    "browserify": "^16.2.3",
+    "watch": "^1.0.2"
   }
 }
