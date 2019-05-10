@@ -1,18 +1,57 @@
-//dynamic table for selecting column for X-Axis
-function sampleDataY(sampleData,headers){
-	document.getElementById('tabley').innerHTML="";
+function plotGraph(hash,length){
+	var config = {};
+	config['type']='line';
+	var data={};
+	data['labels']=hash['x_axis_labels'];
+	var datasets=[];
+	for (var i=0;i<length;i++){
+		var h={};
+		h['label']=hash['labels'][1][i];
+		h['data']=hash['y_axis_values'+i];
+		datasets.push(h);
+	}
+	data['datasets']=datasets;
+	config['data']=data;
+
+	var ctx = document.getElementById('canvas').getContext('2d');
+	window.myLine = new Chart(ctx, config);
+}
+function afterSampleData(sampleData,headers){
+	document.getElementById("upload").onclick = function(e){
+		e.preventDefault();
+		var hash={};
+		var ix=$('input[name=x_axis_column]:checked').val();
+		hash["x_axis_labels"]=sampleData[ix];
+		var columns = new Array(); 
+		var y_axis_names = new Array();
+		$("input:checkbox[name=y_axis_column]:checked").each(function(){
+		    columns.push($(this).val());
+		 });
+		for(var i=0;i<columns.length;i++){
+			hash["y_axis_values"+(i)]=sampleData[columns[i]];
+			y_axis_names.push(headers[columns[i]]);
+		}
+		var labels=[headers[ix],y_axis_names];
+		hash["labels"]=labels;
+		console.log(hash);
+		plotGraph(hash,columns.length);
+	};
+
+}
+function tableGenerator(sampleData,headers,name,tableName,typeOfInput){
+	document.getElementById(tableName).innerHTML="";
 	var trhead=document.createElement('tr');
 	for (var i=0;i<headers.length;i++){
 		var td=document.createElement('td');
 		var checkbox=document.createElement('input')
-		checkbox.type = 'checkbox';
-		checkbox.value = headers[i];
-		checkbox.name = 'y_axis_column';
+		checkbox.type = typeOfInput;
+		checkbox.value = i;
+		checkbox.name = name;
 		td.appendChild(document.createTextNode(headers[i]));
 		td.appendChild(checkbox);
 		trhead.appendChild(td);
 	}
-	document.getElementById('tabley').appendChild(trhead);
+	document.getElementById(tableName).appendChild(trhead);
 	for(var i=0;i<5;i++){
 		var tr=document.createElement('tr');
 		for(var j=0;j<headers.length;j++){
@@ -20,47 +59,15 @@ function sampleDataY(sampleData,headers){
 			td.appendChild(document.createTextNode(sampleData[j][i]));
 			tr.appendChild(td);
 		}
-		document.getElementById('tabley').appendChild(tr);
+		document.getElementById(tableName).appendChild(tr);
 	}
-	var columns = new Array(); 
-	$('input[name=y_axis_column]').click(function() {
-		$("input[name=y_axis_column]:checked").each(function(){
-		    columns.push($(this).val());
-		    var y_axis_column_names=[...new Set(columns)];
-			console.log(y_axis_column_names);
-		});
-	});
+	afterSampleData(sampleData,headers);
 
 
 }
-function sampleDataX(sampleData,headers){
-	document.getElementById('tablex').innerHTML="";
-	var trhead=document.createElement('tr');
-	for (var i=0;i<headers.length;i++){
-		var td=document.createElement('td');
-		var radio=document.createElement('input')
-		radio.type = 'radio';
-		radio.value = headers[i];
-		radio.name = 'x_axis_column';
-		td.appendChild(document.createTextNode(headers[i]));
-		td.appendChild(radio);
-		trhead.appendChild(td);
-	}
-	document.getElementById('tablex').appendChild(trhead);
-	for(var i=0;i<5;i++){
-		var tr=document.createElement('tr');
-		for(var j=0;j<headers.length;j++){
-			var td=document.createElement('td');
-			td.appendChild(document.createTextNode(sampleData[j][i]));
-			tr.appendChild(td);
-		}
-		document.getElementById('tablex').appendChild(tr);
-	}
-	$('input[name=x_axis_column]').click(function() {
-		console.log($('input[name=x_axis_column]:checked').val());
-	});
-
-
+function sampleDataXandY(sampleData,headers){
+	tableGenerator(sampleData,headers,'x_axis_column','tablex','radio');
+	tableGenerator(sampleData,headers,'y_axis_column','tabley','checkbox');
 
 }
 
@@ -76,8 +83,7 @@ function extractSampleData(completeData,headers){
 		}
 	}
 	console.log(sampleData);
-	sampleDataX(sampleData,headers);
-	sampleDataY(sampleData,headers);
+	sampleDataXandY(sampleData,headers);
 
 }
 //makes a 2D matrix with the transpose of the CSV file, each column having the same index as its column heading

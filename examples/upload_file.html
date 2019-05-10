@@ -9,6 +9,7 @@
 	<link rel="stylesheet" href="upload_file.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.6.3/papaparse.min.js"></script>
 	<script src="../src/parsing.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
 </head>
 <body>
 	<div class="main_container">
@@ -24,14 +25,19 @@
 			<input type="text" class="remote_file" placeholder="url of remote file" onchange="handleFileSelectremote(this.value);">
 		</div>
 		<div class="upload_button">
-			<button type="button" class="btn btn-primary">Upload CSV</button>
+			<button type="button" class="btn btn-primary" id="upload" >Upload CSV</button>
 		</div>
-		<div>
-			<table id="tablex" border="1"></table>
-		</div>
-		<div>
-			<table id="tabley" border="1"></table>
-		</div>
+		
+	</div>
+	<div>
+		<table id="tablex" border="1"></table>
+	</div>
+	<div>
+		<table id="tabley" border="1"></table>
+	</div>
+
+	<div style="width:75%;">
+		<canvas id="canvas"></canvas>
 	</div>
 
 </body>
