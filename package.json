@@ -5,7 +5,7 @@
   "main": "src/PublicLab.Grapher.js",
   "scripts": {
     "build": "watch 'browserify src/PublicLab.Grapher.js -o dist/PublicLab.Grapher.js' src",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha spec/js/"
   },
   "repository": {
     "type": "git",
@@ -24,8 +24,10 @@
   },
   "homepage": "https://github.com/publiclab/simple-data-grapher#readme",
   "dependencies": {
+    "chai": "^4.2.0",
     "chartjs": "^0.3.24",
     "jquery": "^3.4.1",
+    "mocha": "^6.1.4",
     "papaparse": "^4.6.3"
   },
   "devDependencies": {
