@@ -176,4 +176,8 @@ function handleFileSelectremote(val){
 //this triggers handleFileSelectLocal function whenever a file is uploaded in the field
 $(document).ready(function(){
 	$(".csv_file").change(handleFileSelectlocal);
+	$(".remote_file").on('change',function(){
+		handleFileSelectremote(this.value);
+	});
 });
+
