@@ -162,7 +162,11 @@ function parse(file){
 //extracts the file uploaded in the field
 function handleFileSelectlocal(evt) {
 	var csv_file_local = evt.target.files[0];
-	parse(csv_file_local);
+	if 	(csv_file_local['name'].split(".")[1]!="csv"){
+		alert("Invalid file type");
+	}
+	else{
+		parse(csv_file_local);}
 }
 //reads the input from the text field in which the link of the remote file is included
 function handleFileSelectremote(val){
