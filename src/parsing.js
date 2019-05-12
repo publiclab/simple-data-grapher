@@ -38,17 +38,20 @@ function afterSampleData(sampleData,headers){
 	};
 
 }
-function tableGenerator(sampleData,headers,name,tableName,typeOfInput){
+function tableGenerator(sampleData,headers,name,tableName,typeOfInput,validValues){
 	document.getElementById(tableName).innerHTML="";
 	var trhead=document.createElement('tr');
 	for (var i=0;i<headers.length;i++){
 		var td=document.createElement('td');
-		var checkbox=document.createElement('input')
-		checkbox.type = typeOfInput;
-		checkbox.value = i;
-		checkbox.name = name;
 		td.appendChild(document.createTextNode(headers[i]));
-		td.appendChild(checkbox);
+		for (var j=0;j<validValues.length;j++){
+			if (validValues[j]==headers[i]){
+			var checkbox=document.createElement('input')
+			checkbox.type = typeOfInput;
+			checkbox.value = i;
+			checkbox.name = name;
+			td.appendChild(checkbox);}
+		}
 		trhead.appendChild(td);
 	}
 	document.getElementById(tableName).appendChild(trhead);
@@ -65,36 +68,45 @@ function tableGenerator(sampleData,headers,name,tableName,typeOfInput){
 
 
 }
-function sampleDataXandY(sampleData,headers){
-	tableGenerator(sampleData,headers,'x_axis_column','tablex','radio');
-	tableGenerator(sampleData,headers,'y_axis_column','tabley','checkbox');
+function sampleDataXandY(sampleData,headers,validForYAxis){
+	tableGenerator(sampleData,headers,'x_axis_column','tablex','radio',headers);
+	tableGenerator(sampleData,headers,'y_axis_column','tabley','checkbox',validForYAxis);
 
 }
 
 //preparing sample data for the user to choose the columns from
 function extractSampleData(completeData,headers){
-	sampleData=[];
+	var sampleData=[];
+	var validForYAxis=[];
 	for (var i=0;i<headers.length;i++){
 		sampleData[i]=[];
 	}
 	for (var i=0;i<headers.length;i++){
 		var counter=0;
+		var bool=false;
 		for(var j=0;j<completeData[i].length;j++){
 			if (counter>=5){
 				break;
 			}
 			else if (completeData[i][j]!=null || completeData[i][j]!=undefined){
+				if (typeof(completeData[i][j])=='number'){
+					bool=true;
+				}
 				counter+=1;
 				sampleData[i].push(completeData[i][j]);}
 		}
+		if (bool){
+			validForYAxis.push(headers[i]);
+		}
 	}
 	console.log(sampleData);
-	sampleDataXandY(sampleData,headers);
+	console.log(validForYAxis);
+	sampleDataXandY(sampleData,headers,validForYAxis);
 
 }
 //makes a 2D matrix with the transpose of the CSV file, each column having the same index as its column heading
 function matrixForCompleteData(headers,mat,start){
-	completeData=[];
+	var completeData=[];
 	for (var i=0;i<headers.length;i++){
 		completeData[i]=[];
 	}
