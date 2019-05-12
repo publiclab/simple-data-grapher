@@ -73,13 +73,19 @@ function sampleDataXandY(sampleData,headers){
 
 //preparing sample data for the user to choose the columns from
 function extractSampleData(completeData,headers){
-	sampleData=[]
+	sampleData=[];
 	for (var i=0;i<headers.length;i++){
 		sampleData[i]=[];
 	}
 	for (var i=0;i<headers.length;i++){
-		for(var j=0;j<5;j++){
-			sampleData[i].push(completeData[i][j]);
+		var counter=0;
+		for(var j=0;j<completeData[i].length;j++){
+			if (counter>=5){
+				break;
+			}
+			else if (completeData[i][j]!=null || completeData[i][j]!=undefined){
+				counter+=1;
+				sampleData[i].push(completeData[i][j]);}
 		}
 	}
 	console.log(sampleData);
@@ -88,13 +94,13 @@ function extractSampleData(completeData,headers){
 }
 //makes a 2D matrix with the transpose of the CSV file, each column having the same index as its column heading
 function matrixForCompleteData(headers,mat,start){
-	completeData=[]
+	completeData=[];
 	for (var i=0;i<headers.length;i++){
 		completeData[i]=[];
 	}
 	for (var i=start;i<mat.length;i++){
 		for(var j=0;j<headers.length;j++){
-			completeData[j].push(mat[i][0][j]);
+			completeData[j].push(mat[i][j]);
 		}
 	}
 	console.log(completeData);
@@ -107,16 +113,16 @@ function determineHeaders(mat){
 	var headers=[]
 	var flag=false;
 	var start=1; //start is variable that will be passed to the function to sort out the columns. start will tell if the existing CSV file has headers or not, therefore, to start the iteration from 0 or 1
-	for (var i=0;i<mat[0][0].length;i++){
+	for (var i=0;i<mat[0].length;i++){
 		
 		if (i==0){
-			headers[i]=mat[0][0][i];
+			headers[i]=mat[0][i];
 		}
 		else{
-			if (typeof(mat[0][0][i])==typeof(mat[0][0][i-1]) && typeof(mat[0][0][i])!='object'){
-				headers[i]=mat[0][0][i];
+			if (typeof(mat[0][i])==typeof(mat[0][i-1]) && typeof(mat[0][i])!='object'){
+				headers[i]=mat[0][i];
 			}
-			else if(typeof(mat[0][0][i])=='object'){
+			else if(typeof(mat[0][i])=='object'){
 				headers[i]="Column"+(i+1);
 			}
 			else{
@@ -126,9 +132,9 @@ function determineHeaders(mat){
 		}
 	}
 	//if there are no headers present, make dummy header names
-	if (flag && headers.length!=mat[0][0].length){
+	if (flag && headers.length!=mat[0].length){
 		start=0;
-		for (var i=0;i<mat[0][0].length;i++){
+		for (var i=0;i<mat[0].length;i++){
 			headers[i]="Column"+(i+1);
 		}
 	}
@@ -147,7 +153,7 @@ function parse(file){
 		dynamicTyping: true,
 		comments: true,
 		step: function(row) {
-			mat[count]=row.data;
+			mat[count]=row.data[0];
 			count+=1;
 		},
 		complete: function() {
