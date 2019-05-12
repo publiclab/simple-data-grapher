@@ -1,18 +1,74 @@
-function plotGraph(hash,length){
+function determineType(type){
+	if (type=="Basic" || type=="Stepped" || type=="Point"){
+		console.log("wtf");
+		return 'line';
+	}
+	else if (type=="Horizontal"){
+		console.log("did i enter");
+		return 'horizontalBar';
+	}
+	else if (type=="Vertical"){
+
+		return 'bar';
+	}
+	else{
+		return type.toLowerCase();
+	}
+}
+function determineConfig(type){
+	if (type=="Stepped"){
+		return {'steppedLine': true};
+	}
+	else if (type=="Point"){
+		return {'showLine': false, 'pointRadius': 10};
+	}
+	else{
+		return {};
+	}
+}
+function graphMenu(){
+	var bar=["Bar","Horizontal","Vertical"];
+	var line=["Line","Basic","Stepped","Point"];
+	var disc=["Disc","Pie","Doughnut","Radar"];
+	var types=[bar,line,disc];
+	for (var i=0;i<3;i++){
+		var tr=document.createElement('tr');
+		var td_head=document.createElement('td');
+		td_head.className=types[i][0];
+		td_head.appendChild(document.createTextNode(types[i][0]));
+		tr.appendChild(td_head);
+		for (var j=1;j<types[i].length;j++){
+			var td=document.createElement('td');
+			var radio=document.createElement('input')
+			radio.type = 'radio';
+			radio.value = types[i][j];
+			td.appendChild(document.createTextNode(types[i][j]));
+			radio.name = 'types';
+			td.appendChild(radio);
+			tr.appendChild(td);
+		}
+		document.getElementById("graph_menu").appendChild(tr);
+	}
+}
+
+function plotGraph(hash,length,type){
 	var config = {};
-	config['type']='line';
+	config['type']=determineType(type);
 	var data={};
 	data['labels']=hash['x_axis_labels'];
 	var datasets=[];
 	for (var i=0;i<length;i++){
-		var h={};
+		var h=determineConfig(type);
 		h['label']=hash['labels'][1][i];
 		h['data']=hash['y_axis_values'+i];
 		datasets.push(h);
 	}
 	data['datasets']=datasets;
 	config['data']=data;
-
+	document.getElementById('canvas').remove();
+	var canv=document.createElement('canvas');
+	canv.id="canvas";
+	document.getElementById('canvas_container').appendChild(canv);
 	var ctx = document.getElementById('canvas').getContext('2d');
 	window.myLine = new Chart(ctx, config);
 }
@@ -33,8 +89,10 @@ function afterSampleData(sampleData,headers){
 		}
 		var labels=[headers[ix],y_axis_names];
 		hash["labels"]=labels;
+		var type=$('input[name=types]:checked').val()
+		console.log(type);
 		console.log(hash);
-		plotGraph(hash,columns.length);
+		plotGraph(hash,columns.length,type);
 	};
 
 }
@@ -71,6 +129,7 @@ function tableGenerator(sampleData,headers,name,tableName,typeOfInput,validValue
 function sampleDataXandY(sampleData,headers,validForYAxis){
 	tableGenerator(sampleData,headers,'x_axis_column','tablex','radio',headers);
 	tableGenerator(sampleData,headers,'y_axis_column','tabley','checkbox',validForYAxis);
+	graphMenu();
 
 }
 
