@@ -16,8 +16,11 @@ function determineType(type){
 	}
 }
 function determineConfig(type){
-	if (type=="Stepped"){
-		return {'steppedLine': true};
+	if (type=="Basic"){
+		return {'fill': false};
+	}
+	else if (type=="Stepped"){
+		return {'steppedLine': true, 'fill': false};
 	}
 	else if (type=="Point"){
 		return {'showLine': false, 'pointRadius': 10};
@@ -50,7 +53,52 @@ function graphMenu(){
 		document.getElementById("graph_menu").appendChild(tr);
 	}
 }
-
+function colorGenerator(i,tb,type,count){
+	var colors=['rgba(255, 77, 210, 0.5)','rgba(0, 204, 255, 0.5)','rgba(128, 0, 255, 0.5)','rgba(255, 77, 77, 0.5)','rgba(0, 179, 0, 0.5)','rgba(255, 255, 0, 0.5)','rgba(255, 0, 102, 0.5)','rgba(0, 115, 230, 0.5)'];
+	var bordercolors=['rgb(255, 0, 191)','rgb(0, 184, 230)','rgb(115, 0, 230)','rgb(255, 51, 51)','rgb(0, 153, 0)','rgb(230, 230, 0)','rgb(230, 0, 92)','rgb(0, 102, 204)'];
+	var length=8;
+	if (type=="Pie" || type=="Doughnut"){
+		var colorSet=[];
+		var borderColorSet=[];
+		for (var j=0;j<count;j++){
+			colorSet.push(colors[j%length]);
+			borderColorSet.push(bordercolors[j%length]);
+		}
+		if (tb=="bg"){
+			return colorSet;
+		}
+		else{
+			return borderColorSet;
+		}
+	}
+	else{
+		if (tb=="bg"){
+			return colors[i%length];
+		}
+		else{
+			return bordercolors[i%length];
+		}
+	}
+}
+function scales(hash){
+	var scales= {
+		xAxes: [{
+			display: true,
+			scaleLabel: {
+				display: true,
+				labelString: hash['labels'][0]
+			}
+		}],
+		yAxes: [{
+			display: true,
+			scaleLabel: {
+				display: true,
+				labelString: 'Value'
+			}
+		}]
+	}
+	return scales;
+}
 function plotGraph(hash,length,type){
 	var config = {};
 	config['type']=determineType(type);
@@ -59,10 +107,16 @@ function plotGraph(hash,length,type){
 	var datasets=[];
 	for (var i=0;i<length;i++){
 		var h=determineConfig(type);
+		h['backgroundColor']=colorGenerator(i,"bg",type,hash['y_axis_values'+i].length);
+		h['borderColor']=colorGenerator(i,"bo",type,hash['y_axis_values'+i].length);
+		h['borderWidth']=1;
 		h['label']=hash['labels'][1][i];
 		h['data']=hash['y_axis_values'+i];
 		datasets.push(h);
 	}
+	var options={'responsive':true, 'maintainAspectRatio': true};
+	options['scales']=scales(hash);
+	config['options']=options;
 	data['datasets']=datasets;
 	config['data']=data;
 	document.getElementById('canvas').remove();
