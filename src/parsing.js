@@ -1,3 +1,12 @@
+function saveAsImage(){
+		var x=new Date();
+		var timestamp=x.getTime();
+		$("#save_as_image").click(function() {
+		  $("#canvas").get(0).toBlob(function(blob) {
+		    saveAs(blob, "chart"+timestamp);
+		  });
+		});
+}
 function determineType(type){
 	if (type=="Basic" || type=="Stepped" || type=="Point"){
 		console.log("wtf");
@@ -115,7 +124,9 @@ function plotGraph(hash,length,type){
 		h['data']=hash['y_axis_values'+i];
 		datasets.push(h);
 	}
-	var options={'responsive':true, 'maintainAspectRatio': true};
+	var options={'responsive':true, 'maintainAspectRatio': true, 'chartArea': {
+					backgroundColor: 'rgb(204, 102, 255)'
+				}};
 	options['scales']=scales(hash);
 	config['options']=options;
 	data['datasets']=datasets;
@@ -125,8 +136,15 @@ function plotGraph(hash,length,type){
 	canv.id="canvas";
 	document.getElementById('canvas_container').appendChild(canv);
 	var ctx = document.getElementById('canvas').getContext('2d');
+	Chart.plugins.register({
+	    beforeDraw: function() {
+	        ctx.fillStyle = 'white';
+	        ctx.fillRect(0, 0, canv.width, canv.height);
+	    }
+	});
 	window.myLine = new Chart(ctx, config);
 	$('.carousel').carousel(2);
+	saveAsImage();
 }
 function afterSampleData(sampleData,headers){
 	document.getElementById("plot_graph").onclick = function(e){
@@ -296,11 +314,11 @@ function parse(file){
 //extracts the file uploaded in the field
 function handleFileSelectlocal(evt) {
 	var csv_file_local = evt.target.files[0];
-	$('.drag_drop_heading').text(csv_file_local['name']);
 	if 	(csv_file_local['name'].split(".")[1]!="csv"){
 		alert("Invalid file type");
 	}
 	else{
+		$('.drag_drop_heading').text(csv_file_local['name']);
 		document.getElementById("upload").onclick = function(e){
 			parse(csv_file_local);
 		}
