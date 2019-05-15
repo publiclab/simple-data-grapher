@@ -125,9 +125,10 @@ function plotGraph(hash,length,type){
 	document.getElementById('canvas_container').appendChild(canv);
 	var ctx = document.getElementById('canvas').getContext('2d');
 	window.myLine = new Chart(ctx, config);
+	$('.carousel').carousel(2);
 }
 function afterSampleData(sampleData,headers){
-	document.getElementById("upload").onclick = function(e){
+	document.getElementById("plot_graph").onclick = function(e){
 		e.preventDefault();
 		var hash={};
 		var ix=$('input[name=x_axis_column]:checked').val();
@@ -143,10 +144,10 @@ function afterSampleData(sampleData,headers){
 		}
 		var labels=[headers[ix],y_axis_names];
 		hash["labels"]=labels;
-		var type=$('input[name=types]:checked').val()
-		console.log(type);
+		var type=$('input[name=types]:checked').val();
 		console.log(hash);
 		plotGraph(hash,columns.length,type);
+
 	};
 
 }
@@ -186,7 +187,6 @@ function sampleDataXandY(sampleData,headers,validForYAxis){
 	graphMenu();
 
 }
-
 //preparing sample data for the user to choose the columns from
 function extractSampleData(completeData,headers){
 	var sampleData=[];
@@ -283,32 +283,62 @@ function parse(file){
 		},
 		complete: function() {
 			console.log(mat);
+			$('.carousel').carousel(1);
 			//calling a function to determine headers for columns
 			determineHeaders(mat);
 		}
 	});
+
 	
 	
 }
 //extracts the file uploaded in the field
 function handleFileSelectlocal(evt) {
 	var csv_file_local = evt.target.files[0];
+	$('.drag_drop_heading').text(csv_file_local['name']);
 	if 	(csv_file_local['name'].split(".")[1]!="csv"){
 		alert("Invalid file type");
 	}
 	else{
-		parse(csv_file_local);}
+		document.getElementById("upload").onclick = function(e){
+			parse(csv_file_local);
+		}
+
+	}
 }
 //reads the input from the text field in which the link of the remote file is included
 function handleFileSelectremote(val){
 	var csv_file_remote = val;
-	parse(csv_file_remote);
+	document.getElementById("upload").onclick = function(e){
+		parse(csv_file_remote);
+	}
 }
 //this triggers handleFileSelectLocal function whenever a file is uploaded in the field
 $(document).ready(function(){
+
 	$(".csv_file").change(handleFileSelectlocal);
 	$(".remote_file").on('change',function(){
 		handleFileSelectremote(this.value);
 	});
+
+});
+$('.carousel').carousel({
+    interval: false
+});
+$('.xytoggle').bootstrapToggle({
+	on: 'X-Axis',
+  	off: 'Y-Axis'
 });
 
+document.getElementById("update_graph").onclick = function(e){
+	$('.carousel').carousel(1);
+}
+$('input[name=xy]:checked').change(function(){
+	var ixy=$('input[name=xy]:checked').val();
+	var ixx=0;
+	if (ixy==undefined){
+		ixx=1;
+	}
+	$('#xtable').toggle( ixx===0);
+	$('#ytable').toggle( ixx===1);
+});
