@@ -30,6 +30,7 @@ function determineConfig(type){
 	}
 }
 function graphMenu(){
+	document.getElementById("graph_menu").innerHTML="";
 	var bar=["Bar","Horizontal","Vertical"];
 	var line=["Line","Basic","Stepped","Point"];
 	var disc=["Disc","Pie","Doughnut","Radar"];
