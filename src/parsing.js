@@ -126,19 +126,19 @@ function plotGraph(hash,length,type){
 	var ctx = document.getElementById('canvas').getContext('2d');
 	window.myLine = new Chart(ctx, config);
 }
-function afterSampleData(sampleData,headers){
+function afterSampleData(completeData,headers){
 	document.getElementById("upload").onclick = function(e){
 		e.preventDefault();
 		var hash={};
 		var ix=$('input[name=x_axis_column]:checked').val();
-		hash["x_axis_labels"]=sampleData[ix];
+		hash["x_axis_labels"]=completeData[ix];
 		var columns = new Array(); 
 		var y_axis_names = new Array();
 		$("input:checkbox[name=y_axis_column]:checked").each(function(){
 		    columns.push($(this).val());
 		 });
 		for(var i=0;i<columns.length;i++){
-			hash["y_axis_values"+(i)]=sampleData[columns[i]];
+			hash["y_axis_values"+(i)]=completeData[columns[i]];
 			y_axis_names.push(headers[columns[i]]);
 		}
 		var labels=[headers[ix],y_axis_names];
@@ -150,7 +150,7 @@ function afterSampleData(sampleData,headers){
 	};
 
 }
-function tableGenerator(sampleData,headers,name,tableName,typeOfInput,validValues){
+function tableGenerator(sampleData,headers,name,tableName,typeOfInput,validValues,completeData){
 	document.getElementById(tableName).innerHTML="";
 	var trhead=document.createElement('tr');
 	for (var i=0;i<headers.length;i++){
@@ -176,13 +176,13 @@ function tableGenerator(sampleData,headers,name,tableName,typeOfInput,validValue
 		}
 		document.getElementById(tableName).appendChild(tr);
 	}
-	afterSampleData(sampleData,headers);
+	afterSampleData(completeData,headers);
 
 
 }
-function sampleDataXandY(sampleData,headers,validForYAxis){
-	tableGenerator(sampleData,headers,'x_axis_column','tablex','radio',headers);
-	tableGenerator(sampleData,headers,'y_axis_column','tabley','checkbox',validForYAxis);
+function sampleDataXandY(sampleData,headers,validForYAxis,completeData){
+	tableGenerator(sampleData,headers,'x_axis_column','tablex','radio',headers,completeData);
+	tableGenerator(sampleData,headers,'y_axis_column','tabley','checkbox',validForYAxis,completeData);
 	graphMenu();
 
 }
@@ -214,7 +214,7 @@ function extractSampleData(completeData,headers){
 	}
 	console.log(sampleData);
 	console.log(validForYAxis);
-	sampleDataXandY(sampleData,headers,validForYAxis);
+	sampleDataXandY(sampleData,headers,validForYAxis,completeData);
 
 }
 //makes a 2D matrix with the transpose of the CSV file, each column having the same index as its column heading
