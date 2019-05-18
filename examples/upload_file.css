@@ -108,3 +108,26 @@ ol.carousel-indicators li{
 .hidden {
      display:none;
 }
+.table_container{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+.button_container{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 100px;
+  align-items: center;
+  margin-bottom: 30px;
+}
+.table{
+  font-family: 'Ubuntu Condensed';
+}
+.feature_buttons{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
