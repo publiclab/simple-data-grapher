@@ -205,20 +205,26 @@ function afterSampleData(completeData,headers,ci,flag){
 	};
 
 }
-function tableGenerator(sampleData,headers,name,tableName,typeOfInput,validValues,ci,flag,completeData,tableType){
+function tableGenerator(sampleData,headers,name,tableName,typeOfInput,validValues,ci,flag,completeData,tableType,badgeType){
 	console.log("at tableGenerator");
 	document.getElementById(tableName).innerHTML="";
 	var trhead=document.createElement('tr');
 	for (var i=0;i<headers.length;i++){
 		var td=document.createElement('td');
-		td.appendChild(document.createTextNode(headers[i]));
+		var span=document.createElement('span');
+		var textnode=document.createTextNode(headers[i]);
+		span.appendChild(textnode);
+		span.classList.add("badge");
+		span.classList.add("badge-pill");
+		span.classList.add(badgeType);
+		td.appendChild(span);
 		for (var j=0;j<validValues.length;j++){
 			if (validValues[j]==headers[i]){
 			var checkbox=document.createElement('input')
 			checkbox.type = typeOfInput;
 			checkbox.value = i;
 			checkbox.name = name;
-			td.appendChild(checkbox);}
+			span.appendChild(checkbox);}
 		}
 		trhead.appendChild(td);
 	}
@@ -244,13 +250,13 @@ function sampleDataXandY(sampleData,headers,validForYAxis,completeData){
 		console.log("at add_graph");
 		counting++;
 		$('.carousel').carousel(1);
-		tableGenerator(sampleData,headers,'x_axis_column','tablex','radio',headers,counting,false,completeData,'table-success');
-		tableGenerator(sampleData,headers,'y_axis_column','tabley','checkbox',validForYAxis,counting,false,completeData,'table-warning');
+		tableGenerator(sampleData,headers,'x_axis_column','tablex','radio',headers,counting,false,completeData,'table-success','badge-success');
+		tableGenerator(sampleData,headers,'y_axis_column','tabley','checkbox',validForYAxis,counting,false,completeData,'table-warning','badge-warning');
 		graphMenu();
 		
 	}
-	tableGenerator(sampleData,headers,'x_axis_column','tablex','radio',headers,0,true,completeData,'table-success');
-	tableGenerator(sampleData,headers,'y_axis_column','tabley','checkbox',validForYAxis,0,true,completeData,'table-warning');
+	tableGenerator(sampleData,headers,'x_axis_column','tablex','radio',headers,0,true,completeData,'table-success','badge-success');
+	tableGenerator(sampleData,headers,'y_axis_column','tabley','checkbox',validForYAxis,0,true,completeData,'table-warning','badge-warning');
 	graphMenu();
 
 }

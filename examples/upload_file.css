@@ -124,6 +124,8 @@ ol.carousel-indicators li{
 }
 .table{
   font-family: 'Ubuntu Condensed';
+  overflow: auto;
+  width: 500px;
 }
 .feature_buttons{
   display: flex;
