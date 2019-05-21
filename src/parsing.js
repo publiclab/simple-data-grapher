@@ -269,8 +269,8 @@ function extractSampleData(completeData,headers){
 		sampleData[i]=[];
 	}
 	var maxval=5;
-	if (completeData.length<5){
-		maxval=completeData.length;
+	if (completeData.length[0]<5){
+		maxval=completeData[0].length;
 	}
 	for (var i=0;i<headers.length;i++){
 		var counter=0;
@@ -307,7 +307,7 @@ function matrixForCompleteData(headers,mat,start){
 			completeData[j].push(mat[i][j]);
 		}
 	}
-	console.log(completeData);
+	console.log(completeData,"completeData");
 	extractSampleData(completeData,headers);
 
 }
@@ -409,19 +409,21 @@ function handleFileSelectremote(val){
 function handleFileSelectstring(val){
 	var csv_string = val.split("\n");
 	var mat=[];
-	for (var i=0;i<csv_string.length;i++){
-		if (csv_string[i]=="" || csv_string[i]==" "){
-			continue;
+	document.getElementById("upload").onclick = function(e){
+		for (var i=0;i<csv_string.length;i++){
+			if (csv_string[i]=="" || csv_string[i]==" "){
+				continue;
+			}
+			var dataHash=Papa.parse(csv_string[i],{
+				dynamicTyping: true,
+				comments: true
+			});
+			mat[i]=dataHash['data'][0];
 		}
-		var dataHash=Papa.parse(csv_string[i],{
-			dynamicTyping: true,
-			comments: true
-		});
-		mat[i]=dataHash['data'][0];
+		console.log(mat);
+		$('.carousel').carousel(1);
+		determineHeaders(mat);
 	}
-	console.log(mat);
-	$('.carousel').carousel(1);
-	determineHeaders(mat);
 }
 //this triggers handleFileSelectLocal function whenever a file is uploaded in the field
 $(document).ready(function(){
