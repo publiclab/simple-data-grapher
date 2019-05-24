@@ -153,18 +153,15 @@ function plotGraph(hash,length,type,ci,flag){
 	if (flag){
 	console.log("at plotGraph");
 	document.getElementById('canvas_container').innerHTML="";}
-	
 	var div = document.createElement('div');
-	div.classList.add('chart-container');
-
-	console.log(ci+"i");
+	div.classList.add('chart-container'+ci);
 	var canv=document.createElement('canvas');
-	// canv.id="canvas"+ci;
+	canv.id='canvas'+ci;
 	div.appendChild(canv);
 	document.getElementById('canvas_container').appendChild(div);
 	var ctx = canv.getContext('2d');
-	colorBackground(ctx,canv);
-	new Chart(ctx, determineConfig(hash,length,type));
+	var configuration=determineConfig(hash,length,type);
+	new Chart(ctx, configuration);
 	$('.carousel').carousel(2);
 	// saveAsImage();
 	// new RangeSliderChart({
