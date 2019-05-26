@@ -38,6 +38,7 @@ class View{
     xyToggleName = null;
     tableXParentId = null;
     tableYParentId = null;
+    saveAsImage = null;
 
 
     handleFileSelectlocal(event) {
@@ -342,6 +343,7 @@ class View{
         this.graphMenuTypeInputName = elementId + "_types";
         this.canvasContinerId = elementId + "_canvas_container";
         this.xyToggleName = elementId + "_xytoggle";
+        this.saveAsImageId = elementId + "save-as-image";
         this.drawHTMLView();
         this.addListeners();
         $('.' + this.carousalClass).carousel({
