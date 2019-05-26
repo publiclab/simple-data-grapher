@@ -33,6 +33,11 @@ class View{
     graphMenuId = null;
     plotGraphId = null;
     graphMenuTypeInputName = null;
+    canvasContinerId = null;
+    xyToggle = null;
+    xyToggleName = null;
+    tableXParentId = null;
+    tableYParentId = null;
 
 
     handleFileSelectlocal(event) {
@@ -52,19 +57,160 @@ class View{
         }
     }
 
+    determineType(type){
+        console.log("at type");
+        console.log(type);
+        if (type=="Basic" || type=="Stepped" || type=="Point"){
+            return 'line';
+        }
+        else if (type=="Horizontal"){
+            return 'horizontalBar';
+        }
+        else if (type=="Vertical"){
+
+            return 'bar';
+        }
+        else{
+            return type.toLowerCase();
+        }
+    }
+
+     colorGenerator(i,tb,type,count){
+        console.log("at color");
+        var colors=['rgba(255, 77, 210, 0.5)','rgba(0, 204, 255, 0.5)','rgba(128, 0, 255, 0.5)','rgba(255, 77, 77, 0.5)','rgba(0, 179, 0, 0.5)','rgba(255, 255, 0, 0.5)','rgba(255, 0, 102, 0.5)','rgba(0, 115, 230, 0.5)'];
+        var bordercolors=['rgb(255, 0, 191)','rgb(0, 184, 230)','rgb(115, 0, 230)','rgb(255, 51, 51)','rgb(0, 153, 0)','rgb(230, 230, 0)','rgb(230, 0, 92)','rgb(0, 102, 204)'];
+        var length=8;
+        if (type=="Pie" || type=="Doughnut"){
+            var colorSet=[];
+            var borderColorSet=[];
+            for (var j=0;j<count;j++){
+                colorSet.push(colors[j%length]);
+                borderColorSet.push(bordercolors[j%length]);
+            }
+            if (tb=="bg"){
+                return colorSet;
+            }
+            else{
+                return borderColorSet;
+            }
+        }
+        else{
+            if (tb=="bg"){
+                return colors[i%length];
+            }
+            else{
+                return bordercolors[i%length];
+            }
+        }
+    }
+
+    determineData(type,i,hash){
+        console.log("at data");
+        var h = {};
+        if (type=="Basic"){
+            h['fill'] = false;
+        }
+        else if (type=="Stepped"){
+            h['steppedLine']= true;
+            h['fill']= false;
+        }
+        else if (type=="Point"){
+            h['showLine']= false;
+            h['pointRadius']= 10;
+        }
+        h['backgroundColor']=this.colorGenerator(i,"bg",type,hash['y_axis_values'+i].length);
+        h['borderColor']=this.colorGenerator(i,"bo",type,hash['y_axis_values'+i].length);
+        h['borderWidth']=1;
+        h['label']=hash['labels'][1][i];
+        h['data']=hash['y_axis_values'+i];
+        return h;
+    }
+
+    determineConfig(hash,length,type){
+        console.log("at config");
+        var config = {};
+        config['type'] = this.determineType(type);
+        var data={};
+        data['labels']= hash['x_axis_labels'];
+        var datasets=[];
+        for (var i=0;i<length;i++){
+            var h = this.determineData(type,i,hash);
+            datasets.push(h);
+        }
+        var options={'responsive':true, 'maintainAspectRatio': true, 'chartArea': {
+                backgroundColor: 'rgb(204, 102, 255)'
+            }};
+        options['scales']= this.scales(hash);
+        config['options']=options;
+        data['datasets']=datasets;
+        config['data']=data;
+        return config;
+    }
+
+    scales(hash){
+        console.log("at scales");
+        var scales= {
+            xAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: hash['labels'][0]
+                }
+            }],
+            yAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Value'
+                }
+            }]
+        }
+        return scales;
+    }
+
+    plotGraph(hash,length,type,flag){
+        if (flag){
+            console.log("at plotGraph");
+            document.getElementById(this.canvasContinerId).innerHTML="";
+        }
+        var div = document.createElement('div');
+        div.classList.add(this.elementId + '_chart_container_'+this.graphCounting);
+        var canv = document.createElement('canvas');
+        canv.id= this.elementId + '_canvas_'+ this.graphCounting;
+        div.appendChild(canv);
+        document.getElementById(this.canvasContinerId).appendChild(div);
+        var ctx = canv.getContext('2d');
+        var configuration = this.determineConfig(hash,length,type);
+        new Chart(ctx, configuration);
+        $('.'+this.carousalClass).carousel(2);
+        // saveAsImage();
+        // new RangeSliderChart({
+
+        // 	chartData: config, //The same data you give to Chart.js
+        // 	chartOpts: options, //Your Chart.js options
+        // 	chartType: type, //Which Chart.js chart you want (eg. Lie, Bar, Pie, etc.)
+        // 	chartCTX: ctx, //your canvas context
+
+        // 	class: 'my-chart-ranger', //Specifies a custom class you want applied to your sliders
+
+        // 	initial: [3, 10] //Which data points to start the sliders on
+        // })
+    }
+
     afterSampleData(flag){
         console.log("at checkbox");
         console.log(this.csvParser.completeCsvMatrix);
-        document.getElementById(this.plotGraphId).onclick = function(e){
+        document.getElementById(this.plotGraphId).onclick = (e) => {
             console.log("at click on plot_graph");
             e.preventDefault();
             var hash={};
             var ix=$('input[name=' + this.tableXInputName + ']:checked').val();
+            console.log(ix);
             hash["x_axis_labels"]=this.csvParser.completeCsvMatrix[ix];
             var columns = new Array();
             var y_axis_names = new Array();
-            $("input:checkbox[name=" + this.tableYInputName +"]:checked").each(function(){
-                columns.push($(this).val());
+            $("input:checkbox[name=" + this.tableYInputName +"]:checked").each((index, element)=>{
+                columns.push(element.value);
             });
             for(var i=0;i<columns.length;i++){
                 hash["y_axis_values"+(i)]=this.csvParser.completeCsvMatrix[columns[i]];
@@ -74,7 +220,7 @@ class View{
             hash["labels"]=labels;
             var type=$('input[name='+ this.graphMenuTypeInputName +']:checked').val();
             console.log(hash);
-            // plotGraph(hash,columns.length,type,this.graphCounting,flag);
+            this.plotGraph(hash,columns.length,type,flag);
 
         };
     }
@@ -185,15 +331,35 @@ class View{
         this.addGraphButtonId = elementId + "_add_graph";
         this.tableXId = elementId + "_tableX";
         this.tableYId = elementId + "_tableY";
+        this.tableXParentId = elementId + "_Xtable";
+        this.tableYParentId = elementId + "_Ytable";
         this.tableXInputName = elementId + "_x_axis_input_columns";
         this.tableYInputName = elementId + "_y_axis_input_columns";
         this.carousalClass = elementId + "_carousal";
         this.carousalId = elementId + "_carousalId";
         this.graphMenuId = elementId + "_graph_menu";
         this.plotGraphId = elementId + "_plot_graph";
-        this.graphMenuTypeInputName = elementId + "types";
+        this.graphMenuTypeInputName = elementId + "_types";
+        this.canvasContinerId = elementId + "_canvas_container";
+        this.xyToggleName = elementId + "_xytoggle";
         this.drawHTMLView();
         this.addListeners();
+        $('.' + this.carousalClass).carousel({
+            interval: false
+        });
+        $('.xytoggle').bootstrapToggle({
+            on: 'X-Axis',
+            off: 'Y-Axis'
+        });
+        $('input[name=' + this.xyToggleName +']:checked').change(()=>{
+            var ixy=$('input[name='+ this.xyToggleName +']:checked').val();
+            var ixx=0;
+            if (ixy==undefined){
+                ixx=1;
+            }
+            $('#'+ this.tableXParentId ).toggle( ixx===0);
+            $('#' + this.tableYParentId).toggle( ixx===1);
+        });
     }
 
     addListeners(){
@@ -209,32 +375,9 @@ class View{
 
 
     drawHTMLView(){
-        this.element.innerHTML = '<div id=' + this.carousalId + ' class="carousel ' + this.carousalClass + ' slide" data-ride="carousel"><div class="indicators"><ol class="carousel-indicators"> <li data-target="#'+this.carousalId +'" data-slide-to="0" class="active" id="up"></li> <li data-target="#'+this.carousalId +'" data-slide-to="1"></li> <li data-target="#'+this.carousalId +'" data-slide-to="2"></li></ol></div><div class="carousel-inner"><div class="carousel-item active"><div class="main_container"><div class="container_drag_drop"><span class="btn btn-outline-primary btn-file input_box"><p class="drag_drop_heading" id=' + this.dragDropHeadingId  + '> <u> Choose a csv file </u> or drag & drop it here </p><input type="file" class="csv_file" id=' + this.elementId + "_csv_file"  + ' accept=".csv"></span></div><h6 class="or"><span>OR</span></h6><div class="container_remote_link"><input type="text" class="remote_file text_field" placeholder="url of remote file" ></div><h6 class="or"><span>OR</span></h6><div class="container_csv_string"><textarea class="csv_string text_field" placeholder="Paste a CSV string here" ></textarea></div><div class="upload_button"><button type="button" class="btn btn-primary" id=' + this.uploadButtonId + ' >Upload CSV</button></div></div></div><div class="carousel-item tables"><div class="button_container"><div><input type="checkbox" name="xy" checked data-toggle="toggle" class="xytoggle" data-width="150" data-onstyle="success" data-offstyle="warning" data-height="40"></div><div class="plot_button"><button type="button" class="btn btn-primary" id='+ this.plotGraphId + ' >Plot Graph</button></div></div><div class="table_container"><div id="xtable"><table id=' + this.tableXId + ' class="table"></table></div><div id="ytable" class="hidden"><table id='+ this.tableYId +' class="table"></table></div><div><table id='+ this.graphMenuId + ' class="table table-dark"></table></div></div></div><div class="carousel-item graph"><div class="feature_buttons"><button type="button" class="btn btn-primary" id="update_graph">Update Graph</button><button type="button" class="btn btn-primary" id="save_as_image"> Save as image</button><button type="button" class="btn btn-primary" id=' + this.addGraphButtonId + '> Add Graph</button></div><div id="canvas_container"></div></div></div></div>';
+        this.element.innerHTML = '<div id=' + this.carousalId + ' class="carousel ' + this.carousalClass + ' slide" data-ride="carousel"><div class="indicators"><ol class="carousel-indicators"> <li data-target="#'+this.carousalId +'" data-slide-to="0" class="active" id="up"></li> <li data-target="#'+this.carousalId +'" data-slide-to="1"></li> <li data-target="#'+this.carousalId +'" data-slide-to="2"></li></ol></div><div class="carousel-inner"><div class="carousel-item active"><div class="main_container"><div class="container_drag_drop"><span class="btn btn-outline-primary btn-file input_box"><p class="drag_drop_heading" id=' + this.dragDropHeadingId  + '> <u> Choose a csv file </u> or drag & drop it here </p><input type="file" class="csv_file" id=' + this.elementId + "_csv_file"  + ' accept=".csv"></span></div><h6 class="or"><span>OR</span></h6><div class="container_remote_link"><input type="text" class="remote_file text_field" placeholder="url of remote file" ></div><h6 class="or"><span>OR</span></h6><div class="container_csv_string"><textarea class="csv_string text_field" placeholder="Paste a CSV string here" ></textarea></div><div class="upload_button"><button type="button" class="btn btn-primary" id=' + this.uploadButtonId + ' >Upload CSV</button></div></div></div><div class="carousel-item tables"><div class="button_container"><div><input type="checkbox" name='+ this.xyToggleName +' checked data-toggle="toggle" class="xytoggle" data-width="150" data-onstyle="success" data-offstyle="warning" data-height="40"></div><div class="plot_button"><button type="button" class="btn btn-primary" id='+ this.plotGraphId + ' >Plot Graph</button></div></div><div class="table_container"><div id='+ this.tableXParentId +' ><table id=' + this.tableXId + ' class="table"></table></div><div id='+ this.tableYParentId +' class="hidden"><table id='+ this.tableYId +' class="table"></table></div><div><table id='+ this.graphMenuId + ' class="table table-dark"></table></div></div></div><div class="carousel-item graph"><div class="feature_buttons"><button type="button" class="btn btn-primary" id="update_graph">Update Graph</button><button type="button" class="btn btn-primary" id="save_as_image"> Save as image</button><button type="button" class="btn btn-primary" id=' + this.addGraphButtonId + '> Add Graph</button></div><div id='+ this.canvasContinerId +' ></div></div></div></div>';
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 class CsvParser{
