@@ -30,6 +30,9 @@ class View{
     tableYInputName = null;
     carousalClass = null;
     carousalId = null;
+    graphMenuId = null;
+    plotGraphId = null;
+    graphMenuTypeInputName = null;
 
 
     handleFileSelectlocal(event) {
@@ -48,6 +51,62 @@ class View{
             }
         }
     }
+
+    afterSampleData(flag){
+        console.log("at checkbox");
+        console.log(this.csvParser.completeCsvMatrix);
+        document.getElementById(this.plotGraphId).onclick = function(e){
+            console.log("at click on plot_graph");
+            e.preventDefault();
+            var hash={};
+            var ix=$('input[name=' + this.tableXInputName + ']:checked').val();
+            hash["x_axis_labels"]=this.csvParser.completeCsvMatrix[ix];
+            var columns = new Array();
+            var y_axis_names = new Array();
+            $("input:checkbox[name=" + this.tableYInputName +"]:checked").each(function(){
+                columns.push($(this).val());
+            });
+            for(var i=0;i<columns.length;i++){
+                hash["y_axis_values"+(i)]=this.csvParser.completeCsvMatrix[columns[i]];
+                y_axis_names.push(this.csvParser.csvHeaders[columns[i]]);
+            }
+            var labels=[this.csvParser.csvHeaders[ix],y_axis_names];
+            hash["labels"]=labels;
+            var type=$('input[name='+ this.graphMenuTypeInputName +']:checked').val();
+            console.log(hash);
+            // plotGraph(hash,columns.length,type,this.graphCounting,flag);
+
+        };
+    }
+
+    graphMenu(){
+        console.log("at menu");
+        document.getElementById(this.graphMenuId).innerHTML="";
+        var bar=["Bar","Horizontal","Vertical"];
+        var line=["Line","Basic","Stepped","Point"];
+        var disc=["Disc","Pie","Doughnut","Radar"];
+        var types=[bar,line,disc];
+        for (var i=0;i<3;i++){
+            var tr=document.createElement('tr');
+            var td_head=document.createElement('td');
+            td_head.className=types[i][0];
+            td_head.appendChild(document.createTextNode(types[i][0]));
+            tr.appendChild(td_head);
+            for (var j=1;j<types[i].length;j++){
+                var td=document.createElement('td');
+                var radio=document.createElement('input');
+                radio.type = 'radio';
+                radio.value = types[i][j];
+                td.appendChild(document.createTextNode(types[i][j]));
+                radio.name = this.graphMenuTypeInputName;
+                td.appendChild(radio);
+                tr.appendChild(td);
+            }
+            document.getElementById(this.graphMenuId).appendChild(tr);
+        }
+    }
+
+
 
     tableGenerator(name,tableId,typeOfInput,validValues,flag,tableType,badgeType){
         console.log("i am in tablegenerator");
@@ -85,7 +144,7 @@ class View{
             }
             document.getElementById(tableId).appendChild(tr);
         }
-        // afterSampleData(this.csvParser.completeCsvMatrix,this.csvParser.csvHeaders,this.graphCounting,flag);
+        this.afterSampleData(flag);
     }
 
     showSampleDataXandY(){
@@ -96,13 +155,12 @@ class View{
             $('.'+this.carousalClass).carousel(1); /// ---------------> after
             this.tableGenerator(this.tableXInputName, this.tableXId, 'radio', this.csvParser.csvHeaders, false, 'table-success','badge-success');
             this.tableGenerator(this.tableYInputName, this.tableYId, 'checkbox', this.csvParser.csvValidForYAxis, false, 'table-warning','badge-warning');
-            // graphMenu();
+            this.graphMenu();
 
         };
         this.tableGenerator(this.tableXInputName, this.tableXId, 'radio', this.csvParser.csvHeaders, true, 'table-success','badge-success');
         this.tableGenerator(this.tableYInputName, this.tableYId, 'checkbox', this.csvParser.csvValidForYAxis, true, 'table-warning','badge-warning');
-        // graphMenu();
-
+        this.graphMenu();
     }
 
     continueViewManipulation(){
@@ -130,7 +188,10 @@ class View{
         this.tableXInputName = elementId + "_x_axis_input_columns";
         this.tableYInputName = elementId + "_y_axis_input_columns";
         this.carousalClass = elementId + "_carousal";
-        this.carousalId = elementId + "_carousalId"
+        this.carousalId = elementId + "_carousalId";
+        this.graphMenuId = elementId + "_graph_menu";
+        this.plotGraphId = elementId + "_plot_graph";
+        this.graphMenuTypeInputName = elementId + "types";
         this.drawHTMLView();
         this.addListeners();
     }
@@ -148,7 +209,7 @@ class View{
 
 
     drawHTMLView(){
-        this.element.innerHTML = '<div id=' + this.carousalId + ' class="carousel ' + this.carousalClass + ' slide" data-ride="carousel"><div class="indicators"><ol class="carousel-indicators"> <li data-target="#'+this.carousalId +'" data-slide-to="0" class="active" id="up"></li> <li data-target="#'+this.carousalId +'" data-slide-to="1"></li> <li data-target="#'+this.carousalId +'" data-slide-to="2"></li></ol></div><div class="carousel-inner"><div class="carousel-item active"><div class="main_container"><div class="container_drag_drop"><span class="btn btn-outline-primary btn-file input_box"><p class="drag_drop_heading" id=' + this.dragDropHeadingId  + '> <u> Choose a csv file </u> or drag & drop it here </p><input type="file" class="csv_file" id=' + this.elementId + "_csv_file"  + ' accept=".csv"></span></div><h6 class="or"><span>OR</span></h6><div class="container_remote_link"><input type="text" class="remote_file text_field" placeholder="url of remote file" ></div><h6 class="or"><span>OR</span></h6><div class="container_csv_string"><textarea class="csv_string text_field" placeholder="Paste a CSV string here" ></textarea></div><div class="upload_button"><button type="button" class="btn btn-primary" id=' + this.uploadButtonId + ' >Upload CSV</button></div></div></div><div class="carousel-item tables"><div class="button_container"><div><input type="checkbox" name="xy" checked data-toggle="toggle" class="xytoggle" data-width="150" data-onstyle="success" data-offstyle="warning" data-height="40"></div><div class="plot_button"><button type="button" class="btn btn-primary" id="plot_graph" >Plot Graph</button></div></div><div class="table_container"><div id="xtable"><table id=' + this.tableXId + ' class="table"></table></div><div id="ytable" class="hidden"><table id='+ this.tableYId +' class="table"></table></div><div><table id="graph_menu" class="table table-dark"></table></div></div></div><div class="carousel-item graph"><div class="feature_buttons"><button type="button" class="btn btn-primary" id="update_graph">Update Graph</button><button type="button" class="btn btn-primary" id="save_as_image"> Save as image</button><button type="button" class="btn btn-primary" id=' + this.addGraphButtonId + '> Add Graph</button></div><div id="canvas_container"></div></div></div></div>';
+        this.element.innerHTML = '<div id=' + this.carousalId + ' class="carousel ' + this.carousalClass + ' slide" data-ride="carousel"><div class="indicators"><ol class="carousel-indicators"> <li data-target="#'+this.carousalId +'" data-slide-to="0" class="active" id="up"></li> <li data-target="#'+this.carousalId +'" data-slide-to="1"></li> <li data-target="#'+this.carousalId +'" data-slide-to="2"></li></ol></div><div class="carousel-inner"><div class="carousel-item active"><div class="main_container"><div class="container_drag_drop"><span class="btn btn-outline-primary btn-file input_box"><p class="drag_drop_heading" id=' + this.dragDropHeadingId  + '> <u> Choose a csv file </u> or drag & drop it here </p><input type="file" class="csv_file" id=' + this.elementId + "_csv_file"  + ' accept=".csv"></span></div><h6 class="or"><span>OR</span></h6><div class="container_remote_link"><input type="text" class="remote_file text_field" placeholder="url of remote file" ></div><h6 class="or"><span>OR</span></h6><div class="container_csv_string"><textarea class="csv_string text_field" placeholder="Paste a CSV string here" ></textarea></div><div class="upload_button"><button type="button" class="btn btn-primary" id=' + this.uploadButtonId + ' >Upload CSV</button></div></div></div><div class="carousel-item tables"><div class="button_container"><div><input type="checkbox" name="xy" checked data-toggle="toggle" class="xytoggle" data-width="150" data-onstyle="success" data-offstyle="warning" data-height="40"></div><div class="plot_button"><button type="button" class="btn btn-primary" id='+ this.plotGraphId + ' >Plot Graph</button></div></div><div class="table_container"><div id="xtable"><table id=' + this.tableXId + ' class="table"></table></div><div id="ytable" class="hidden"><table id='+ this.tableYId +' class="table"></table></div><div><table id='+ this.graphMenuId + ' class="table table-dark"></table></div></div></div><div class="carousel-item graph"><div class="feature_buttons"><button type="button" class="btn btn-primary" id="update_graph">Update Graph</button><button type="button" class="btn btn-primary" id="save_as_image"> Save as image</button><button type="button" class="btn btn-primary" id=' + this.addGraphButtonId + '> Add Graph</button></div><div id="canvas_container"></div></div></div></div>';
     }
 }
 
