@@ -1,8 +1,8 @@
-var CsvParser = require('./SimpleDataGrapher');
+import {SimpleDataGrapher} from "./SimpleDataGrapher";
 
-module.exports = class CsvParser{
+class CsvParser{
 
-    csvFile = null;
+    csvFile = null
     csvMatrix = [];
     csvHeaders = [];
     csvFileStart = 1; //start is variable that will be passed to the function to sort out the columns. start will tell if the existing CSV file has headers or not, therefore, to start the iteration from 0 or 1 Used in header determination
@@ -112,3 +112,5 @@ module.exports = class CsvParser{
         }
     }
 };
+
+export {CsvParser}

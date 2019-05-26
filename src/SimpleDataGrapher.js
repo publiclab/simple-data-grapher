@@ -1,6 +1,7 @@
-var View = require('./View');
+import {View} from "./View";
+import {CsvParser} from "./CsvParser";
 
-module.exports = class SimpleDataGrapher{
+class SimpleDataGrapher{
     static elementIdSimpleDataGraphInstanceMap = {};
     elementId = null;
     view = null;
@@ -12,3 +13,5 @@ module.exports = class SimpleDataGrapher{
     }
 
 };
+
+export {SimpleDataGrapher};

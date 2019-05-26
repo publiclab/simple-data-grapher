@@ -1,7 +1,6 @@
-var SimpleDataGrapher = require('./SimpleDataGrapher');
-var CsvParser = require('./CsvParser');
+import {CsvParser} from "./CsvParser";
 
-module.exports = class View{
+class View{
     elementId = null;
     element = null;
     fileUploadId = null;
@@ -367,3 +366,5 @@ module.exports = class View{
         this.element.innerHTML = '<div id=' + this.carousalId + ' class="carousel ' + this.carousalClass + ' slide" data-ride="carousel"><div class="indicators"><ol class="carousel-indicators"> <li data-target="#'+this.carousalId +'" data-slide-to="0" class="active" id="up"></li> <li data-target="#'+this.carousalId +'" data-slide-to="1"></li> <li data-target="#'+this.carousalId +'" data-slide-to="2"></li></ol></div><div class="carousel-inner"><div class="carousel-item active"><div class="main_container"><div class="container_drag_drop"><span class="btn btn-outline-primary btn-file input_box"><p class="drag_drop_heading" id=' + this.dragDropHeadingId  + '> <u> Choose a csv file </u> or drag & drop it here </p><input type="file" class="csv_file" id=' + this.elementId + "_csv_file"  + ' accept=".csv"></span></div><h6 class="or"><span>OR</span></h6><div class="container_remote_link"><input type="text" class="remote_file text_field" placeholder="url of remote file" ></div><h6 class="or"><span>OR</span></h6><div class="container_csv_string"><textarea class="csv_string text_field" placeholder="Paste a CSV string here" ></textarea></div><div class="upload_button"><button type="button" class="btn btn-primary" id=' + this.uploadButtonId + ' >Upload CSV</button></div></div></div><div class="carousel-item tables"><div class="button_container"><div><input type="checkbox" name='+ this.xyToggleName +' checked data-toggle="toggle" class="xytoggle" data-width="150" data-onstyle="success" data-offstyle="warning" data-height="40"></div><div class="plot_button"><button type="button" class="btn btn-primary" id='+ this.plotGraphId + ' >Plot Graph</button></div></div><div class="table_container"><div id='+ this.tableXParentId +' ><table id=' + this.tableXId + ' class="table"></table></div><div id='+ this.tableYParentId +' class="hidden"><table id='+ this.tableYId +' class="table"></table></div><div><table id='+ this.graphMenuId + ' class="table table-dark"></table></div></div></div><div class="carousel-item graph"><div class="feature_buttons"><button type="button" class="btn btn-primary" id="update_graph">Update Graph</button><button type="button" class="btn btn-primary" id="save_as_image"> Save as image</button><button type="button" class="btn btn-primary" id=' + this.addGraphButtonId + '> Add Graph</button></div><div id='+ this.canvasContinerId +' ></div></div></div></div>';
     }
 }
+
+export {View}
