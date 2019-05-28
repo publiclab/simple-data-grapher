@@ -161,20 +161,23 @@ function plotGraph(hash,length,type,ci,flag){
 	document.getElementById('canvas_container').appendChild(div);
 	var ctx = canv.getContext('2d');
 	var configuration=determineConfig(hash,length,type);
+	var actualType=determineType(type);
+	console.log(configuration);
 	new Chart(ctx, configuration);
-	$('.carousel').carousel(2);
+	
 	// saveAsImage();
-	// new RangeSliderChart({
+	new RangeSliderChart({
 
-	// 	chartData: config, //The same data you give to Chart.js
-	// 	chartOpts: options, //Your Chart.js options
-	// 	chartType: type, //Which Chart.js chart you want (eg. Lie, Bar, Pie, etc.)
-	// 	chartCTX: ctx, //your canvas context
+		chartData: configuration['data'], //The same data you give to Chart.js
+		chartOpts: configuration['options'], //Your Chart.js options
+		chartType: actualType, //Which Chart.js chart you want (eg. Lie, Bar, Pie, etc.)
+		chartCTX: ctx, //your canvas context
 
-	// 	class: 'my-chart-ranger', //Specifies a custom class you want applied to your sliders
+		class: 'my-chart-ranger', //Specifies a custom class you want applied to your sliders
 
-	// 	initial: [3, 10] //Which data points to start the sliders on
-	// })
+		initial: [1200, 7500] //Which data points to start the sliders on
+	})
+	$('.carousel').carousel(2);
 }
 function afterSampleData(completeData,headers,ci,flag){
 	console.log("at checkbox");
@@ -278,7 +281,7 @@ function extractSampleData(completeData,headers){
 				break;
 			}
 			else if (completeData[i][j]!=null || completeData[i][j]!=undefined){
-				if (typeof(completeData[i][j])=='number'){
+				if (typeof(completeData[i][j])==='number'){
 					bool=true;
 				}
 				counter+=1;
