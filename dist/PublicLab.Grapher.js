@@ -25,6 +25,8 @@ function () {
   function CsvParser(file, elementId) {
     _classCallCheck(this, CsvParser);
 
+    _defineProperty(this, 'use strict', void 0);
+
     _defineProperty(this, "csvFile", null);
 
     _defineProperty(this, "csvMatrix", []);
@@ -79,10 +81,6 @@ function () {
   }, {
     key: "extractSampleData",
     value: function extractSampleData() {
-      for (var i = 0; i < this.csvHeaders.length; i++) {
-        this.csvSampleData[i] = [];
-      }
-
       var maxval = 5;
 
       if (this.completeCsvMatrix.length[0] < 5) {
@@ -96,7 +94,7 @@ function () {
         for (var j = 0; j < this.completeCsvMatrix[i].length; j++) {
           if (counter >= maxval) {
             break;
-          } else if (this.completeCsvMatrix[i][j] != null || this.completeCsvMatrix[i][j] != undefined) {
+          } else if (this.completeCsvMatrix[i][j] !== null || this.completeCsvMatrix[i][j] !== undefined) {
             if (typeof this.completeCsvMatrix[i][j] == 'number') {
               bool = true;
             }
@@ -180,12 +178,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var SimpleDataGrapher = function SimpleDataGrapher(elementId) {
   _classCallCheck(this, SimpleDataGrapher);
 
+  _defineProperty(this, 'use strict', void 0);
+
   _defineProperty(this, "elementId", null);
 
   _defineProperty(this, "view", null);
 
   this.elementId = elementId;
-  SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId] = this;
+  this.elementIdSimpleDataGraphInstanceMap[this.elementId] = this;
   this.view = new _View.View(elementId);
 };
 
@@ -536,6 +536,8 @@ function () {
     var _this4 = this;
 
     _classCallCheck(this, View);
+
+    _defineProperty(this, 'use strict', void 0);
 
     _defineProperty(this, "elementId", null);
 

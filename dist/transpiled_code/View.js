@@ -339,6 +339,8 @@ function () {
 
     _classCallCheck(this, View);
 
+    _defineProperty(this, 'use strict', void 0);
+
     _defineProperty(this, "elementId", null);
 
     _defineProperty(this, "element", null);

@@ -24,6 +24,8 @@ function () {
   function CsvParser(file, elementId) {
     _classCallCheck(this, CsvParser);
 
+    _defineProperty(this, 'use strict', void 0);
+
     _defineProperty(this, "csvFile", null);
 
     _defineProperty(this, "csvMatrix", []);
@@ -78,10 +80,6 @@ function () {
   }, {
     key: "extractSampleData",
     value: function extractSampleData() {
-      for (var i = 0; i < this.csvHeaders.length; i++) {
-        this.csvSampleData[i] = [];
-      }
-
       var maxval = 5;
 
       if (this.completeCsvMatrix.length[0] < 5) {
@@ -95,8 +93,8 @@ function () {
         for (var j = 0; j < this.completeCsvMatrix[i].length; j++) {
           if (counter >= maxval) {
             break;
-          } else if (this.completeCsvMatrix[i][j] != null || this.completeCsvMatrix[i][j] != undefined) {
-            if (typeof this.completeCsvMatrix[i][j] == 'number') {
+          } else if (this.completeCsvMatrix[i][j] !== null || this.completeCsvMatrix[i][j] !== undefined) {
+            if (typeof this.completeCsvMatrix[i][j] === 'number') {
               bool = true;
             }
 

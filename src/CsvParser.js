@@ -2,7 +2,9 @@ import {SimpleDataGrapher} from "./SimpleDataGrapher";
 
 class CsvParser{
 
-    csvFile = null
+    'use strict';
+
+    csvFile = null;
     csvMatrix = [];
     csvHeaders = [];
     csvFileStart = 1; //start is variable that will be passed to the function to sort out the columns. start will tell if the existing CSV file has headers or not, therefore, to start the iteration from 0 or 1 Used in header determination
@@ -43,9 +45,6 @@ class CsvParser{
 
     //preparing sample data for the user to choose the columns from
     extractSampleData(){
-        for (var i=0;i<this.csvHeaders.length;i++){
-            this.csvSampleData[i]=[];
-        }
         var maxval=5;
         if (this.completeCsvMatrix.length[0]<5){
             maxval=this.completeCsvMatrix[0].length;
@@ -58,8 +57,8 @@ class CsvParser{
                 if (counter>=maxval){
                     break;
                 }
-                else if (this.completeCsvMatrix[i][j]!=null || this.completeCsvMatrix[i][j]!=undefined){
-                    if (typeof(this.completeCsvMatrix[i][j])=='number'){
+                else if (this.completeCsvMatrix[i][j]!==null || this.completeCsvMatrix[i][j]!==undefined){
+                    if (typeof(this.completeCsvMatrix[i][j])==='number'){
                         bool=true;
                     }
                     counter+=1;

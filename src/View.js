@@ -2,6 +2,7 @@ import {CsvParser} from "./CsvParser";
 import {SimpleDataGrapher} from "./SimpleDataGrapher";
 
 class View{
+    'use strict';
     elementId = null;
     element = null;
     fileUploadId = null;

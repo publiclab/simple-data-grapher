@@ -16,12 +16,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var SimpleDataGrapher = function SimpleDataGrapher(elementId) {
   _classCallCheck(this, SimpleDataGrapher);
 
+  _defineProperty(this, 'use strict', void 0);
+
   _defineProperty(this, "elementId", null);
 
   _defineProperty(this, "view", null);
 
   this.elementId = elementId;
-  SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId] = this;
+  this.elementIdSimpleDataGraphInstanceMap[this.elementId] = this;
   this.view = new _View.View(elementId);
 };
 
