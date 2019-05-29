@@ -15,3 +15,5 @@ class SimpleDataGrapher{
 };
 
 export {SimpleDataGrapher};
+
+window.SimpleDataGrapher = SimpleDataGrapher;

@@ -1,4 +1,5 @@
 import {CsvParser} from "./CsvParser";
+import {SimpleDataGrapher} from "./SimpleDataGrapher";
 
 class View{
     elementId = null;

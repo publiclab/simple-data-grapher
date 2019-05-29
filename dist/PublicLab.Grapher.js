@@ -205,6 +205,8 @@ exports.View = void 0;
 
 var _CsvParser = require("./CsvParser");
 
+var _SimpleDataGrapher = require("./SimpleDataGrapher");
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -656,4 +658,4 @@ function () {
 }();
 
 exports.View = View;
-},{"./CsvParser":1}]},{},[2]);
+},{"./CsvParser":1,"./SimpleDataGrapher":2}]},{},[2]);
