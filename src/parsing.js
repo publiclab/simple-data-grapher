@@ -163,7 +163,7 @@ function plotGraph(hash,length,type,ci,flag){
 	var configuration=determineConfig(hash,length,type);
 	var graphType=determineType(type);
 	console.log(configuration);
-	new Chart(ctx, configuration);
+	// new Chart(ctx, configuration);
 	
 	// saveAsImage();
 	new RangeSliderChart({
