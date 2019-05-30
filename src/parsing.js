@@ -161,7 +161,7 @@ function plotGraph(hash,length,type,ci,flag){
 	document.getElementById('canvas_container').appendChild(div);
 	var ctx = canv.getContext('2d');
 	var configuration=determineConfig(hash,length,type);
-	var actualType=determineType(type);
+	var graphType=determineType(type);
 	console.log(configuration);
 	new Chart(ctx, configuration);
 	
@@ -170,7 +170,7 @@ function plotGraph(hash,length,type,ci,flag){
 
 		chartData: configuration['data'], //The same data you give to Chart.js
 		chartOpts: configuration['options'], //Your Chart.js options
-		chartType: actualType, //Which Chart.js chart you want (eg. Lie, Bar, Pie, etc.)
+		chartType: graphType, //Which Chart.js chart you want (eg. Lie, Bar, Pie, etc.)
 		chartCTX: ctx, //your canvas context
 
 		class: 'my-chart-ranger', //Specifies a custom class you want applied to your sliders
