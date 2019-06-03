@@ -422,6 +422,54 @@ function handleFileSelectstring(val){
 		determineHeaders(mat);
 	}
 }
+function handleFileSelectGoogleSheet(val){
+
+		document.getElementById("upload").onclick = function(e){
+			var sheet_link=val;
+			$.getJSON(sheet_link, function(data) {
+			//first row "title" column
+				var hashSheet=data.feed.entry;
+				var headers_sheet=[];
+				for (var key in hashSheet){
+					var h=hashSheet[key];
+					for (var headKey in h){
+						if (headKey.slice(0,4)=="gsx$"){
+							headers_sheet.push(headKey);
+						}
+					}
+					break;
+				}
+				console.log(headers_sheet,"headers_sheet");
+				var matrixComplete=[];
+				for (var i=0;i<headers_sheet.length;i++){
+					matrixComplete[i]=[];
+				}
+				console.log(headers_sheet.length);
+				for (var i=0;i<headers_sheet.length;i++){
+					for (var key in hashSheet){
+						var valueCell=hashSheet[key][headers_sheet[i]]["$t"];
+						if (!isNaN(valueCell)){
+							matrixComplete[i].push(+valueCell);}
+						else{
+							matrixComplete[i].push(valueCell);
+						}
+					}
+				}
+				console.log(matrixComplete,"matrixComplete");
+				for (var i=0;i<headers_sheet.length;i++){
+					headers_sheet[i]=headers_sheet[i].slice(4,headers_sheet[i].length);
+				}
+				
+				console.log(headers_sheet,"hh");
+				extractSampleData(matrixComplete,headers_sheet);
+			$('.carousel').carousel(1);
+			});
+			
+		}
+		
+	
+
+}
 //this triggers handleFileSelectLocal function whenever a file is uploaded in the field
 $(document).ready(function(){
 
@@ -431,6 +479,11 @@ $(document).ready(function(){
 	});
 	$(".csv_string").on('change',function(){
 		handleFileSelectstring(this.value);
+	});
+	$(".google_sheet").on('change',function(){
+		var sheetLink=this.value;
+		var sheetURL="https://spreadsheets.google.com/feeds/list/"+sheetLink.split("/")[5]+"/od6/public/values?alt=json";
+		handleFileSelectGoogleSheet(sheetURL);
 	});
 
 });
