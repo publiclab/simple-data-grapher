@@ -149,6 +149,19 @@ function determineConfig(hash,length,type){
 	config['data']=data;
 	return config;
 }
+function plotIt(configuration,graphType,ctx){
+	new RangeSliderChart({
+
+		'chartData': configuration['data'], //The same data you give to Chart.js
+		'chartOpts': configuration['options'], //Your Chart.js options
+		'chartType': graphType, //Which Chart.js chart you want (eg. Lie, Bar, Pie, etc.)
+		'chartCTX': ctx, //your canvas context
+
+		'class': 'my-chart-ranger', //Specifies a custom class you want applied to your sliders
+
+		'initial': [3, 400] //Which data points to start the sliders on
+	})
+}
 function plotGraph(hash,length,type,ci,flag){
 	if (flag){
 	console.log("at plotGraph");
@@ -163,20 +176,8 @@ function plotGraph(hash,length,type,ci,flag){
 	var configuration=determineConfig(hash,length,type);
 	var graphType=determineType(type);
 	console.log(configuration);
-	// new Chart(ctx, configuration);
-	
-	// saveAsImage();
-	new RangeSliderChart({
+	window.setTimeout(plotIt(configuration,graphType,ctx),2000);
 
-		chartData: configuration['data'], //The same data you give to Chart.js
-		chartOpts: configuration['options'], //Your Chart.js options
-		chartType: graphType, //Which Chart.js chart you want (eg. Lie, Bar, Pie, etc.)
-		chartCTX: ctx, //your canvas context
-
-		class: 'my-chart-ranger', //Specifies a custom class you want applied to your sliders
-
-		initial: [1200, 7500] //Which data points to start the sliders on
-	})
 	$('.carousel').carousel(2);
 }
 function afterSampleData(completeData,headers,ci,flag){
