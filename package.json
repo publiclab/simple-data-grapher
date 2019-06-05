@@ -4,7 +4,7 @@
   "description": "Turns CSVs into graphs in a few simple steps; embeds onto other websites!",
   "main": "src/PublicLab.Grapher.js",
   "scripts": {
-    "build": "watch 'browserify src/PublicLab.Grapher.js -o dist/PublicLab.Grapher.js' src",
+    "build": "watch 'babel src -d dist/transpiled_code & browserify dist/transpiled_code/SimpleDataGrapher.js -o dist/PublicLab.Grapher.js' src",
     "test": "mocha spec/js/"
   },
   "repository": {
@@ -31,6 +31,12 @@
     "papaparse": "^4.6.3"
   },
   "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/preset-env": "^7.4.5",
+    "babel-core": "^6.26.3",
+    "babelify": "^10.0.0",
     "browserify": "^16.2.3",
     "watch": "^1.0.2"
   }
