@@ -8,7 +8,7 @@ class SimpleDataGrapher{
     view = null;
     constructor(elementId){
         this.elementId = elementId;
-        this.elementIdSimpleDataGraphInstanceMap[this.elementId] = this;
+        SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId] = this;
         this.view = new View(elementId);
     }
 };

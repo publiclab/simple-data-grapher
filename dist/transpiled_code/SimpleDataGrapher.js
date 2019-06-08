@@ -23,7 +23,7 @@ var SimpleDataGrapher = function SimpleDataGrapher(elementId) {
   _defineProperty(this, "view", null);
 
   this.elementId = elementId;
-  this.elementIdSimpleDataGraphInstanceMap[this.elementId] = this;
+  SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId] = this;
   this.view = new _View.View(elementId);
 };
 

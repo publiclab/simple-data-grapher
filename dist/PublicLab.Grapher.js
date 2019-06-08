@@ -95,7 +95,7 @@ function () {
           if (counter >= maxval) {
             break;
           } else if (this.completeCsvMatrix[i][j] !== null || this.completeCsvMatrix[i][j] !== undefined) {
-            if (typeof this.completeCsvMatrix[i][j] == 'number') {
+            if (typeof this.completeCsvMatrix[i][j] === 'number') {
               bool = true;
             }
 
@@ -185,7 +185,7 @@ var SimpleDataGrapher = function SimpleDataGrapher(elementId) {
   _defineProperty(this, "view", null);
 
   this.elementId = elementId;
-  this.elementIdSimpleDataGraphInstanceMap[this.elementId] = this;
+  SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId] = this;
   this.view = new _View.View(elementId);
 };
 
