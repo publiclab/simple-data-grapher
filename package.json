@@ -5,7 +5,8 @@
   "main": "src/PublicLab.Grapher.js",
   "scripts": {
     "build": "watch 'babel src -d dist/transpiled_code & browserify dist/transpiled_code/SimpleDataGrapher.js -o dist/PublicLab.Grapher.js' src",
-    "test": "mocha spec/js/"
+    "test": "mocha spec/js/",
+    "lint": "eslint ./src ./dist ./spec --fix"
   },
   "repository": {
     "type": "git",
@@ -38,6 +39,7 @@
     "babel-core": "^6.26.3",
     "babelify": "^10.0.0",
     "browserify": "^16.2.3",
+    "eslint": "^5.16.0",
     "watch": "^1.0.2"
   }
 }
