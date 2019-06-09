@@ -88,7 +88,6 @@ function () {
     key: "startFileProcessing",
     value: function startFileProcessing(functionParameter) {
       if (functionParameter==="local" || functionParameter=="csvstring"){
-        console.log(functionParameter,"wtf?");
         this.determineHeaders();
         this.matrixForCompleteData();
         this.extractSampleData();
