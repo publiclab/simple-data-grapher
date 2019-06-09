@@ -375,15 +375,7 @@ function () {
       var ctx = canv.getContext('2d');
       var configuration = this.determineConfig(hash, length, type);
       new Chart(ctx, configuration);
-      $('.' + this.carousalClass).carousel(2); // saveAsImage();
-      // new RangeSliderChart({
-      // 	chartData: config, //The same data you give to Chart.js
-      // 	chartOpts: options, //Your Chart.js options
-      // 	chartType: type, //Which Chart.js chart you want (eg. Lie, Bar, Pie, etc.)
-      // 	chartCTX: ctx, //your canvas context
-      // 	class: 'my-chart-ranger', //Specifies a custom class you want applied to your sliders
-      // 	initial: [3, 10] //Which data points to start the sliders on
-      // })
+      $('.' + this.carousalClass).carousel(2); 
     }
   }, {
     key: "afterSampleData",
