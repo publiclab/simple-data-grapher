@@ -44,19 +44,20 @@ function () {
     _defineProperty(this, "elementId", null);
 
     this.elementId = elementId;
+    console.log(functionParameter);
 
     if (functionParameter=="local"){
       this.csvFile = file;
-      this.parse();
+      this.parse(functionParameter);
     }
     else if (functionParameter=="csvstring"){
       this.csvMatrix=file;
-      this.determineHeaders();
+      this.startFileProcessing(functionParameter);
     }
     else if (functionParameter=="googleSheet"){
       this.completeCsvMatrix=file[0];
       this.csvHeaders=file[1];
-      this.extractSampleData();
+      this.startFileProcessing(functionParameter);
 
     }
   }
@@ -64,7 +65,7 @@ function () {
 
   _createClass(CsvParser, [{
     key: "parse",
-    value: function parse() {
+    value: function parse(functionParameter) {
       var _this = this;
 
       var count = 0;
@@ -78,16 +79,24 @@ function () {
         },
         complete: function complete() {
           //calling a function to determine headers for columns
-          _this.startFileProcessing();
+          $('.' + this.carousalClass).carousel(1);
+          _this.startFileProcessing(functionParameter);
         }
       });
     }
   }, {
     key: "startFileProcessing",
-    value: function startFileProcessing() {
-      this.determineHeaders();
-      this.matrixForCompleteData();
-      this.extractSampleData();
+    value: function startFileProcessing(functionParameter) {
+      if (functionParameter==="local" || functionParameter=="csvstring"){
+        console.log(functionParameter,"wtf?");
+        this.determineHeaders();
+        this.matrixForCompleteData();
+        this.extractSampleData();
+        
+      }
+      else if (functionParameter="googleSheet"){
+        this.extractSampleData();
+      }
 
       _SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId].view.continueViewManipulation();
     } //preparing sample data for the user to choose the columns from
@@ -95,6 +104,10 @@ function () {
   }, {
     key: "extractSampleData",
     value: function extractSampleData() {
+      
+      for (var i=0;i<this.csvHeaders.length;i++){
+        this.csvSampleData[i]=[];
+      }
       var maxval = 5;
 
       if (this.completeCsvMatrix.length[0] < 5) {
@@ -167,7 +180,6 @@ function () {
       }
     }
   }]);
-
   return CsvParser;
 }();
 
@@ -499,6 +511,7 @@ function () {
   }, {
     key: "graphMenu",
     value: function graphMenu() {
+      $('.' + this.carousalClass).carousel(1); 
       console.log("at menu");
       document.getElementById(this.graphMenuId).innerHTML = "";
       var bar = ["Bar", "Horizontal", "Vertical"];
