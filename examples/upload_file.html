@@ -21,6 +21,17 @@
 
 </head>
 <body>
+	<div class="main_heading_container">
+		<h2 class="main_heading"> Simple Data Grapher</h2>
+		<p class="sub_heading">Plot and Export Graphs with CSV data</p>
+	</div>
+	<div class="heading_container"> 
+		<ul class="headings">
+			<li class="item-1">Upload CSV Data</li>
+			<li class="item-2">Select Columns & Graph Type</li>
+			<li class="item-3">Plotted Graph & Export Options</li>
+		</ul>
+	</div>
 	<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
 		<div class="indicators"> 
 			<ol class="carousel-indicators">
@@ -46,6 +57,10 @@
 					<h6 class="or"><span>OR</span></h6>
 					<div class="container_csv_string">
 						<textarea class="csv_string text_field" placeholder="Paste a CSV string here" ></textarea>
+					</div>
+					<h6 class="or"><span>OR</span></h6>
+					<div class="container_google_sheet">
+						<input type="text" class="google_sheet text_field" placeholder="Link of published Google Sheet" >
 					</div>
 					
 					<div class="upload_button">
@@ -80,8 +95,6 @@
 			</div>
 			<div class="carousel-item graph">
 				<div class="feature_buttons">
-					<button type="button" class="btn btn-primary" id="update_graph">Update Graph</button>
-					<button type="button" class="btn btn-primary" id="save_as_image"> Save as image</button>
 					<button type="button" class="btn btn-primary" id="add_graph"> Add Graph</button>
 				</div>
 				<div id="canvas_container">

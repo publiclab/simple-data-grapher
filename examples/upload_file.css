@@ -1,7 +1,7 @@
 .main_container{
     margin:0 auto;
     width: 50%;
-    margin-top: 300px;
+    margin-top: 100px;
     height: 600px;
     display: flex;
     flex-direction: column;
@@ -62,19 +62,19 @@
     width: 350px;
   }
  .carousel-indicators{
- top: 200px;
+ top: 30px;
   justify-content:space-around;
   margin:0;
   display: flex;
   height: 20px;
 }
 .tables{
-  margin-top: 300px;
+  margin-top: 100px;
   text-align: center;
 
 }
 .graph{
-  margin-top: 300px;
+  margin-top: 100px;
 }
 #canvas_container{
   width: 50%;
@@ -88,12 +88,6 @@ ol.carousel-indicators li{
   height: 6px;
   cursor: pointer;
   background: #cccccc;
-}
-.carousel_headings{
-    justify-content:space-around;
-    margin:0;
-    display: flex;
-    height: 20px;
 }
 .toggle-handle{
   background: #f2f2f2;
@@ -140,7 +134,8 @@ ol.carousel-indicators li{
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  margin-bottom: -160px;
+  list-style: none;
+  /* margin-bottom: -160px; */
 }
 .check-inputs{
   margin-left: 10px;
@@ -152,4 +147,33 @@ ol.carousel-indicators li{
 .csv_string{
   height: 100px;
   width: 350px;
+}
+.main_heading{
+  font-family: 'Ubuntu Condensed';
+  text-align: center;
+  color: #001a66;
+  font-size: 40px;
+}
+.sub_heading{
+  font-family: 'Ubuntu Condensed';
+  text-align: center;
+  color: #525357;
+  font-size: 18px;
+  padding-top: 5px;
+}
+.main_heading_container{
+  margin-top: 40px;
+}
+.headings li{
+  font-family: 'Ubuntu Condensed';
+  font-size: 20px;
+}
+.heading_container{
+  margin-top:80px;
+}
+.item-1{
+  margin-left: 20px;
+}
+.item-2{
+  margin-left: 70px;
 }
