@@ -52,12 +52,12 @@ function () {
     }
     else if (functionParameter=="csvstring"){
       this.csvMatrix=file;
-      this.startFileProcessing(functionParameter);
+      this.parse(functionParameter);
     }
     else if (functionParameter=="googleSheet"){
       this.completeCsvMatrix=file[0];
       this.csvHeaders=file[1];
-      this.startFileProcessing(functionParameter);
+      this.parse(functionParameter);
 
     }
   }
@@ -66,27 +66,33 @@ function () {
   _createClass(CsvParser, [{
     key: "parse",
     value: function parse(functionParameter) {
+      console.log("i am in parsing",functionParameter);
       var _this = this;
-
-      var count = 0;
-      Papa.parse(this.csvFile, {
-        download: true,
-        dynamicTyping: true,
-        comments: true,
-        step: function step(row) {
-          _this.csvMatrix[count] = row.data[0];
-          count += 1;
-        },
-        complete: function complete() {
-          //calling a function to determine headers for columns
-          $('.' + this.carousalClass).carousel(1);
-          _this.startFileProcessing(functionParameter);
-        }
-      });
+      if (functionParameter=="local"){
+        var count = 0;
+        Papa.parse(this.csvFile, {
+          download: true,
+          dynamicTyping: true,
+          comments: true,
+          step: function step(row) {
+            _this.csvMatrix[count] = row.data[0];
+            count += 1;
+          },
+          complete: function complete() {
+            //calling a function to determine headers for columns
+            $('.' + this.carousalClass).carousel(1);
+            _this.startFileProcessing(functionParameter);
+          }
+        });
+      }
+      else {
+        _this.startFileProcessing(functionParameter);
+      }
     }
   }, {
     key: "startFileProcessing",
     value: function startFileProcessing(functionParameter) {
+      console.log("I am in file processing",functionParameter);
       if (functionParameter==="local" || functionParameter=="csvstring"){
         this.determineHeaders();
         this.matrixForCompleteData();
@@ -96,14 +102,14 @@ function () {
       else if (functionParameter="googleSheet"){
         this.extractSampleData();
       }
-
+      console.log("I am about to go to view");
       _SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId].view.continueViewManipulation();
     } //preparing sample data for the user to choose the columns from
 
   }, {
     key: "extractSampleData",
     value: function extractSampleData() {
-      
+      console.log("i am in extraction of sample");
       for (var i=0;i<this.csvHeaders.length;i++){
         this.csvSampleData[i]=[];
       }
@@ -139,6 +145,7 @@ function () {
   }, {
     key: "matrixForCompleteData",
     value: function matrixForCompleteData() {
+      console.log("I am in complete data");
       for (var i = 0; i < this.csvHeaders.length; i++) {
         this.completeCsvMatrix[i] = [];
       }
@@ -152,6 +159,7 @@ function () {
   }, {
     key: "determineHeaders",
     value: function determineHeaders() {
+      console.log("i am in headers");
       var flag = false;
 
       for (var i = 0; i < this.csvMatrix[0].length; i++) {
@@ -269,7 +277,7 @@ function () {
     value: function handleFileSelectstring(val){
       var _this = this;
       this.csvFileString = val;
-      console.log("i am at csv string handler");
+      console.log("i am at csv string handler",this);
       var csv_string = this.csvFileString.split("\n");
       var mat=[];
       for (var i=0;i<csv_string.length;i++){
@@ -282,11 +290,12 @@ function () {
         });
         mat[i]=dataHash['data'][0];
       }
-      this.csvStringMat=mat;
+      this.csvFile=mat;
+      console.log(this.csvFile);
       document.getElementById(this.uploadButtonId).onclick = function (e) {
         console.log("i am uploading");
         console.log(_this);
-        _this.csvParser = new _CsvParser.CsvParser(_this.csvStringMat, _this.elementId,"csvstring");
+        _this.csvParser = new _CsvParser.CsvParser(_this.csvFile, _this.elementId,"csvstring");
       };
     }
 
@@ -296,9 +305,11 @@ function () {
     value: function handleFileSelectGoogleSheet(val){
       var _this=this;
       this.csvGoogleSheet=val;
+      var headers_sheet=[];
+      var matrixComplete=[];
       $.getJSON(this.csvGoogleSheet, function(data) {
           var hashSheet=data.feed.entry;
-          var headers_sheet=[];
+          
           for (var key in hashSheet){
             var h=hashSheet[key];
             for (var headKey in h){
@@ -308,7 +319,7 @@ function () {
             }
             break;
           }
-          var matrixComplete=[];
+          
           for (var i=0;i<headers_sheet.length;i++){
             matrixComplete[i]=[];
           }
@@ -322,16 +333,18 @@ function () {
           for (var i=0;i<headers_sheet.length;i++){
             headers_sheet[i]=headers_sheet[i].slice(4,headers_sheet[i].length);
           }
-          var totaldata=[headers_sheet,matrixComplete];
-          this.sheetData=totaldata;
+          // var totaldata=[headers_sheet,matrixComplete];
+          // this.sheetData=totaldata;
           console.log(headers_sheet,"hh");
-          document.getElementById(this.uploadButtonId).onclick = function (e) {
-            console.log("i am uploading");
-            console.log(_this);
-            _this.csvParser = new _CsvParser.CsvParser(_this.sheetData, _this.elementId, "googleSheet");
-          };
+          
           
         });
+        this.sheetData=[headers_sheet,matrixComplete];
+        document.getElementById(this.uploadButtonId).onclick = function (e) {
+          console.log("i am uploading");
+          console.log(_this);
+          _this.csvParser = new _CsvParser.CsvParser(_this.sheetData, _this.elementId, "googleSheet");
+        };  
     }
 
   },
@@ -592,6 +605,7 @@ function () {
     key: "showSampleDataXandY",
     value: function showSampleDataXandY() {
       var _this3 = this;
+      console.log(this,"sample data");
 
       console.log("at sampleDataXandY");
 
@@ -614,7 +628,7 @@ function () {
   }, {
     key: "continueViewManipulation",
     value: function continueViewManipulation() {
-      console.log(" i am back in view manipulation");
+      console.log(" i am back in view manipulation",this);
       this.showSampleDataXandY(); // this.showSampleDataXandY(this.csvParser.csvSampleData, this.csvParser.csvHeaders, this.csvParser.csvValidForYAxis, this.csvParser.csvSampleData);
       // sampleDataXandY(this.csvSampleData,this.csvHeaders,this.csvValidForYAxis,this.completeCsvMatrix);
       // matrixForCompleteData(headers,this.csvMatrix,start);
@@ -633,6 +647,12 @@ function () {
     _defineProperty(this, "element", null);
 
     _defineProperty(this, "fileUploadId", null);
+
+    _defineProperty(this, "remoteFileUploadId", null);
+
+    _defineProperty(this, "googleSheetUploadId", null);
+
+    _defineProperty(this, "csvStringUploadId", null);
 
     _defineProperty(this, "csvFile", null);
 
@@ -748,7 +768,7 @@ function () {
         _this5.handleFileSelectstring(this.value);
       });
       $("#"+this.googleSheetUploadId).on('change',function(){
-        console.log("i am at csv string");
+        console.log("i am at google sheet",this.value);
         _this5.handleFileSelectGoogleSheet(this.value);
       });
 
