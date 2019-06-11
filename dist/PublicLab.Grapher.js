@@ -22,7 +22,7 @@ var CsvParser =
 /*#__PURE__*/
 function () {
   //start is variable that will be passed to the function to sort out the columns. start will tell if the existing CSV file has headers or not, therefore, to start the iteration from 0 or 1 Used in header determination
-  function CsvParser(file, elementId) {
+  function CsvParser(file, elementId, functionParameter) {
     _classCallCheck(this, CsvParser);
 
     _defineProperty(this, 'use strict', void 0);
@@ -43,14 +43,24 @@ function () {
 
     _defineProperty(this, "elementId", null);
 
-    this.csvFile = file;
     this.elementId = elementId;
-    this.parse();
+
+    if (functionParameter == "local") {
+      this.csvFile = file;
+      this.parse(functionParameter);
+    } else if (functionParameter == "csvstring") {
+      this.csvMatrix = file;
+      this.startFileProcessing(functionParameter);
+    } else if (functionParameter == "googleSheet") {
+      this.completeCsvMatrix = file[0];
+      this.csvHeaders = file[1];
+      this.startFileProcessing(functionParameter);
+    }
   }
 
   _createClass(CsvParser, [{
     key: "parse",
-    value: function parse() {
+    value: function parse(functionParameter) {
       var _this = this;
 
       var count = 0;
@@ -64,16 +74,20 @@ function () {
         },
         complete: function complete() {
           //calling a function to determine headers for columns
-          _this.startFileProcessing();
+          _this.startFileProcessing(functionParameter);
         }
       });
     }
   }, {
     key: "startFileProcessing",
-    value: function startFileProcessing() {
-      this.determineHeaders();
-      this.matrixForCompleteData();
-      this.extractSampleData();
+    value: function startFileProcessing(functionParameter) {
+      if (functionParameter == "local" || functionParameter == "csvstring") {
+        this.determineHeaders();
+        this.matrixForCompleteData();
+        this.extractSampleData();
+      } else if (functionParameter == "googleSheet") {
+        this.extractSampleData();
+      }
 
       _SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId].view.continueViewManipulation();
     } //preparing sample data for the user to choose the columns from
@@ -82,6 +96,10 @@ function () {
     key: "extractSampleData",
     value: function extractSampleData() {
       var maxval = 5;
+
+      for (var i = 0; i < this.csvHeaders.length; i++) {
+        this.csvSampleData[i] = [];
+      }
 
       if (this.completeCsvMatrix.length[0] < 5) {
         maxval = this.completeCsvMatrix[0].length;
@@ -243,6 +261,7 @@ function () {
     key: "handleFileSelectstring",
     value: function handleFileSelectstring(val) {
       // this.csvFileString = val;
+      console.log("value", val);
       console.log("i am at csv string handler");
       var csv_string = val.split("\n");
       var mat = [];
@@ -499,6 +518,7 @@ function () {
   }, {
     key: "graphMenu",
     value: function graphMenu() {
+      $('.' + this.carousalClass).carousel(1);
       console.log("at menu");
       document.getElementById(this.graphMenuId).innerHTML = "";
       var bar = ["Bar", "Horizontal", "Vertical"];
@@ -734,13 +754,17 @@ function () {
 
         _this5.handleFileSelectlocal(e);
       });
-      $("#" + this.csvStringUploadId).on('change', function () {
-        console.log("i am at csv string");
-        this.handleFileSelectstring(this.value);
+      $("#" + this.csvStringUploadId).change(function () {
+        // var x=$("#"+this.csvStringUploadId);
+        console.log(document.getElementById(_this5.csvStringUploadId).value); // console.log("i am at csv string",x);
+
+        _this5.handleFileSelectstring(document.getElementById(_this5.csvStringUploadId).value);
       });
-      $("#" + this.googleSheetUploadId).on('change', function () {
-        console.log("i am at csv string");
-        this.handleFileSelectGoogleSheet(this.value);
+      $("#" + this.googleSheetUploadId).change(function () {
+        // var x=$("#"+this.googleSheetUploadId);
+        console.log(document.getElementById(_this5.csvStringUploadId).value); // console.log("i am at csv string",x);
+
+        _this5.handleFileSelectstring(document.getElementById(_this5.googleSheetUploadId).value);
       });
     }
   }, {

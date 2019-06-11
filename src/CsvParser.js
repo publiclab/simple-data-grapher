@@ -13,13 +13,24 @@ class CsvParser{
     csvValidForYAxis = [];
     elementId = null;
 
-    constructor(file, elementId){
-        this.csvFile = file;
+    constructor(file, elementId, functionParameter){
         this.elementId = elementId;
-        this.parse();
+        if (functionParameter=="local"){
+            this.csvFile = file;
+            this.parse(functionParameter);
+        }
+        else if (functionParameter=="csvstring"){
+            this.csvMatrix=file;
+            this.startFileProcessing(functionParameter);
+        }
+        else if (functionParameter=="googleSheet"){
+            this.completeCsvMatrix=file[0];
+            this.csvHeaders=file[1];
+            this.startFileProcessing(functionParameter);
+        }
     }
 
-    parse(){
+    parse(functionParameter){
         var count = 0;
         Papa.parse(this.csvFile, {
             download: true,
@@ -31,21 +42,29 @@ class CsvParser{
             },
             complete: () => {
                 //calling a function to determine headers for columns
-                this.startFileProcessing();
+                this.startFileProcessing(functionParameter);
             }
         });
     }
 
-    startFileProcessing(){
-        this.determineHeaders();
-        this.matrixForCompleteData();
-        this.extractSampleData();
+    startFileProcessing(functionParameter){
+        if (functionParameter=="local" || functionParameter=="csvstring"){
+            this.determineHeaders();
+            this.matrixForCompleteData();
+            this.extractSampleData();
+        }
+        else if (functionParameter=="googleSheet"){
+            this.extractSampleData();
+        }
         SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId].view.continueViewManipulation();
     }
 
     //preparing sample data for the user to choose the columns from
     extractSampleData(){
         var maxval=5;
+        for (var i=0;i<this.csvHeaders.length;i++){
+            this.csvSampleData[i]=[];
+        }
         if (this.completeCsvMatrix.length[0]<5){
             maxval=this.completeCsvMatrix[0].length;
         }

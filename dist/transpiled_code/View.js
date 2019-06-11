@@ -45,6 +45,7 @@ function () {
     key: "handleFileSelectstring",
     value: function handleFileSelectstring(val) {
       // this.csvFileString = val;
+      console.log("value", val);
       console.log("i am at csv string handler");
       var csv_string = val.split("\n");
       var mat = [];
@@ -301,6 +302,7 @@ function () {
   }, {
     key: "graphMenu",
     value: function graphMenu() {
+      $('.' + this.carousalClass).carousel(1);
       console.log("at menu");
       document.getElementById(this.graphMenuId).innerHTML = "";
       var bar = ["Bar", "Horizontal", "Vertical"];
@@ -536,13 +538,17 @@ function () {
 
         _this5.handleFileSelectlocal(e);
       });
-      $("#" + this.csvStringUploadId).on('change', function () {
-        console.log("i am at csv string");
-        this.handleFileSelectstring(this.value);
+      $("#" + this.csvStringUploadId).change(function () {
+        // var x=$("#"+this.csvStringUploadId);
+        console.log(document.getElementById(_this5.csvStringUploadId).value); // console.log("i am at csv string",x);
+
+        _this5.handleFileSelectstring(document.getElementById(_this5.csvStringUploadId).value);
       });
-      $("#" + this.googleSheetUploadId).on('change', function () {
-        console.log("i am at csv string");
-        this.handleFileSelectGoogleSheet(this.value);
+      $("#" + this.googleSheetUploadId).change(function () {
+        // var x=$("#"+this.googleSheetUploadId);
+        console.log(document.getElementById(_this5.csvStringUploadId).value); // console.log("i am at csv string",x);
+
+        _this5.handleFileSelectstring(document.getElementById(_this5.googleSheetUploadId).value);
       });
     }
   }, {
