@@ -36,6 +36,8 @@ function () {
 
     _defineProperty(this, "completeCsvMatrix", []);
 
+    _defineProperty(this, "completeCsvMatrixTranspose", []);
+
     _defineProperty(this, "csvSampleData", []);
 
     _defineProperty(this, "csvValidForYAxis", []);
@@ -87,6 +89,8 @@ function () {
       } else if (functionParameter == "googleSheet") {
         this.extractSampleData();
       }
+
+      this.createTranspose();
 
       _SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId].view.continueViewManipulation();
     } //preparing sample data for the user to choose the columns from
@@ -168,6 +172,24 @@ function () {
           this.csvHeaders[i] = "Column" + (i + 1);
         }
       }
+    }
+  }, {
+    key: "createTranspose",
+    value: function createTranspose() {
+      for (var i = 0; i <= this.completeCsvMatrix[0].length; i++) {
+        this.completeCsvMatrixTranspose[i] = [];
+      }
+
+      for (var i = 0; i < this.completeCsvMatrix.length; i++) {
+        this.completeCsvMatrixTranspose[0][i] = this.csvHeaders[i];
+      }
+
+      for (var i = 0; i < this.completeCsvMatrix.length; i++) {
+        for (var j = 0; j < this.completeCsvMatrix[0].length; j++) {
+          this.completeCsvMatrixTranspose[j + 1][i] = this.completeCsvMatrix[i][j];
+        }
+      } // console.log(this.completeCsvMatrixTranspose);
+
     }
   }]);
 

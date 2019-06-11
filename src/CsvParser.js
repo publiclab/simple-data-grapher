@@ -9,6 +9,7 @@ class CsvParser{
     csvHeaders = [];
     csvFileStart = 1; //start is variable that will be passed to the function to sort out the columns. start will tell if the existing CSV file has headers or not, therefore, to start the iteration from 0 or 1 Used in header determination
     completeCsvMatrix = [];
+    completeCsvMatrixTranspose = [];
     csvSampleData = [];
     csvValidForYAxis = [];
     elementId = null;
@@ -56,6 +57,7 @@ class CsvParser{
         else if (functionParameter=="googleSheet"){
             this.extractSampleData();
         }
+        this.createTranspose();
         SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId].view.continueViewManipulation();
     }
 
@@ -128,6 +130,20 @@ class CsvParser{
                 this.csvHeaders[i]="Column"+(i+1);
             }
         }
+    }
+    createTranspose(){
+        for (var i=0;i<=this.completeCsvMatrix[0].length;i++){
+            this.completeCsvMatrixTranspose[i]=[];
+        }
+        for (var i=0;i<this.completeCsvMatrix.length;i++){
+            this.completeCsvMatrixTranspose[0][i]=this.csvHeaders[i];
+        }
+        for (var i=0;i<this.completeCsvMatrix.length;i++){
+            for (var j=0;j<this.completeCsvMatrix[0].length;j++){
+                this.completeCsvMatrixTranspose[j+1][i]=this.completeCsvMatrix[i][j];
+            }
+        }
+        // console.log(this.completeCsvMatrixTranspose);
     }
 };
 
