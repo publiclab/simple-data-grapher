@@ -120,6 +120,20 @@ function () {
       };
     }
   }, {
+    key: "handleFileSelectremote",
+    value: function handleFileSelectremote(val) {
+      var proxyurl = "https://cors-anywhere.herokuapp.com/";
+      var url = val;
+      fetch(proxyurl + url).then(function (response) {
+        return response.text();
+      }).then(function (contents) {
+        return console.log(contents);
+      })["catch"](function () {
+        return console.log("Can’t access " + url + " response. Blocked by browser?");
+      });
+      console.log(this.csvFile, "remote file");
+    }
+  }, {
     key: "determineType",
     value: function determineType(type) {
       console.log("at type");
@@ -548,7 +562,16 @@ function () {
         // var x=$("#"+this.googleSheetUploadId);
         console.log(document.getElementById(_this5.csvStringUploadId).value); // console.log("i am at csv string",x);
 
-        _this5.handleFileSelectstring(document.getElementById(_this5.googleSheetUploadId).value);
+        var sheetLink = document.getElementById(_this5.csvStringUploadId).value;
+        var sheetURL = "https://spreadsheets.google.com/feeds/list/" + sheetLink.split("/")[5] + "/od6/public/values?alt=json";
+
+        _this5.handleFileSelectstring(sheetURL);
+      });
+      $("#" + this.remoteFileUploadId).change(function () {
+        // var remotefileLink=document.getElementById(this.remoteFileUploadId).value;
+        console.log(document.getElementById(_this5.remoteFileUploadId).value);
+
+        _this5.handleFileSelectremote(document.getElementById(_this5.remoteFileUploadId).value);
       });
     }
   }, {

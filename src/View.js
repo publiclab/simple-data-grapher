@@ -114,6 +114,16 @@ class View{
           this.csvParser = new _CsvParser.CsvParser(this.csvFile, this.elementId, "googleSheet");
         };  
     }
+    handleFileSelectremote(val){
+        const proxyurl = "https://cors-anywhere.herokuapp.com/"; 
+        const url = val;
+        fetch(proxyurl + url)
+        .then(response => response.text())
+        .then(contents => console.log(contents))
+        .catch(() => console.log("Can’t access " + url + " response. Blocked by browser?")) ;
+        console.log(this.csvFile,"remote file");
+
+    }
 
     determineType(type){
         console.log("at type");
@@ -442,7 +452,14 @@ class View{
             // var x=$("#"+this.googleSheetUploadId);
             console.log(document.getElementById(this.csvStringUploadId).value);
             // console.log("i am at csv string",x);
-            this.handleFileSelectstring(document.getElementById(this.googleSheetUploadId).value);
+            var sheetLink=document.getElementById(this.csvStringUploadId).value;
+            var sheetURL="https://spreadsheets.google.com/feeds/list/"+sheetLink.split("/")[5]+"/od6/public/values?alt=json";
+            this.handleFileSelectstring(sheetURL);
+        });
+        $("#"+this.remoteFileUploadId).change(()=>{
+            // var remotefileLink=document.getElementById(this.remoteFileUploadId).value;
+            console.log(document.getElementById(this.remoteFileUploadId).value);
+            this.handleFileSelectremote(document.getElementById(this.remoteFileUploadId).value);
         });
 
     }
