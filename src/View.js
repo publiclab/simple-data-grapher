@@ -114,6 +114,10 @@ class View{
           this.csvParser = new _CsvParser.CsvParser(this.csvFile, this.elementId, "googleSheet");
         };  
     }
+    receive(vall){
+        console.log(vall);
+        console.log("hurray!!");
+    }
     handleFileSelectremote(val){
         const proxyurl = "https://cors-anywhere.herokuapp.com/"; 
         const url = val;

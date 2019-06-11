@@ -336,6 +336,12 @@ function () {
       };
     }
   }, {
+    key: "receive",
+    value: function receive(vall) {
+      console.log(vall);
+      console.log("hurray!!");
+    }
+  }, {
     key: "handleFileSelectremote",
     value: function handleFileSelectremote(val) {
       var proxyurl = "https://cors-anywhere.herokuapp.com/";
