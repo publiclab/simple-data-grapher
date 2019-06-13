@@ -434,9 +434,7 @@ $(document).ready(function(){
 	});
 
 });
-document.getElementById("update_graph").onclick = function(e){
-	$('.carousel').carousel(1);
-}
+
 $('.carousel').carousel({
     interval: false
 });
