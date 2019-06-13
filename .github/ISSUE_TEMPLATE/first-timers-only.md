@@ -2,7 +2,7 @@
 name: First-Timers-Only
 about: Issues to welcome new-comers to the community
 title: ''
-labels: good first issue, first-timers-only
+labels: first-timers-only, good first issue
 assignees: ''
 
 ---
