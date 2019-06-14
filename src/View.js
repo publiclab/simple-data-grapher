@@ -29,8 +29,6 @@ class View{
     xyToggleName = null;
     tableXParentId = null;
     tableYParentId = null;
-    saveAsImage = null;
-
 
     handleFileSelectlocal(event) {
         this.csvFile = event.target.files[0];
@@ -41,16 +39,13 @@ class View{
         }
         else{
             $('#' + this.dragDropHeadingId).text(this.csvFile['name']);
+            let self=this;
             document.getElementById(this.uploadButtonId).onclick = (e) => {
-                console.log("i am uploading");
-                console.log(this);
-                this.csvParser = new CsvParser(this.csvFile, this.elementId, "local");
+                self.csvParser = new CsvParser(self.csvFile, self.elementId, "local");
             }
         }
     }
     handleFileSelectstring(val){
-        // this.csvFileString = val;
-        console.log("value",val);
         console.log("i am at csv string handler");
         var csv_string = val.split("\n");
         var mat=[];
@@ -64,22 +59,16 @@ class View{
             });
             mat[i]=dataHash['data'][0];
         }
-        console.log(mat,"mat");
         this.csvFile=mat;
-        console.log(this.csvFile,"csv");
         let self = this;
         document.getElementById(this.uploadButtonId).onclick = (e) => {
             console.log("i am uploading");
-            console.log(self.csvFile,"csvvvvv");
-            console.log(self);
             self.csvParser = new CsvParser(self.csvFile, self.elementId,"csvstring");
         };
 
     }
-    doingCalulation(mydata){
+    headersForGoogleSheet(hashSheet){
         var headers_sheet=[];
-        var matrixComplete=[];
-        var hashSheet=mydata;
         for (var key in hashSheet){
             var h=hashSheet[key];
             for (var headKey in h){
@@ -89,12 +78,13 @@ class View{
             }
             break;
         }
-        console.log(headers_sheet,"headers_sheet");
+        return headers_sheet;
+    }
+    completeMatrixForGoogleSheet(hashSheet,headers_sheet){
         var matrixComplete=[];
         for (var i=0;i<headers_sheet.length;i++){
             matrixComplete[i]=[];
         }
-        console.log(headers_sheet.length);
         for (var i=0;i<headers_sheet.length;i++){
             for (var key in hashSheet){
                 var valueCell=hashSheet[key][headers_sheet[i]]["$t"];
@@ -105,94 +95,42 @@ class View{
                 }
             }
         }
-        console.log(matrixComplete,"matrixComplete");
+        return matrixComplete;
+    }
+    handleFileSelectGoogleSheet(mydata){
+        
+        
+        var hashSheet=mydata;
+        var headers_sheet=this.headersForGoogleSheet(hashSheet);
+        var matrixComplete=this.completeMatrixForGoogleSheet(hashSheet,headers_sheet);
+        
         for (var i=0;i<headers_sheet.length;i++){
             headers_sheet[i]=headers_sheet[i].slice(4,headers_sheet[i].length);
         }
-            // var totaldata=[headers_sheet,matrixComplete];
-            // this.sheetData=totaldata;
-            console.log(headers_sheet,"hh");
-            console.log(matrixComplete,"mattttt");
-    
-    
-            // });
-            console.log(headers_sheet,matrixComplete,"hua");
-            this.csvFile=[headers_sheet,matrixComplete];
-            console.log(this.csvFile,"sheetfile");
-            let self=this;
-            document.getElementById(this.uploadButtonId).onclick = (e) => {
-              console.log("i am uploading");
-              console.log(self.csvFile);
-              self.csvParser = new CsvParser(self.csvFile, self.elementId, "googleSheet");
-            };
-    }
-    getValue(valll){
+        this.csvFile=[headers_sheet,matrixComplete];
         let self=this;
-        $.getJSON(valll, function(data) {
-            console.log(data.feed.entry,"received");
-            self.doingCalulation(data.feed.entry);
+        document.getElementById(this.uploadButtonId).onclick = (e) => {
+            self.csvParser = new CsvParser(self.csvFile, self.elementId, "googleSheet");
+        };
+    }
+    getValueGoogleSheet(googleSheetLink){
+        let self=this;
+        $.getJSON(googleSheetLink, function(data) {
+            self.handleFileSelectGoogleSheet(data.feed.entry);
         });
 
     }
-    handleFileSelectGoogleSheet(val){
-      
-      this.getValue(val);
-    //   $.getJSON(val, function(data) {
-    //       var hashSheet=data.feed.entry;
-
-        // for (var key in hashSheet){
-        // var h=hashSheet[key];
-        // for (var headKey in h){
-        //     if (headKey.slice(0,4)=="gsx$"){
-        //     headers_sheet.push(headKey);
-        //     }
-        // }
-        // break;
-        // }
-
-        // for (var i=0;i<headers_sheet.length;i++){
-        // matrixComplete[i]=[];
-        // }
-        // for (var i=0;i<headers_sheet.length;i++){
-        // var j=0;
-        // for (var key in hashSheet){
-        //     matrixComplete[i].push(hashSheet[key][headers_sheet[i]]["$t"]);
-        //     j++;
-        // }
-        // }
-        // for (var i=0;i<headers_sheet.length;i++){
-        // headers_sheet[i]=headers_sheet[i].slice(4,headers_sheet[i].length);
-        // }
-        // // var totaldata=[headers_sheet,matrixComplete];
-        // // this.sheetData=totaldata;
-        // console.log(headers_sheet,"hh");
-        // console.log(matrixComplete,"mattttt");
-
-
-        // // });
-        // console.log(headers_sheet,matrixComplete,"hua");
-        // this.csvFile=[headers_sheet,matrixComplete];
-        // console.log(this.csvFile,"sheetfile");
-        // let self=this;
-        // document.getElementById(this.uploadButtonId).onclick = (e) => {
-        //   console.log("i am uploading");
-        //   console.log(self.csvFile);
-        //   self.csvParser = new CsvParser(self.csvFile, self.elementId, "googleSheet");
-        // };  
-    }
-    receive(vall){
-        this.csvFile=vall;
-        console.log(this.csvFile);
-        console.log("hurray!!");
+    sendRemoteFileToHandler(remoteVal){
+        this.csvFile=remoteVal;
+        this.handleFileSelectstring(this.csvFile);
     }
     handleFileSelectremote(val){
         const proxyurl = "https://cors-anywhere.herokuapp.com/"; 
         const url = val;
         fetch(proxyurl + url)
         .then(response => response.text())
-        .then(contents => this.receive(contents))
+        .then(contents => this.sendRemoteFileToHandler(contents))
         .catch((e) => console.log(e)) ;
-        // console.log(this.csvFile,"remote file");
 
     }
 
@@ -306,7 +244,35 @@ class View{
         }
         return scales;
     }
+    saveAsImageFunction(xx){
+        console.log("entered image");
+        var x=new Date();
+        var timestamp=x.getTime();
+        var temp=xx;
+        temp="#"+temp;
+        console.log(temp,"omg");
+        // var temp2=temp.slice(0,temp.length-5);
+        // console.log(temp2);
+        console.log(document.getElementById(xx));
+        var tt=document.getElementById(xx);
+        $(temp).get(0).toBlob(function(blob) {
+            saveAs(blob, "chart"+timestamp);
+        });
 
+    }
+    createSaveAsImageButton(canvasDiv,canvasId){
+        var saveImageButton=document.createElement("BUTTON");
+        saveImageButton.classList.add("btn");
+        saveImageButton.classList.add("btn-primary");
+        saveImageButton.innerHTML="Save as Image";
+        saveImageButton.id=canvasId+"image";
+        canvasDiv.appendChild(saveImageButton);
+        console.log(this,"this");
+        let self=this;
+        document.getElementById(saveImageButton.id).onclick = (e) => {
+        self.saveAsImageFunction(canvasId);
+        }
+    }
     plotGraph(hash,length,type,flag){
         if (flag){
             console.log("at plotGraph");
@@ -321,19 +287,8 @@ class View{
         var ctx = canv.getContext('2d');
         var configuration = this.determineConfig(hash,length,type);
         new Chart(ctx, configuration);
+        this.createSaveAsImageButton(div,canv.id);
         $('.'+this.carousalClass).carousel(2);
-        // saveAsImage();
-        // new RangeSliderChart({
-
-        // 	chartData: config, //The same data you give to Chart.js
-        // 	chartOpts: options, //Your Chart.js options
-        // 	chartType: type, //Which Chart.js chart you want (eg. Lie, Bar, Pie, etc.)
-        // 	chartCTX: ctx, //your canvas context
-
-        // 	class: 'my-chart-ranger', //Specifies a custom class you want applied to your sliders
-
-        // 	initial: [3, 10] //Which data points to start the sliders on
-        // })
     }
     createSheet(){
         var wb = XLSX.utils.book_new();
@@ -355,9 +310,8 @@ class View{
                 return buf;
                 
         }
-        // $("#button-a").click(function(){
         saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), 'newSpreadsheet'+this.elementId+'.xlsx');
-        // });
+
     }
 
     afterSampleData(flag){
@@ -540,21 +494,16 @@ class View{
             this.handleFileSelectlocal(e);
         });
         $("#"+this.csvStringUploadId).change(()=>{
-            // var x=$("#"+this.csvStringUploadId);
             console.log(document.getElementById(this.csvStringUploadId).value);
-            // console.log("i am at csv string",x);
             this.handleFileSelectstring(document.getElementById(this.csvStringUploadId).value);
           });
         $("#"+this.googleSheetUploadId).change(()=>{
-            // var x=$("#"+this.googleSheetUploadId);
             console.log(document.getElementById(this.googleSheetUploadId).value,"sheetlink");
-            // console.log("i am at csv string",x);
             var sheetLink=document.getElementById(this.googleSheetUploadId).value;
             var sheetURL="https://spreadsheets.google.com/feeds/list/"+sheetLink.split("/")[5]+"/od6/public/values?alt=json";
-            this.handleFileSelectGoogleSheet(sheetURL);
+            this.getValueGoogleSheet(sheetURL);
         });
         $("#"+this.remoteFileUploadId).change(()=>{
-            // var remotefileLink=document.getElementById(this.remoteFileUploadId).value;
             console.log(document.getElementById(this.remoteFileUploadId).value);
             this.handleFileSelectremote(document.getElementById(this.remoteFileUploadId).value);
         });
