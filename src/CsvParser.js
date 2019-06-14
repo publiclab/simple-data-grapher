@@ -22,11 +22,14 @@ class CsvParser{
         }
         else if (functionParameter=="csvstring"){
             this.csvMatrix=file;
+            console.log("csv matrix",this.csvMatrix);
             this.startFileProcessing(functionParameter);
         }
         else if (functionParameter=="googleSheet"){
-            this.completeCsvMatrix=file[0];
-            this.csvHeaders=file[1];
+            console.log(file,"file",file[0],file[1]);
+            this.completeCsvMatrix=file[1];
+            this.csvHeaders=file[0];
+            console.log(this.completeCsvMatrix,this.csvHeaders,"did it");
             this.startFileProcessing(functionParameter);
         }
     }
@@ -50,6 +53,7 @@ class CsvParser{
 
     startFileProcessing(functionParameter){
         if (functionParameter=="local" || functionParameter=="csvstring"){
+            console.log("pahuncha?",this.csvMatrix);
             this.determineHeaders();
             this.matrixForCompleteData();
             this.extractSampleData();
@@ -58,7 +62,10 @@ class CsvParser{
             this.extractSampleData();
         }
         this.createTranspose();
-        SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId].view.continueViewManipulation();
+        console.log(this,"blah");
+        let self = this;
+        console.log(self,"self");
+        SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[self.elementId].view.continueViewManipulation(self);
     }
 
     //preparing sample data for the user to choose the columns from
@@ -89,10 +96,12 @@ class CsvParser{
                 this.csvValidForYAxis.push(this.csvHeaders[i]);
             }
         }
+        console.log("complete",this.completeCsvMatrix);
     }
 
     //makes a 2D matrix with the transpose of the CSV file, each column having the same index as its column heading
     matrixForCompleteData(){
+        console.log("what?");
         for (var i=0;i<this.csvHeaders.length;i++){
             this.completeCsvMatrix[i]=[];
         }
@@ -101,10 +110,12 @@ class CsvParser{
                 this.completeCsvMatrix[j].push(this.csvMatrix[i][j]);
             }
         }
+        console.log(this.completeCsvMatrix,"comp");
     }
 
     determineHeaders(){
         var flag = false;
+        console.log("headers",this.csvMatrix);
         for (var i=0;i<this.csvMatrix[0].length;i++){
             if (i==0){
                 this.csvHeaders[i]=this.csvMatrix[0][i];
@@ -130,6 +141,7 @@ class CsvParser{
                 this.csvHeaders[i]="Column"+(i+1);
             }
         }
+        console.log("hh",this.csvHeaders);
     }
     createTranspose(){
         for (var i=0;i<=this.completeCsvMatrix[0].length;i++){

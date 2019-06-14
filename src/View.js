@@ -64,58 +64,125 @@ class View{
             });
             mat[i]=dataHash['data'][0];
         }
+        console.log(mat,"mat");
         this.csvFile=mat;
-        document.getElementById(this.uploadButtonId).onclick = function (e) {
+        console.log(this.csvFile,"csv");
+        let self = this;
+        document.getElementById(this.uploadButtonId).onclick = (e) => {
             console.log("i am uploading");
-            console.log(this);
-            this.csvParser = new _CsvParser.CsvParser(this.csvFile, this.elementId,"csvstring");
+            console.log(self.csvFile,"csvvvvv");
+            console.log(self);
+            self.csvParser = new CsvParser(self.csvFile, self.elementId,"csvstring");
         };
 
     }
-    handleFileSelectGoogleSheet(val){
-      var headers_sheet=[];
-      var matrixComplete=[];
-      $.getJSON(val, function(data) {
-          var hashSheet=data.feed.entry;
-
-          for (var key in hashSheet){
+    doingCalulation(mydata){
+        var headers_sheet=[];
+        var matrixComplete=[];
+        var hashSheet=mydata;
+        for (var key in hashSheet){
             var h=hashSheet[key];
             for (var headKey in h){
-              if (headKey.slice(0,4)=="gsx$"){
-                headers_sheet.push(headKey);
-              }
+                if (headKey.slice(0,4)=="gsx$"){
+                    headers_sheet.push(headKey);
+                }
             }
             break;
-          }
-
-          for (var i=0;i<headers_sheet.length;i++){
+        }
+        console.log(headers_sheet,"headers_sheet");
+        var matrixComplete=[];
+        for (var i=0;i<headers_sheet.length;i++){
             matrixComplete[i]=[];
-          }
-          for (var i=0;i<headers_sheet.length;i++){
-            var j=0;
+        }
+        console.log(headers_sheet.length);
+        for (var i=0;i<headers_sheet.length;i++){
             for (var key in hashSheet){
-              matrixComplete[i].push(hashSheet[key][headers_sheet[i]]["$t"]);
-              j++;
+                var valueCell=hashSheet[key][headers_sheet[i]]["$t"];
+                if (!isNaN(valueCell)){
+                    matrixComplete[i].push(+valueCell);}
+                else{
+                    matrixComplete[i].push(valueCell);
+                }
             }
-          }
-          for (var i=0;i<headers_sheet.length;i++){
+        }
+        console.log(matrixComplete,"matrixComplete");
+        for (var i=0;i<headers_sheet.length;i++){
             headers_sheet[i]=headers_sheet[i].slice(4,headers_sheet[i].length);
-          }
-          // var totaldata=[headers_sheet,matrixComplete];
-          // this.sheetData=totaldata;
-          console.log(headers_sheet,"hh");
-
-
+        }
+            // var totaldata=[headers_sheet,matrixComplete];
+            // this.sheetData=totaldata;
+            console.log(headers_sheet,"hh");
+            console.log(matrixComplete,"mattttt");
+    
+    
+            // });
+            console.log(headers_sheet,matrixComplete,"hua");
+            this.csvFile=[headers_sheet,matrixComplete];
+            console.log(this.csvFile,"sheetfile");
+            let self=this;
+            document.getElementById(this.uploadButtonId).onclick = (e) => {
+              console.log("i am uploading");
+              console.log(self.csvFile);
+              self.csvParser = new CsvParser(self.csvFile, self.elementId, "googleSheet");
+            };
+    }
+    getValue(valll){
+        let self=this;
+        $.getJSON(valll, function(data) {
+            console.log(data.feed.entry,"received");
+            self.doingCalulation(data.feed.entry);
         });
-        this.csvFile=[headers_sheet,matrixComplete];
-        document.getElementById(this.uploadButtonId).onclick = function (e) {
-          console.log("i am uploading");
-          console.log(this);
-          this.csvParser = new _CsvParser.CsvParser(this.csvFile, this.elementId, "googleSheet");
-        };  
+
+    }
+    handleFileSelectGoogleSheet(val){
+      
+      this.getValue(val);
+    //   $.getJSON(val, function(data) {
+    //       var hashSheet=data.feed.entry;
+
+        // for (var key in hashSheet){
+        // var h=hashSheet[key];
+        // for (var headKey in h){
+        //     if (headKey.slice(0,4)=="gsx$"){
+        //     headers_sheet.push(headKey);
+        //     }
+        // }
+        // break;
+        // }
+
+        // for (var i=0;i<headers_sheet.length;i++){
+        // matrixComplete[i]=[];
+        // }
+        // for (var i=0;i<headers_sheet.length;i++){
+        // var j=0;
+        // for (var key in hashSheet){
+        //     matrixComplete[i].push(hashSheet[key][headers_sheet[i]]["$t"]);
+        //     j++;
+        // }
+        // }
+        // for (var i=0;i<headers_sheet.length;i++){
+        // headers_sheet[i]=headers_sheet[i].slice(4,headers_sheet[i].length);
+        // }
+        // // var totaldata=[headers_sheet,matrixComplete];
+        // // this.sheetData=totaldata;
+        // console.log(headers_sheet,"hh");
+        // console.log(matrixComplete,"mattttt");
+
+
+        // // });
+        // console.log(headers_sheet,matrixComplete,"hua");
+        // this.csvFile=[headers_sheet,matrixComplete];
+        // console.log(this.csvFile,"sheetfile");
+        // let self=this;
+        // document.getElementById(this.uploadButtonId).onclick = (e) => {
+        //   console.log("i am uploading");
+        //   console.log(self.csvFile);
+        //   self.csvParser = new CsvParser(self.csvFile, self.elementId, "googleSheet");
+        // };  
     }
     receive(vall){
-        console.log(vall);
+        this.csvFile=vall;
+        console.log(this.csvFile);
         console.log("hurray!!");
     }
     handleFileSelectremote(val){
@@ -123,9 +190,9 @@ class View{
         const url = val;
         fetch(proxyurl + url)
         .then(response => response.text())
-        .then(contents => console.log(contents))
-        .catch(() => console.log("Can’t access " + url + " response. Blocked by browser?")) ;
-        console.log(this.csvFile,"remote file");
+        .then(contents => this.receive(contents))
+        .catch((e) => console.log(e)) ;
+        // console.log(this.csvFile,"remote file");
 
     }
 
@@ -391,7 +458,7 @@ class View{
     }
 
     showSampleDataXandY(){
-        console.log("at sampleDataXandY");
+        console.log("at sampleDataXandY",this);
         document.getElementById(this.addGraphButtonId).onclick = (e) => {
             console.log("at " + this.addGraphButtonId);
             this.graphCounting++;
@@ -406,8 +473,9 @@ class View{
         this.graphMenu();
     }
 
-    continueViewManipulation(){
-        console.log(" i am back in view manipulation");
+    continueViewManipulation(x){
+        console.log(" i am back in view manipulation",this);
+        this.csvParser=x;
         this.showSampleDataXandY();
         // this.showSampleDataXandY(this.csvParser.csvSampleData, this.csvParser.csvHeaders, this.csvParser.csvValidForYAxis, this.csvParser.csvSampleData);
         // sampleDataXandY(this.csvSampleData,this.csvHeaders,this.csvValidForYAxis,this.completeCsvMatrix);
@@ -479,11 +547,11 @@ class View{
           });
         $("#"+this.googleSheetUploadId).change(()=>{
             // var x=$("#"+this.googleSheetUploadId);
-            console.log(document.getElementById(this.csvStringUploadId).value);
+            console.log(document.getElementById(this.googleSheetUploadId).value,"sheetlink");
             // console.log("i am at csv string",x);
-            var sheetLink=document.getElementById(this.csvStringUploadId).value;
+            var sheetLink=document.getElementById(this.googleSheetUploadId).value;
             var sheetURL="https://spreadsheets.google.com/feeds/list/"+sheetLink.split("/")[5]+"/od6/public/values?alt=json";
-            this.handleFileSelectstring(sheetURL);
+            this.handleFileSelectGoogleSheet(sheetURL);
         });
         $("#"+this.remoteFileUploadId).change(()=>{
             // var remotefileLink=document.getElementById(this.remoteFileUploadId).value;
@@ -499,7 +567,7 @@ class View{
 
 
     drawHTMLView(){
-        this.element.innerHTML = '<div class="main_heading_container"><h2 class="main_heading"> Simple Data Grapher</h2><p class="sub_heading">Plot and Export Graphs with CSV data</p></div><div class="heading_container"><ul class="headings"><li class="item-1">Upload CSV Data</li><li class="item-2">Select Columns & Graph Type</li><li class="item-3">Plotted Graph & Export Options</li></ul></div><div id=' + this.carousalId + ' class="carousel ' + this.carousalClass + ' slide" data-ride="carousel"><div class="indicators"><ol class="carousel-indicators"> <li data-target="#' + this.carousalId + '" data-slide-to="0" class="active" id="up"></li> <li data-target="#' + this.carousalId + '" data-slide-to="1"></li> <li data-target="#' + this.carousalId + '" data-slide-to="2"></li></ol></div><div class="carousel-inner"><div class="carousel-item active"><div class="main_container"><div class="container_drag_drop"><span class="btn btn-outline-primary btn-file input_box"><p class="drag_drop_heading" id=' + this.dragDropHeadingId + '> <u> Choose a csv file </u> or drag & drop it here </p><input type="file" class="csv_file" id=' + this.elementId + "_csv_file" + ' accept=".csv"></span></div><h6 class="or"><span>OR</span></h6><div class="container_remote_link"><input type="text" class="remote_file text_field" placeholder="url of remote file" id=' + this.elementId + "_remote_file" + ' ></div><h6 class="or"><span>OR</span></h6><div class="container_csv_string"><textarea class="csv_string text_field" id=' + this.elementId + "_csv_string" + ' placeholder="Paste a CSV string here" ></textarea></div><h6 class="or"><span>OR</span></h6><div class="container_google_sheet"><input type="text" class="google_sheet text_field" id=' + this.elementId + "_google_sheet" + ' placeholder="Link of published Google Sheet" ></div><div class="upload_button"><button type="button" class="btn btn-primary" id=' + this.uploadButtonId + ' >Upload CSV</button></div></div></div><div class="carousel-item tables"><div class="button_container"><div><input type="checkbox" name=' + this.xyToggleName + ' checked data-toggle="toggle" class="xytoggle" data-width="150" data-onstyle="success" data-offstyle="warning" data-height="40"></div><div class="plot_button"><button type="button" class="btn btn-primary" id=' + this.plotGraphId + ' >Plot Graph</button></div></div><div class="table_container"><div id=' + this.tableXParentId + ' ><table id=' + this.tableXId + ' class="table"></table></div><div id=' + this.tableYParentId + ' class="hidden"><table id=' + this.tableYId + ' class="table"></table></div><div><table id=' + this.graphMenuId + ' class="table table-dark"></table></div></div></div><div class="carousel-item graph"><div class="feature_buttons"><button type="button" class="btn btn-primary" id=' + this.addGraphButtonId + '> Add Graph</button><button type="button" class="btn btn-primary" id=' + this.createSpreadsheetButtonId + '> Create Spreadsheet</button></div><div id=' + this.canvasContinerId + ' ></div></div></div></div>';
+        this.element.innerHTML = '<div class="body_container"><div class="main_heading_container"><h2 class="main_heading"> Simple Data Grapher</h2><p class="sub_heading">Plot and Export Graphs with CSV data</p></div><div class="heading_container"><ul class="headings"><li class="item-1">Upload CSV Data</li><li class="item-2">Select Columns & Graph Type</li><li class="item-3">Plotted Graph & Export Options</li></ul></div><div id=' + this.carousalId + ' class="carousel ' + this.carousalClass + ' slide" data-ride="carousel"><div class="indicators"><ol class="carousel-indicators"> <li data-target="#' + this.carousalId + '" data-slide-to="0" class="active" id="up"></li> <li data-target="#' + this.carousalId + '" data-slide-to="1"></li> <li data-target="#' + this.carousalId + '" data-slide-to="2"></li></ol></div><div class="carousel-inner"><div class="carousel-item active"><div class="main_container"><div class="container_drag_drop"><span class="btn btn-outline-primary btn-file input_box"><p class="drag_drop_heading" id=' + this.dragDropHeadingId + '> <u> Choose a csv file </u> or drag & drop it here </p><input type="file" class="csv_file" id=' + this.elementId + "_csv_file" + ' accept=".csv"></span></div><h6 class="or"><span>OR</span></h6><div class="container_remote_link"><input type="text" class="remote_file text_field" placeholder="url of remote file" id=' + this.elementId + "_remote_file" + ' ></div><h6 class="or"><span>OR</span></h6><div class="container_csv_string"><textarea class="csv_string text_field" id=' + this.elementId + "_csv_string" + ' placeholder="Paste a CSV string here" ></textarea></div><h6 class="or"><span>OR</span></h6><div class="container_google_sheet"><input type="text" class="google_sheet text_field" id=' + this.elementId + "_google_sheet" + ' placeholder="Link of published Google Sheet" ></div><div class="upload_button"><button type="button" class="btn btn-primary" id=' + this.uploadButtonId + ' >Upload CSV</button></div></div></div><div class="carousel-item tables"><div class="button_container"><div><input type="checkbox" name=' + this.xyToggleName + ' checked data-toggle="toggle" class="xytoggle" data-width="150" data-onstyle="success" data-offstyle="warning" data-height="40"></div><div class="plot_button"><button type="button" class="btn btn-primary" id=' + this.plotGraphId + ' >Plot Graph</button></div></div><div class="table_container"><div id=' + this.tableXParentId + ' ><table id=' + this.tableXId + ' class="table"></table></div><div id=' + this.tableYParentId + ' class="hidden"><table id=' + this.tableYId + ' class="table"></table></div><div><table id=' + this.graphMenuId + ' class="table table-dark"></table></div></div></div><div class="carousel-item graph"><div class="feature_buttons"><button type="button" class="btn btn-primary" id=' + this.addGraphButtonId + '> Add Graph</button><button type="button" class="btn btn-primary" id=' + this.createSpreadsheetButtonId + '> Create Spreadsheet</button></div><div id=' + this.canvasContinerId + ' ></div></div></div></div></div>';
     
     }
 }
