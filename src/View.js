@@ -1,8 +1,8 @@
-import {CsvParser} from "./CsvParser";
-import {SimpleDataGrapher} from "./SimpleDataGrapher";
-
+// import {CsvParser} from "./CsvParser";
+// import {SimpleDataGrapher} from "./SimpleDataGrapher";
+// 'use strict';
+const CsvParser=require('./CsvParser');
 class View{
-    'use strict';
     elementId = null;
     element = null;
     fileUploadId = null;
@@ -520,5 +520,8 @@ class View{
     
     }
 }
-
-export {View}
+// module.exports = {
+//     View: View
+// }
+module.exports=View;
+// export {View}

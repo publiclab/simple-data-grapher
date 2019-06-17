@@ -1,8 +1,8 @@
-import {SimpleDataGrapher} from "./SimpleDataGrapher";
-
+// import {SimpleDataGrapher} from "./SimpleDataGrapher";
+const SimpleDataGrapher=require('./SimpleDataGrapher');
 class CsvParser{
 
-    'use strict';
+    // 'use strict';
 
     csvFile = null;
     csvMatrix = [];
@@ -150,4 +150,4 @@ class CsvParser{
     }
 };
 
-export {CsvParser}
+module.exports=CsvParser;

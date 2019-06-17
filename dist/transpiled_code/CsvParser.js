@@ -1,12 +1,5 @@
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.CsvParser = void 0;
-
-var _SimpleDataGrapher = require("./SimpleDataGrapher");
-
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -17,14 +10,16 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+// import {SimpleDataGrapher} from "./SimpleDataGrapher";
+var SimpleDataGrapher = require('./SimpleDataGrapher');
+
 var CsvParser =
 /*#__PURE__*/
 function () {
+  // 'use strict';
   //start is variable that will be passed to the function to sort out the columns. start will tell if the existing CSV file has headers or not, therefore, to start the iteration from 0 or 1 Used in header determination
   function CsvParser(file, elementId, functionParameter) {
     _classCallCheck(this, CsvParser);
-
-    _defineProperty(this, 'use strict', void 0);
 
     _defineProperty(this, "csvFile", null);
 
@@ -95,8 +90,7 @@ function () {
 
       this.createTranspose();
       var self = this;
-
-      _SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[self.elementId].view.continueViewManipulation(self);
+      SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[self.elementId].view.continueViewManipulation(self);
     } //preparing sample data for the user to choose the columns from
 
   }, {
@@ -199,5 +193,5 @@ function () {
   return CsvParser;
 }();
 
-exports.CsvParser = CsvParser;
 ;
+module.exports = CsvParser;
