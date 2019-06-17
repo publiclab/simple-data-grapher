@@ -1,11 +1,12 @@
 const assert = require('chai').assert;
-const sampleTest = require('../../src/sample').sampleTest;
+const {sampleTest} = require('../../src/sample');
 const Viewtest = require('../../src/View');
 //  const CsvParsertest = require('../../src/CsvParser');
 
 describe("Sample Test", function(){
     it('Should return Mocha Testing', function () {
-        result = sampleTest();
+        console.dir(sampleTest)
+        var result = sampleTest();
         assert.equal(result, "Mocha Testing");
     });
 });
