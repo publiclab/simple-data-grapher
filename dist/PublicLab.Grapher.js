@@ -22,7 +22,7 @@ var CsvParser =
 /*#__PURE__*/
 function () {
   //start is variable that will be passed to the function to sort out the columns. start will tell if the existing CSV file has headers or not, therefore, to start the iteration from 0 or 1 Used in header determination
-  function CsvParser(file, elementId) {
+  function CsvParser(file, elementId, functionParameter) {
     _classCallCheck(this, CsvParser);
 
     _defineProperty(this, 'use strict', void 0);
@@ -37,20 +37,35 @@ function () {
 
     _defineProperty(this, "completeCsvMatrix", []);
 
+    _defineProperty(this, "completeCsvMatrixTranspose", []);
+
     _defineProperty(this, "csvSampleData", []);
 
     _defineProperty(this, "csvValidForYAxis", []);
 
     _defineProperty(this, "elementId", null);
 
-    this.csvFile = file;
     this.elementId = elementId;
-    this.parse();
+
+    if (functionParameter == "local") {
+      this.csvFile = file;
+      this.parse(functionParameter);
+    } else if (functionParameter == "csvstring" || functionParameter == "remote") {
+      this.csvMatrix = file;
+      console.log("csv matrix", this.csvMatrix);
+      this.startFileProcessing(functionParameter);
+    } else if (functionParameter == "googleSheet") {
+      console.log(file, "file", file[0], file[1]);
+      this.completeCsvMatrix = file[1];
+      this.csvHeaders = file[0];
+      console.log(this.completeCsvMatrix, this.csvHeaders, "did it");
+      this.startFileProcessing(functionParameter);
+    }
   }
 
   _createClass(CsvParser, [{
     key: "parse",
-    value: function parse() {
+    value: function parse(functionParameter) {
       var _this = this;
 
       var count = 0;
@@ -64,24 +79,35 @@ function () {
         },
         complete: function complete() {
           //calling a function to determine headers for columns
-          _this.startFileProcessing();
+          _this.startFileProcessing(functionParameter);
         }
       });
     }
   }, {
     key: "startFileProcessing",
-    value: function startFileProcessing() {
-      this.determineHeaders();
-      this.matrixForCompleteData();
-      this.extractSampleData();
+    value: function startFileProcessing(functionParameter) {
+      if (functionParameter == "local" || functionParameter == "csvstring" || functionParameter == "remote") {
+        this.determineHeaders();
+        this.matrixForCompleteData();
+        this.extractSampleData();
+      } else if (functionParameter == "googleSheet") {
+        this.extractSampleData();
+      }
 
-      _SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId].view.continueViewManipulation();
+      this.createTranspose();
+      var self = this;
+
+      _SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[self.elementId].view.continueViewManipulation(self);
     } //preparing sample data for the user to choose the columns from
 
   }, {
     key: "extractSampleData",
     value: function extractSampleData() {
       var maxval = 5;
+
+      for (var i = 0; i < this.csvHeaders.length; i++) {
+        this.csvSampleData[i] = [];
+      }
 
       if (this.completeCsvMatrix.length[0] < 5) {
         maxval = this.completeCsvMatrix[0].length;
@@ -149,6 +175,23 @@ function () {
 
         for (var i = 0; i < this.csvMatrix[0].length; i++) {
           this.csvHeaders[i] = "Column" + (i + 1);
+        }
+      }
+    }
+  }, {
+    key: "createTranspose",
+    value: function createTranspose() {
+      for (var i = 0; i <= this.completeCsvMatrix[0].length; i++) {
+        this.completeCsvMatrixTranspose[i] = [];
+      }
+
+      for (var i = 0; i < this.completeCsvMatrix.length; i++) {
+        this.completeCsvMatrixTranspose[0][i] = this.csvHeaders[i];
+      }
+
+      for (var i = 0; i < this.completeCsvMatrix.length; i++) {
+        for (var j = 0; j < this.completeCsvMatrix[0].length; j++) {
+          this.completeCsvMatrixTranspose[j + 1][i] = this.completeCsvMatrix[i][j];
         }
       }
     }
@@ -221,8 +264,6 @@ function () {
   _createClass(View, [{
     key: "handleFileSelectlocal",
     value: function handleFileSelectlocal(event) {
-      var _this = this;
-
       this.csvFile = event.target.files[0];
       console.log("iam here in handle");
       console.log(this);
@@ -231,13 +272,128 @@ function () {
         alert("Invalid file type");
       } else {
         $('#' + this.dragDropHeadingId).text(this.csvFile['name']);
+        var self = this;
 
         document.getElementById(this.uploadButtonId).onclick = function (e) {
-          console.log("i am uploading");
-          console.log(_this);
-          _this.csvParser = new _CsvParser.CsvParser(_this.csvFile, _this.elementId);
+          self.csvParser = new _CsvParser.CsvParser(self.csvFile, self.elementId, "local");
         };
       }
+    }
+  }, {
+    key: "handleFileSelectstring",
+    value: function handleFileSelectstring(val) {
+      console.log("i am at csv string handler");
+      var csv_string = val.split("\n");
+      var mat = [];
+
+      for (var i = 0; i < csv_string.length; i++) {
+        if (csv_string[i] == "" || csv_string[i] == " ") {
+          continue;
+        }
+
+        var dataHash = Papa.parse(csv_string[i], {
+          dynamicTyping: true,
+          comments: true
+        });
+        mat[i] = dataHash['data'][0];
+      }
+
+      this.csvFile = mat;
+      var self = this;
+
+      document.getElementById(this.uploadButtonId).onclick = function (e) {
+        console.log("i am uploading");
+        self.csvParser = new _CsvParser.CsvParser(self.csvFile, self.elementId, "csvstring");
+      };
+    }
+  }, {
+    key: "headersForGoogleSheet",
+    value: function headersForGoogleSheet(hashSheet) {
+      var headers_sheet = [];
+
+      for (var key in hashSheet) {
+        var h = hashSheet[key];
+
+        for (var headKey in h) {
+          if (headKey.slice(0, 4) == "gsx$") {
+            headers_sheet.push(headKey);
+          }
+        }
+
+        break;
+      }
+
+      return headers_sheet;
+    }
+  }, {
+    key: "completeMatrixForGoogleSheet",
+    value: function completeMatrixForGoogleSheet(hashSheet, headers_sheet) {
+      var matrixComplete = [];
+
+      for (var i = 0; i < headers_sheet.length; i++) {
+        matrixComplete[i] = [];
+      }
+
+      for (var i = 0; i < headers_sheet.length; i++) {
+        for (var key in hashSheet) {
+          var valueCell = hashSheet[key][headers_sheet[i]]["$t"];
+
+          if (!isNaN(valueCell)) {
+            matrixComplete[i].push(+valueCell);
+          } else {
+            matrixComplete[i].push(valueCell);
+          }
+        }
+      }
+
+      return matrixComplete;
+    }
+  }, {
+    key: "handleFileSelectGoogleSheet",
+    value: function handleFileSelectGoogleSheet(mydata) {
+      var hashSheet = mydata;
+      var headers_sheet = this.headersForGoogleSheet(hashSheet);
+      var matrixComplete = this.completeMatrixForGoogleSheet(hashSheet, headers_sheet);
+
+      for (var i = 0; i < headers_sheet.length; i++) {
+        headers_sheet[i] = headers_sheet[i].slice(4, headers_sheet[i].length);
+      }
+
+      this.csvFile = [headers_sheet, matrixComplete];
+      var self = this;
+
+      document.getElementById(this.uploadButtonId).onclick = function (e) {
+        self.csvParser = new _CsvParser.CsvParser(self.csvFile, self.elementId, "googleSheet");
+      };
+    }
+  }, {
+    key: "getValueGoogleSheet",
+    value: function getValueGoogleSheet(googleSheetLink) {
+      var self = this;
+      $.getJSON(googleSheetLink, function (data) {
+        self.handleFileSelectGoogleSheet(data.feed.entry);
+      });
+    }
+  }, {
+    key: "sendRemoteFileToHandler",
+    value: function sendRemoteFileToHandler(remoteVal) {
+      this.csvFile = remoteVal;
+      this.handleFileSelectstring(this.csvFile);
+    }
+  }, {
+    key: "handleFileSelectremote",
+    value: function handleFileSelectremote(val) {
+      var _this = this;
+
+      var proxyurl = "https://cors-anywhere.herokuapp.com/";
+      var url = val;
+      fetch(proxyurl + url).then(function (response) {
+        return response.text();
+      }).then(function (contents) {
+        return _this.sendRemoteFileToHandler(contents);
+      })["catch"](function (e) {
+        return console.log(e);
+      });
     }
   }, {
     key: "determineType",
@@ -359,6 +515,39 @@ function () {
       return scales;
     }
   }, {
+    key: "saveAsImageFunction",
+    value: function saveAsImageFunction(xx) {
+      console.log("entered image");
+      var x = new Date();
+      var timestamp = x.getTime();
+      var temp = xx;
+      temp = "#" + temp;
+      console.log(temp, "omg"); // var temp2=temp.slice(0,temp.length-5);
+      // console.log(temp2);
+
+      console.log(document.getElementById(xx));
+      var tt = document.getElementById(xx);
+      $(temp).get(0).toBlob(function (blob) {
+        saveAs(blob, "chart" + timestamp);
+      });
+    }
+  }, {
+    key: "createSaveAsImageButton",
+    value: function createSaveAsImageButton(canvasDiv, canvasId) {
+      var saveImageButton = document.createElement("BUTTON");
+      saveImageButton.classList.add("btn");
+      saveImageButton.classList.add("btn-primary");
+      saveImageButton.innerHTML = "Save as Image";
+      saveImageButton.id = canvasId + "image";
+      canvasDiv.appendChild(saveImageButton);
+      console.log(this, "this");
+      var self = this;
+
+      document.getElementById(saveImageButton.id).onclick = function (e) {
+        self.saveAsImageFunction(canvasId);
+      };
+    }
+  }, {
     key: "plotGraph",
     value: function plotGraph(hash, length, type, flag) {
       if (flag) {
@@ -375,15 +564,40 @@ function () {
       var ctx = canv.getContext('2d');
       var configuration = this.determineConfig(hash, length, type);
       new Chart(ctx, configuration);
-      $('.' + this.carousalClass).carousel(2); // saveAsImage();
-      // new RangeSliderChart({
-      // 	chartData: config, //The same data you give to Chart.js
-      // 	chartOpts: options, //Your Chart.js options
-      // 	chartType: type, //Which Chart.js chart you want (eg. Lie, Bar, Pie, etc.)
-      // 	chartCTX: ctx, //your canvas context
-      // 	class: 'my-chart-ranger', //Specifies a custom class you want applied to your sliders
-      // 	initial: [3, 10] //Which data points to start the sliders on
-      // })
+      this.createSaveAsImageButton(div, canv.id);
+      $('.' + this.carousalClass).carousel(2);
+    }
+  }, {
+    key: "createSheet",
+    value: function createSheet() {
+      var wb = XLSX.utils.book_new();
+      wb.Props = {
+        Title: "New Spreadsheet" + this.elementId,
+        CreatedDate: new Date()
+      };
+      wb.SheetNames.push("Sheet" + this.elementId);
+      var ws_data = this.csvParser.completeCsvMatrixTranspose;
+      var ws = XLSX.utils.aoa_to_sheet(ws_data);
+      wb.Sheets["Sheet" + this.elementId] = ws;
+      var wbout = XLSX.write(wb, {
+        bookType: 'xlsx',
+        type: 'binary'
+      });
+
+      function s2ab(s) {
+        var buf = new ArrayBuffer(s.length);
+        var view = new Uint8Array(buf);
+
+        for (var i = 0; i < s.length; i++) {
+          view[i] = s.charCodeAt(i) & 0xFF;
+        }
+
+        return buf;
+      }
+
+      saveAs(new Blob([s2ab(wbout)], {
+        type: "application/octet-stream"
+      }), 'newSpreadsheet' + this.elementId + '.xlsx');
     }
   }, {
     key: "afterSampleData",
@@ -422,6 +636,7 @@ function () {
   }, {
     key: "graphMenu",
     value: function graphMenu() {
+      $('.' + this.carousalClass).carousel(1);
       console.log("at menu");
       document.getElementById(this.graphMenuId).innerHTML = "";
       var bar = ["Bar", "Horizontal", "Vertical"];
@@ -504,7 +719,7 @@ function () {
     value: function showSampleDataXandY() {
       var _this3 = this;
 
-      console.log("at sampleDataXandY");
+      console.log("at sampleDataXandY", this);
 
       document.getElementById(this.addGraphButtonId).onclick = function (e) {
         console.log("at " + _this3.addGraphButtonId);
@@ -524,8 +739,9 @@ function () {
     }
   }, {
     key: "continueViewManipulation",
-    value: function continueViewManipulation() {
-      console.log(" i am back in view manipulation");
+    value: function continueViewManipulation(x) {
+      console.log(" i am back in view manipulation", this);
+      this.csvParser = x;
       this.showSampleDataXandY(); // this.showSampleDataXandY(this.csvParser.csvSampleData, this.csvParser.csvHeaders, this.csvParser.csvValidForYAxis, this.csvParser.csvSampleData);
       // sampleDataXandY(this.csvSampleData,this.csvHeaders,this.csvValidForYAxis,this.completeCsvMatrix);
       // matrixForCompleteData(headers,this.csvMatrix,start);
@@ -544,6 +760,12 @@ function () {
     _defineProperty(this, "element", null);
 
     _defineProperty(this, "fileUploadId", null);
+
+    _defineProperty(this, "remoteFileUploadId", null);
+
+    _defineProperty(this, "csvStringUploadId", null);
+
+    _defineProperty(this, "googleSheetUploadId", null);
 
     _defineProperty(this, "csvFile", null);
 
@@ -585,8 +807,6 @@ function () {
 
     _defineProperty(this, "tableYParentId", null);
 
-    _defineProperty(this, "saveAsImage", null);
-
     console.log("i am in view");
     this.elementId = elementId;
     this.element = document.getElementById(elementId);
@@ -597,9 +817,13 @@ function () {
 
     console.log("i am in view");
     this.fileUploadId = elementId + "_csv_file";
+    this.remoteFileUploadId = elementId + "_remote_file";
+    this.csvStringUploadId = elementId + "_csv_string";
+    this.googleSheetUploadId = elementId + "_google_sheet";
     this.dragDropHeadingId = elementId + "_drag_drop_heading";
     this.uploadButtonId = elementId + "_file_upload_button";
     this.addGraphButtonId = elementId + "_add_graph";
+    this.createSpreadsheetButtonId = elementId + "_save_as_spreadsheet";
     this.tableXId = elementId + "_tableX";
     this.tableYId = elementId + "_tableY";
     this.tableXParentId = elementId + "_Xtable";
@@ -648,11 +872,31 @@ function () {
 
         _this5.handleFileSelectlocal(e);
       });
+      $("#" + this.csvStringUploadId).change(function () {
+        console.log(document.getElementById(_this5.csvStringUploadId).value);
+
+        _this5.handleFileSelectstring(document.getElementById(_this5.csvStringUploadId).value);
+      });
+      $("#" + this.googleSheetUploadId).change(function () {
+        console.log(document.getElementById(_this5.googleSheetUploadId).value, "sheetlink");
+        var sheetLink = document.getElementById(_this5.googleSheetUploadId).value;
+        var sheetURL = "https://spreadsheets.google.com/feeds/list/" + sheetLink.split("/")[5] + "/od6/public/values?alt=json";
+
+        _this5.getValueGoogleSheet(sheetURL);
+      });
+      $("#" + this.remoteFileUploadId).change(function () {
+        console.log(document.getElementById(_this5.remoteFileUploadId).value);
+
+        _this5.handleFileSelectremote(document.getElementById(_this5.remoteFileUploadId).value);
+      });
+      $("#" + this.createSpreadsheetButtonId).click(function () {
+        _this5.createSheet();
+      });
     }
   }, {
     key: "drawHTMLView",
     value: function drawHTMLView() {
-      this.element.innerHTML = '<div id=' + this.carousalId + ' class="carousel ' + this.carousalClass + ' slide" data-ride="carousel"><div class="indicators"><ol class="carousel-indicators"> <li data-target="#' + this.carousalId + '" data-slide-to="0" class="active" id="up"></li> <li data-target="#' + this.carousalId + '" data-slide-to="1"></li> <li data-target="#' + this.carousalId + '" data-slide-to="2"></li></ol></div><div class="carousel-inner"><div class="carousel-item active"><div class="main_container"><div class="container_drag_drop"><span class="btn btn-outline-primary btn-file input_box"><p class="drag_drop_heading" id=' + this.dragDropHeadingId + '> <u> Choose a csv file </u> or drag & drop it here </p><input type="file" class="csv_file" id=' + this.elementId + "_csv_file" + ' accept=".csv"></span></div><h6 class="or"><span>OR</span></h6><div class="container_remote_link"><input type="text" class="remote_file text_field" placeholder="url of remote file" ></div><h6 class="or"><span>OR</span></h6><div class="container_csv_string"><textarea class="csv_string text_field" placeholder="Paste a CSV string here" ></textarea></div><div class="upload_button"><button type="button" class="btn btn-primary" id=' + this.uploadButtonId + ' >Upload CSV</button></div></div></div><div class="carousel-item tables"><div class="button_container"><div><input type="checkbox" name=' + this.xyToggleName + ' checked data-toggle="toggle" class="xytoggle" data-width="150" data-onstyle="success" data-offstyle="warning" data-height="40"></div><div class="plot_button"><button type="button" class="btn btn-primary" id=' + this.plotGraphId + ' >Plot Graph</button></div></div><div class="table_container"><div id=' + this.tableXParentId + ' ><table id=' + this.tableXId + ' class="table"></table></div><div id=' + this.tableYParentId + ' class="hidden"><table id=' + this.tableYId + ' class="table"></table></div><div><table id=' + this.graphMenuId + ' class="table table-dark"></table></div></div></div><div class="carousel-item graph"><div class="feature_buttons"><button type="button" class="btn btn-primary" id="update_graph">Update Graph</button><button type="button" class="btn btn-primary" id="save_as_image"> Save as image</button><button type="button" class="btn btn-primary" id=' + this.addGraphButtonId + '> Add Graph</button></div><div id=' + this.canvasContinerId + ' ></div></div></div></div>';
+      this.element.innerHTML = '<div class="body_container"><div class="main_heading_container"><h2 class="main_heading"> Simple Data Grapher</h2><p class="sub_heading">Plot and Export Graphs with CSV data</p></div><div class="heading_container"><ul class="headings"><li class="item-1">Upload CSV Data</li><li class="item-2">Select Columns & Graph Type</li><li class="item-3">Plotted Graph & Export Options</li></ul></div><div id=' + this.carousalId + ' class="carousel ' + this.carousalClass + ' slide" data-ride="carousel"><div class="indicators"><ol class="carousel-indicators"> <li data-target="#' + this.carousalId + '" data-slide-to="0" class="active" id="up"></li> <li data-target="#' + this.carousalId + '" data-slide-to="1"></li> <li data-target="#' + this.carousalId + '" data-slide-to="2"></li></ol></div><div class="carousel-inner"><div class="carousel-item active"><div class="main_container"><div class="container_drag_drop"><span class="btn btn-outline-primary btn-file input_box"><p class="drag_drop_heading" id=' + this.dragDropHeadingId + '> <u> Choose a csv file </u> or drag & drop it here </p><input type="file" class="csv_file" id=' + this.elementId + "_csv_file" + ' accept=".csv"></span></div><h6 class="or"><span>OR</span></h6><div class="container_remote_link"><input type="text" class="remote_file text_field" placeholder="url of remote file" id=' + this.elementId + "_remote_file" + ' ></div><h6 class="or"><span>OR</span></h6><div class="container_csv_string"><textarea class="csv_string text_field" id=' + this.elementId + "_csv_string" + ' placeholder="Paste a CSV string here" ></textarea></div><h6 class="or"><span>OR</span></h6><div class="container_google_sheet"><input type="text" class="google_sheet text_field" id=' + this.elementId + "_google_sheet" + ' placeholder="Link of published Google Sheet" ></div><div class="upload_button"><button type="button" class="btn btn-primary" id=' + this.uploadButtonId + ' >Upload CSV</button></div></div></div><div class="carousel-item tables"><div class="button_container"><div><input type="checkbox" name=' + this.xyToggleName + ' checked data-toggle="toggle" class="xytoggle" data-width="150" data-onstyle="success" data-offstyle="warning" data-height="40"></div><div class="plot_button"><button type="button" class="btn btn-primary" id=' + this.plotGraphId + ' >Plot Graph</button></div></div><div class="table_container"><div id=' + this.tableXParentId + ' ><table id=' + this.tableXId + ' class="table"></table></div><div id=' + this.tableYParentId + ' class="hidden"><table id=' + this.tableYId + ' class="table"></table></div><div><table id=' + this.graphMenuId + ' class="table table-dark"></table></div></div></div><div class="carousel-item graph"><div class="feature_buttons"><button type="button" class="btn btn-primary" id=' + this.addGraphButtonId + '> Add Graph</button><button type="button" class="btn btn-primary" id=' + this.createSpreadsheetButtonId + '> Create Spreadsheet</button></div><div id=' + this.canvasContinerId + ' ></div></div></div></div></div>';
     }
   }]);
 

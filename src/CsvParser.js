@@ -9,17 +9,32 @@ class CsvParser{
     csvHeaders = [];
     csvFileStart = 1; //start is variable that will be passed to the function to sort out the columns. start will tell if the existing CSV file has headers or not, therefore, to start the iteration from 0 or 1 Used in header determination
     completeCsvMatrix = [];
+    completeCsvMatrixTranspose = [];
     csvSampleData = [];
     csvValidForYAxis = [];
     elementId = null;
 
-    constructor(file, elementId){
-        this.csvFile = file;
+    constructor(file, elementId, functionParameter){
         this.elementId = elementId;
-        this.parse();
+        if (functionParameter=="local"){
+            this.csvFile = file;
+            this.parse(functionParameter);
+        }
+        else if (functionParameter=="csvstring" || functionParameter=="remote"){
+            this.csvMatrix=file;
+            console.log("csv matrix",this.csvMatrix);
+            this.startFileProcessing(functionParameter);
+        }
+        else if (functionParameter=="googleSheet"){
+            console.log(file,"file",file[0],file[1]);
+            this.completeCsvMatrix=file[1];
+            this.csvHeaders=file[0];
+            console.log(this.completeCsvMatrix,this.csvHeaders,"did it");
+            this.startFileProcessing(functionParameter);
+        }
     }
 
-    parse(){
+    parse(functionParameter){
         var count = 0;
         Papa.parse(this.csvFile, {
             download: true,
@@ -31,21 +46,31 @@ class CsvParser{
             },
             complete: () => {
                 //calling a function to determine headers for columns
-                this.startFileProcessing();
+                this.startFileProcessing(functionParameter);
             }
         });
     }
 
-    startFileProcessing(){
-        this.determineHeaders();
-        this.matrixForCompleteData();
-        this.extractSampleData();
-        SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId].view.continueViewManipulation();
+    startFileProcessing(functionParameter){
+        if (functionParameter=="local" || functionParameter=="csvstring" || functionParameter=="remote"){
+            this.determineHeaders();
+            this.matrixForCompleteData();
+            this.extractSampleData();
+        }
+        else if (functionParameter=="googleSheet"){
+            this.extractSampleData();
+        }
+        this.createTranspose();
+        let self = this;
+        SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[self.elementId].view.continueViewManipulation(self);
     }
 
     //preparing sample data for the user to choose the columns from
     extractSampleData(){
         var maxval=5;
+        for (var i=0;i<this.csvHeaders.length;i++){
+            this.csvSampleData[i]=[];
+        }
         if (this.completeCsvMatrix.length[0]<5){
             maxval=this.completeCsvMatrix[0].length;
         }
@@ -107,6 +132,19 @@ class CsvParser{
             this.csvFileStart=0;
             for (var i=0;i<this.csvMatrix[0].length;i++){
                 this.csvHeaders[i]="Column"+(i+1);
+            }
+        }
+    }
+    createTranspose(){
+        for (var i=0;i<=this.completeCsvMatrix[0].length;i++){
+            this.completeCsvMatrixTranspose[i]=[];
+        }
+        for (var i=0;i<this.completeCsvMatrix.length;i++){
+            this.completeCsvMatrixTranspose[0][i]=this.csvHeaders[i];
+        }
+        for (var i=0;i<this.completeCsvMatrix.length;i++){
+            for (var j=0;j<this.completeCsvMatrix[0].length;j++){
+                this.completeCsvMatrixTranspose[j+1][i]=this.completeCsvMatrix[i][j];
             }
         }
     }
