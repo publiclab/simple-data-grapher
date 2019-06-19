@@ -158,7 +158,7 @@ function () {
 }();
 
 exports.CsvParser = CsvParser;
-;
+
 },{"./SimpleDataGrapher":2}],2:[function(require,module,exports){
 "use strict";
 
@@ -193,7 +193,7 @@ exports.SimpleDataGrapher = SimpleDataGrapher;
 
 _defineProperty(SimpleDataGrapher, "elementIdSimpleDataGraphInstanceMap", {});
 
-;
+
 window.SimpleDataGrapher = SimpleDataGrapher;
 },{"./CsvParser":1,"./View":3}],3:[function(require,module,exports){
 "use strict";
