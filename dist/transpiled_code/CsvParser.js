@@ -7,6 +7,10 @@ exports.CsvParser = void 0;
 
 var _SimpleDataGrapher = require("./SimpleDataGrapher");
 
+var _papaparse = _interopRequireDefault(require("papaparse"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -68,7 +72,8 @@ function () {
       var _this = this;
 
       var count = 0;
-      Papa.parse(this.csvFile, {
+
+      _papaparse["default"].parse(this.csvFile, {
         download: true,
         dynamicTyping: true,
         comments: true,
@@ -112,39 +117,39 @@ function () {
         maxval = this.completeCsvMatrix[0].length;
       }
 
-      for (var i = 0; i < this.csvHeaders.length; i++) {
+      for (var x = 0; x < this.csvHeaders.length; x++) {
         var counter = 0;
         var bool = false;
 
-        for (var j = 0; j < this.completeCsvMatrix[i].length; j++) {
+        for (var j = 0; j < this.completeCsvMatrix[x].length; j++) {
           if (counter >= maxval) {
             break;
-          } else if (this.completeCsvMatrix[i][j] !== null || this.completeCsvMatrix[i][j] !== undefined) {
-            if (typeof this.completeCsvMatrix[i][j] === 'number') {
+          } else if (this.completeCsvMatrix[x][j] !== null || this.completeCsvMatrix[x][j] !== undefined) {
+            if (typeof this.completeCsvMatrix[x][j] === 'number') {
               bool = true;
             }
 
             counter += 1;
-            this.csvSampleData[i].push(this.completeCsvMatrix[i][j]);
+            this.csvSampleData[x].push(this.completeCsvMatrix[x][j]);
           }
         }
 
         if (bool) {
-          this.csvValidForYAxis.push(this.csvHeaders[i]);
+          this.csvValidForYAxis.push(this.csvHeaders[x]);
         }
       }
-    } //makes a 2D matrix with the transpose of the CSV file, each column having the same index as its column heading
+    } //makes a 2D matrxx with the transpose of the CSV file, each column having the same index as its column heading
 
   }, {
     key: "matrixForCompleteData",
     value: function matrixForCompleteData() {
-      for (var i = 0; i < this.csvHeaders.length; i++) {
-        this.completeCsvMatrix[i] = [];
+      for (var y = 0; y < this.csvHeaders.length; y++) {
+        this.completeCsvMatrix[y] = [];
       }
 
-      for (var i = this.csvFileStart; i < this.csvMatrix.length; i++) {
+      for (var v = this.csvFileStart; v < this.csvMatrix.length; v++) {
         for (var j = 0; j < this.csvHeaders.length; j++) {
-          this.completeCsvMatrix[j].push(this.csvMatrix[i][j]);
+          this.completeCsvMatrix[j].push(this.csvMatrix[v][j]);
         }
       }
     }
@@ -172,8 +177,8 @@ function () {
       if (flag && this.csvHeaders.length != this.csvMatrix[0].length) {
         this.csvFileStart = 0;
 
-        for (var i = 0; i < this.csvMatrix[0].length; i++) {
-          this.csvHeaders[i] = "Column" + (i + 1);
+        for (var u = 0; u < this.csvMatrix[0].length; u++) {
+          this.csvHeaders[u] = "Column" + (u + 1);
         }
       }
     }
@@ -184,13 +189,13 @@ function () {
         this.completeCsvMatrixTranspose[i] = [];
       }
 
-      for (var i = 0; i < this.completeCsvMatrix.length; i++) {
-        this.completeCsvMatrixTranspose[0][i] = this.csvHeaders[i];
+      for (var v = 0; v < this.completeCsvMatrix.length; v++) {
+        this.completeCsvMatrixTranspose[0][v] = this.csvHeaders[v];
       }
 
-      for (var i = 0; i < this.completeCsvMatrix.length; i++) {
+      for (var s = 0; s < this.completeCsvMatrix.length; s++) {
         for (var j = 0; j < this.completeCsvMatrix[0].length; j++) {
-          this.completeCsvMatrixTranspose[j + 1][i] = this.completeCsvMatrix[i][j];
+          this.completeCsvMatrixTranspose[j + 1][s] = this.completeCsvMatrix[s][j];
         }
       }
     }

@@ -9,6 +9,16 @@ var _CsvParser = require("./CsvParser");
 
 var _SimpleDataGrapher = require("./SimpleDataGrapher");
 
+var _xlsx = _interopRequireDefault(require("xlsx"));
+
+var _fileSaver = require("file-saver");
+
+var _chartjs = _interopRequireDefault(require("chartjs"));
+
+var _papaparse = _interopRequireDefault(require("papaparse"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -50,10 +60,11 @@ function () {
           continue;
         }
 
-        var dataHash = Papa.parse(csv_string[i], {
+        var dataHash = _papaparse["default"].parse(csv_string[i], {
           dynamicTyping: true,
           comments: true
         });
+
         mat[i] = dataHash['data'][0];
       }
 
@@ -93,14 +104,14 @@ function () {
         matrixComplete[i] = [];
       }
 
-      for (var i = 0; i < headers_sheet.length; i++) {
+      for (var j = 0; j < headers_sheet.length; j++) {
         for (var key in hashSheet) {
-          var valueCell = hashSheet[key][headers_sheet[i]]["$t"];
+          var valueCell = hashSheet[key][headers_sheet[j]]["$t"];
 
           if (!isNaN(valueCell)) {
-            matrixComplete[i].push(+valueCell);
+            matrixComplete[j].push(+valueCell);
           } else {
-            matrixComplete[i].push(valueCell);
+            matrixComplete[j].push(valueCell);
           }
         }
       }
@@ -287,7 +298,7 @@ function () {
       console.log(document.getElementById(xx));
       var tt = document.getElementById(xx);
       $(temp).get(0).toBlob(function (blob) {
-        saveAs(blob, "chart" + timestamp);
+        (0, _fileSaver.saveAs)(blob, "chart" + timestamp);
       });
     }
   }, {
@@ -322,23 +333,27 @@ function () {
       document.getElementById(this.canvasContinerId).appendChild(div);
       var ctx = canv.getContext('2d');
       var configuration = this.determineConfig(hash, length, type);
-      new Chart(ctx, configuration);
+      new _chartjs["default"](ctx, configuration);
       this.createSaveAsImageButton(div, canv.id);
       $('.' + this.carousalClass).carousel(2);
     }
   }, {
     key: "createSheet",
     value: function createSheet() {
-      var wb = XLSX.utils.book_new();
+      var wb = _xlsx["default"].utils.book_new();
+
       wb.Props = {
         Title: "New Spreadsheet" + this.elementId,
         CreatedDate: new Date()
       };
       wb.SheetNames.push("Sheet" + this.elementId);
       var ws_data = this.csvParser.completeCsvMatrixTranspose;
-      var ws = XLSX.utils.aoa_to_sheet(ws_data);
+
+      var ws = _xlsx["default"].utils.aoa_to_sheet(ws_data);
+
       wb.Sheets["Sheet" + this.elementId] = ws;
-      var wbout = XLSX.write(wb, {
+
+      var wbout = _xlsx["default"].write(wb, {
         bookType: 'xlsx',
         type: 'binary'
       });
@@ -354,7 +369,7 @@ function () {
         return buf;
       }
 
-      saveAs(new Blob([s2ab(wbout)], {
+      (0, _fileSaver.saveAs)(new Blob([s2ab(wbout)], {
         type: "application/octet-stream"
       }), 'newSpreadsheet' + this.elementId + '.xlsx');
     }
@@ -459,13 +474,13 @@ function () {
       trhead.classList.add(tableType);
       document.getElementById(tableId).appendChild(trhead);
 
-      for (var i = 0; i < this.csvParser.csvSampleData[0].length; i++) {
+      for (var x = 0; x < this.csvParser.csvSampleData[0].length; x++) {
         var tr = document.createElement('tr');
 
-        for (var j = 0; j < this.csvParser.csvHeaders.length; j++) {
-          var td = document.createElement('td');
-          td.appendChild(document.createTextNode(this.csvParser.csvSampleData[j][i]));
-          tr.appendChild(td);
+        for (var y = 0; y < this.csvParser.csvHeaders.length; y++) {
+          var tds = document.createElement('td');
+          tds.appendChild(document.createTextNode(this.csvParser.csvSampleData[y][x]));
+          tr.appendChild(tds);
         }
 
         document.getElementById(tableId).appendChild(tr);

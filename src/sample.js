@@ -1,5 +1,3 @@
-module.exports = {
-  sampleTest: function () {
-      return "Mocha Testing";
-  }
-};
+export function sampleTest() {
+  return "Mocha Testing";
+}

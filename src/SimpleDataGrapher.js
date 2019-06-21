@@ -11,7 +11,7 @@ class SimpleDataGrapher{
         SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId] = this;
         this.view = new View(elementId);
     }
-};
+}
 
 export {SimpleDataGrapher};
 

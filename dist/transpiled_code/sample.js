@@ -1,7 +1,10 @@
 "use strict";
 
-module.exports = {
-  sampleTest: function sampleTest() {
-    return "Mocha Testing";
-  }
-};
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.sampleTest = sampleTest;
+
+function sampleTest() {
+  return "Mocha Testing";
+}

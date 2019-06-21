@@ -27,9 +27,11 @@
   "dependencies": {
     "chai": "^4.2.0",
     "chartjs": "^0.3.24",
+    "file-saver": "^2.0.2",
     "jquery": "^3.4.1",
     "mocha": "^6.1.4",
-    "papaparse": "^4.6.3"
+    "papaparse": "^4.6.3",
+    "xlsx": "^0.14.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
@@ -37,6 +39,7 @@
     "@babel/plugin-proposal-class-properties": "^7.4.4",
     "@babel/preset-env": "^7.4.5",
     "babel-core": "^6.26.3",
+    "babel-eslint": "^10.0.2",
     "babelify": "^10.0.0",
     "browserify": "^16.2.3",
     "eslint": "^5.16.0",

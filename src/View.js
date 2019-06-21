@@ -1,5 +1,9 @@
 import {CsvParser} from "./CsvParser";
 import {SimpleDataGrapher} from "./SimpleDataGrapher";
+import XLSX from 'xlsx'
+import { saveAs } from 'file-saver'
+import Chart from 'chartjs'
+import Papa from 'papaparse'
 
 class View{
     'use strict';
@@ -85,13 +89,13 @@ class View{
         for (var i=0;i<headers_sheet.length;i++){
             matrixComplete[i]=[];
         }
-        for (var i=0;i<headers_sheet.length;i++){
+        for (var j=0;j<headers_sheet.length;j++){
             for (var key in hashSheet){
-                var valueCell=hashSheet[key][headers_sheet[i]]["$t"];
+                var valueCell=hashSheet[key][headers_sheet[j]]["$t"];
                 if (!isNaN(valueCell)){
-                    matrixComplete[i].push(+valueCell);}
+                    matrixComplete[j].push(+valueCell);}
                 else{
-                    matrixComplete[i].push(valueCell);
+                    matrixComplete[j].push(valueCell);
                 }
             }
         }
@@ -399,12 +403,12 @@ class View{
         }
         trhead.classList.add(tableType);
         document.getElementById(tableId).appendChild(trhead);
-        for(var i=0;i<this.csvParser.csvSampleData[0].length;i++){
+        for(var x=0;x<this.csvParser.csvSampleData[0].length;x++){
             var tr=document.createElement('tr');
-            for(var j=0;j<this.csvParser.csvHeaders.length;j++){
-                var td=document.createElement('td');
-                td.appendChild(document.createTextNode(this.csvParser.csvSampleData[j][i]));
-                tr.appendChild(td);
+            for(var y=0;y<this.csvParser.csvHeaders.length;y++){
+                var tds=document.createElement('td');
+                tds.appendChild(document.createTextNode(this.csvParser.csvSampleData[y][x]));
+                tr.appendChild(tds);
             }
             document.getElementById(tableId).appendChild(tr);
         }
