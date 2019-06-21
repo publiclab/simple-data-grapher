@@ -33,7 +33,6 @@ class View{
     handleFileSelectlocal(event) {
         this.csvFile = event.target.files[0];
         console.log("iam here in handle");
-        console.log(this);
         if 	(this.csvFile['name'].split(".")[1]!="csv"){
             alert("Invalid file type");
         }
@@ -250,10 +249,8 @@ class View{
         var timestamp=x.getTime();
         var temp=xx;
         temp="#"+temp;
-        console.log(temp,"omg");
         // var temp2=temp.slice(0,temp.length-5);
         // console.log(temp2);
-        console.log(document.getElementById(xx));
         var tt=document.getElementById(xx);
         $(temp).get(0).toBlob(function(blob) {
             saveAs(blob, "chart"+timestamp);
@@ -267,7 +264,6 @@ class View{
         saveImageButton.innerHTML="Save as Image";
         saveImageButton.id=canvasId+"image";
         canvasDiv.appendChild(saveImageButton);
-        console.log(this,"this");
         let self=this;
         document.getElementById(saveImageButton.id).onclick = (e) => {
         self.saveAsImageFunction(canvasId);
@@ -316,7 +312,6 @@ class View{
 
     afterSampleData(flag){
         console.log("at checkbox");
-        console.log(this.csvParser.completeCsvMatrix);
         document.getElementById(this.plotGraphId).onclick = (e) => {
             console.log("at click on plot_graph");
             e.preventDefault();
