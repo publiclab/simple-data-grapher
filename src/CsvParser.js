@@ -21,15 +21,11 @@ class CsvParser{
             this.parse(functionParameter);
         }
         else if (functionParameter=="csvstring" || functionParameter=="remote"){
-            this.csvMatrix=file;
-            console.log("csv matrix",this.csvMatrix);
-            this.startFileProcessing(functionParameter);
+            this.csvFile=file;
+            this.parseString(functionParameter);
         }
         else if (functionParameter=="googleSheet"){
-            console.log(file,"file",file[0],file[1]);
-            this.completeCsvMatrix=file[1];
-            this.csvHeaders=file[0];
-            console.log(this.completeCsvMatrix,this.csvHeaders,"did it");
+            this.csvFile = file;
             this.startFileProcessing(functionParameter);
         }
     }
@@ -51,6 +47,22 @@ class CsvParser{
         });
     }
 
+    parseString(functionParameter){
+        var mat=[];
+        for (var i=0;i<this.csvFile.length;i++){
+            if (this.csvFile[i]=="" || this.csvFile[i]==" "){
+            continue;
+            }
+            var dataHash=Papa.parse(this.csvFile[i],{
+            dynamicTyping: true,
+            comments: true
+            });
+            mat[i]=dataHash['data'][0];
+        }
+        this.csvMatrix=mat;
+        this.startFileProcessing(functionParameter);
+    }
+
     startFileProcessing(functionParameter){
         if (functionParameter=="local" || functionParameter=="csvstring" || functionParameter=="remote"){
             this.determineHeaders();
@@ -58,6 +70,8 @@ class CsvParser{
             this.extractSampleData();
         }
         else if (functionParameter=="googleSheet"){
+            this.headersForGoogleSheet();
+            this.completeMatrixForGoogleSheet();
             this.extractSampleData();
         }
         this.createTranspose();
@@ -106,6 +120,26 @@ class CsvParser{
             }
         }
     }
+    completeMatrixForGoogleSheet(){
+        var matrixComplete=[];
+        for (var i=0;i<this.csvHeaders.length;i++){
+            matrixComplete[i]=[];
+        }
+        for (var i=0;i<this.csvHeaders.length;i++){
+            for (var key in this.csvFile){
+                var valueCell=this.csvFile[key][this.csvHeaders[i]]["$t"];
+                if (!isNaN(valueCell)){
+                    matrixComplete[i].push(+valueCell);}
+                else{
+                    matrixComplete[i].push(valueCell);
+                }
+            }
+        }
+        for (var i=0;i<this.csvHeaders.length;i++){
+            this.csvHeaders[i]=this.csvHeaders[i].slice(4,this.csvHeaders[i].length);
+        }
+        this.completeCsvMatrix=matrixComplete;
+    }
 
     determineHeaders(){
         var flag = false;
@@ -134,6 +168,19 @@ class CsvParser{
                 this.csvHeaders[i]="Column"+(i+1);
             }
         }
+    }
+    headersForGoogleSheet(){
+        var headers_sheet=[];
+        for (var key in this.csvFile){
+            var h=this.csvFile[key];
+            for (var headKey in h){
+                if (headKey.slice(0,4)=="gsx$"){
+                    headers_sheet.push(headKey);
+                }
+            }
+            break;
+        }
+        this.csvHeaders=headers_sheet;
     }
     createTranspose(){
         for (var i=0;i<=this.completeCsvMatrix[0].length;i++){

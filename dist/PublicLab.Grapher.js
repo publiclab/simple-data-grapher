@@ -51,14 +51,10 @@ function () {
       this.csvFile = file;
       this.parse(functionParameter);
     } else if (functionParameter == "csvstring" || functionParameter == "remote") {
-      this.csvMatrix = file;
-      console.log("csv matrix", this.csvMatrix);
-      this.startFileProcessing(functionParameter);
+      this.csvFile = file;
+      this.parseString(functionParameter);
     } else if (functionParameter == "googleSheet") {
-      console.log(file, "file", file[0], file[1]);
-      this.completeCsvMatrix = file[1];
-      this.csvHeaders = file[0];
-      console.log(this.completeCsvMatrix, this.csvHeaders, "did it");
+      this.csvFile = file;
       this.startFileProcessing(functionParameter);
     }
   }
@@ -84,6 +80,26 @@ function () {
       });
     }
   }, {
+    key: "parseString",
+    value: function parseString(functionParameter) {
+      var mat = [];
+
+      for (var i = 0; i < this.csvFile.length; i++) {
+        if (this.csvFile[i] == "" || this.csvFile[i] == " ") {
+          continue;
+        }
+
+        var dataHash = Papa.parse(this.csvFile[i], {
+          dynamicTyping: true,
+          comments: true
+        });
+        mat[i] = dataHash['data'][0];
+      }
+
+      this.csvMatrix = mat;
+      this.startFileProcessing(functionParameter);
+    }
+  }, {
     key: "startFileProcessing",
     value: function startFileProcessing(functionParameter) {
       if (functionParameter == "local" || functionParameter == "csvstring" || functionParameter == "remote") {
@@ -91,6 +107,8 @@ function () {
         this.matrixForCompleteData();
         this.extractSampleData();
       } else if (functionParameter == "googleSheet") {
+        this.headersForGoogleSheet();
+        this.completeMatrixForGoogleSheet();
         this.extractSampleData();
       }
 
@@ -150,6 +168,33 @@ function () {
       }
     }
   }, {
+    key: "completeMatrixForGoogleSheet",
+    value: function completeMatrixForGoogleSheet() {
+      var matrixComplete = [];
+
+      for (var i = 0; i < this.csvHeaders.length; i++) {
+        matrixComplete[i] = [];
+      }
+
+      for (var i = 0; i < this.csvHeaders.length; i++) {
+        for (var key in this.csvFile) {
+          var valueCell = this.csvFile[key][this.csvHeaders[i]]["$t"];
+
+          if (!isNaN(valueCell)) {
+            matrixComplete[i].push(+valueCell);
+          } else {
+            matrixComplete[i].push(valueCell);
+          }
+        }
+      }
+
+      for (var i = 0; i < this.csvHeaders.length; i++) {
+        this.csvHeaders[i] = this.csvHeaders[i].slice(4, this.csvHeaders[i].length);
+      }
+
+      this.completeCsvMatrix = matrixComplete;
+    }
+  }, {
     key: "determineHeaders",
     value: function determineHeaders() {
       var flag = false;
@@ -179,6 +224,25 @@ function () {
       }
     }
   }, {
+    key: "headersForGoogleSheet",
+    value: function headersForGoogleSheet() {
+      var headers_sheet = [];
+
+      for (var key in this.csvFile) {
+        var h = this.csvFile[key];
+
+        for (var headKey in h) {
+          if (headKey.slice(0, 4) == "gsx$") {
+            headers_sheet.push(headKey);
+          }
+        }
+
+        break;
+      }
+
+      this.csvHeaders = headers_sheet;
+    }
+  }, {
     key: "createTranspose",
     value: function createTranspose() {
       for (var i = 0; i <= this.completeCsvMatrix[0].length; i++) {
@@ -201,7 +265,7 @@ function () {
 }();
 
 exports.CsvParser = CsvParser;
-
+;
 },{"./SimpleDataGrapher":2}],2:[function(require,module,exports){
 "use strict";
 
@@ -236,7 +300,7 @@ exports.SimpleDataGrapher = SimpleDataGrapher;
 
 _defineProperty(SimpleDataGrapher, "elementIdSimpleDataGraphInstanceMap", {});
 
-
+;
 window.SimpleDataGrapher = SimpleDataGrapher;
 },{"./CsvParser":1,"./View":3}],3:[function(require,module,exports){
 "use strict";
@@ -284,21 +348,7 @@ function () {
     value: function handleFileSelectstring(val) {
       console.log("i am at csv string handler");
       var csv_string = val.split("\n");
-      var mat = [];
-
-      for (var i = 0; i < csv_string.length; i++) {
-        if (csv_string[i] == "" || csv_string[i] == " ") {
-          continue;
-        }
-
-        var dataHash = Papa.parse(csv_string[i], {
-          dynamicTyping: true,
-          comments: true
-        });
-        mat[i] = dataHash['data'][0];
-      }
-
-      this.csvFile = mat;
+      this.csvFile = csv_string;
       var self = this;
 
       document.getElementById(this.uploadButtonId).onclick = function (e) {
@@ -307,59 +357,9 @@ function () {
       };
     }
   }, {
-    key: "headersForGoogleSheet",
-    value: function headersForGoogleSheet(hashSheet) {
-      var headers_sheet = [];
-
-      for (var key in hashSheet) {
-        var h = hashSheet[key];
-
-        for (var headKey in h) {
-          if (headKey.slice(0, 4) == "gsx$") {
-            headers_sheet.push(headKey);
-          }
-        }
-
-        break;
-      }
-
-      return headers_sheet;
-    }
-  }, {
-    key: "completeMatrixForGoogleSheet",
-    value: function completeMatrixForGoogleSheet(hashSheet, headers_sheet) {
-      var matrixComplete = [];
-
-      for (var i = 0; i < headers_sheet.length; i++) {
-        matrixComplete[i] = [];
-      }
-
-      for (var i = 0; i < headers_sheet.length; i++) {
-        for (var key in hashSheet) {
-          var valueCell = hashSheet[key][headers_sheet[i]]["$t"];
-
-          if (!isNaN(valueCell)) {
-            matrixComplete[i].push(+valueCell);
-          } else {
-            matrixComplete[i].push(valueCell);
-          }
-        }
-      }
-
-      return matrixComplete;
-    }
-  }, {
     key: "handleFileSelectGoogleSheet",
-    value: function handleFileSelectGoogleSheet(mydata) {
-      var hashSheet = mydata;
-      var headers_sheet = this.headersForGoogleSheet(hashSheet);
-      var matrixComplete = this.completeMatrixForGoogleSheet(hashSheet, headers_sheet);
-
-      for (var i = 0; i < headers_sheet.length; i++) {
-        headers_sheet[i] = headers_sheet[i].slice(4, headers_sheet[i].length);
-      }
-
-      this.csvFile = [headers_sheet, matrixComplete];
+    value: function handleFileSelectGoogleSheet(googleSheetData) {
+      this.csvFile = googleSheetData;
       var self = this;
 
       document.getElementById(this.uploadButtonId).onclick = function (e) {
@@ -376,13 +376,7 @@ function () {
     }
   }, {
     key: "sendRemoteFileToHandler",
-    value: function sendRemoteFileToHandler(remoteVal) {
-      this.csvFile = remoteVal;
-      this.handleFileSelectstring(this.csvFile);
-    }
-  }, {
-    key: "handleFileSelectremote",
-    value: function handleFileSelectremote(val) {
+    value: function sendRemoteFileToHandler(val) {
       var _this = this;
 
       var proxyurl = "https://cors-anywhere.herokuapp.com/";
@@ -390,10 +384,22 @@ function () {
       fetch(proxyurl + url).then(function (response) {
         return response.text();
       }).then(function (contents) {
-        return _this.sendRemoteFileToHandler(contents);
+        return _this.handleFileSelectremote(contents);
       })["catch"](function (e) {
         return console.log(e);
       });
+    }
+  }, {
+    key: "handleFileSelectremote",
+    value: function handleFileSelectremote(remoteVal) {
+      var remoteValSplit = remoteVal.split("\n");
+      this.csvFile = remoteValSplit;
+      var self = this;
+
+      document.getElementById(this.uploadButtonId).onclick = function (e) {
+        console.log("i am uploading");
+        self.csvParser = new _CsvParser.CsvParser(self.csvFile, self.elementId, "remote");
+      };
     }
   }, {
     key: "determineType",
@@ -887,7 +893,7 @@ function () {
       $("#" + this.remoteFileUploadId).change(function () {
         console.log(document.getElementById(_this5.remoteFileUploadId).value);
 
-        _this5.handleFileSelectremote(document.getElementById(_this5.remoteFileUploadId).value);
+        _this5.sendRemoteFileToHandler(document.getElementById(_this5.remoteFileUploadId).value);
       });
       $("#" + this.createSpreadsheetButtonId).click(function () {
         _this5.createSheet();

@@ -48,18 +48,7 @@ class View{
     handleFileSelectstring(val){
         console.log("i am at csv string handler");
         var csv_string = val.split("\n");
-        var mat=[];
-        for (var i=0;i<csv_string.length;i++){
-            if (csv_string[i]=="" || csv_string[i]==" "){
-            continue;
-            }
-            var dataHash=Papa.parse(csv_string[i],{
-            dynamicTyping: true,
-            comments: true
-            });
-            mat[i]=dataHash['data'][0];
-        }
-        this.csvFile=mat;
+        this.csvFile=csv_string;        
         let self = this;
         document.getElementById(this.uploadButtonId).onclick = (e) => {
             console.log("i am uploading");
@@ -67,47 +56,8 @@ class View{
         };
 
     }
-    headersForGoogleSheet(hashSheet){
-        var headers_sheet=[];
-        for (var key in hashSheet){
-            var h=hashSheet[key];
-            for (var headKey in h){
-                if (headKey.slice(0,4)=="gsx$"){
-                    headers_sheet.push(headKey);
-                }
-            }
-            break;
-        }
-        return headers_sheet;
-    }
-    completeMatrixForGoogleSheet(hashSheet,headers_sheet){
-        var matrixComplete=[];
-        for (var i=0;i<headers_sheet.length;i++){
-            matrixComplete[i]=[];
-        }
-        for (var i=0;i<headers_sheet.length;i++){
-            for (var key in hashSheet){
-                var valueCell=hashSheet[key][headers_sheet[i]]["$t"];
-                if (!isNaN(valueCell)){
-                    matrixComplete[i].push(+valueCell);}
-                else{
-                    matrixComplete[i].push(valueCell);
-                }
-            }
-        }
-        return matrixComplete;
-    }
-    handleFileSelectGoogleSheet(mydata){
-        
-        
-        var hashSheet=mydata;
-        var headers_sheet=this.headersForGoogleSheet(hashSheet);
-        var matrixComplete=this.completeMatrixForGoogleSheet(hashSheet,headers_sheet);
-        
-        for (var i=0;i<headers_sheet.length;i++){
-            headers_sheet[i]=headers_sheet[i].slice(4,headers_sheet[i].length);
-        }
-        this.csvFile=[headers_sheet,matrixComplete];
+    handleFileSelectGoogleSheet(googleSheetData){
+        this.csvFile=googleSheetData;
         let self=this;
         document.getElementById(this.uploadButtonId).onclick = (e) => {
             self.csvParser = new CsvParser(self.csvFile, self.elementId, "googleSheet");
@@ -120,18 +70,24 @@ class View{
         });
 
     }
-    sendRemoteFileToHandler(remoteVal){
-        this.csvFile=remoteVal;
-        this.handleFileSelectstring(this.csvFile);
-    }
-    handleFileSelectremote(val){
+    
+    sendRemoteFileToHandler(val){
         const proxyurl = "https://cors-anywhere.herokuapp.com/"; 
         const url = val;
         fetch(proxyurl + url)
         .then(response => response.text())
-        .then(contents => this.sendRemoteFileToHandler(contents))
+        .then(contents => this.handleFileSelectremote(contents))
         .catch((e) => console.log(e)) ;
 
+    }
+    handleFileSelectremote(remoteVal){
+        var remoteValSplit = remoteVal.split("\n");
+        this.csvFile=remoteValSplit;
+        let self = this;
+        document.getElementById(this.uploadButtonId).onclick = (e) => {
+            console.log("i am uploading");
+            self.csvParser = new CsvParser(self.csvFile, self.elementId,"remote");
+        };
     }
 
     determineType(type){
@@ -505,7 +461,7 @@ class View{
         });
         $("#"+this.remoteFileUploadId).change(()=>{
             console.log(document.getElementById(this.remoteFileUploadId).value);
-            this.handleFileSelectremote(document.getElementById(this.remoteFileUploadId).value);
+            this.sendRemoteFileToHandler(document.getElementById(this.remoteFileUploadId).value);
         });
         $("#"+this.createSpreadsheetButtonId).click(()=>{
             this.createSheet();
