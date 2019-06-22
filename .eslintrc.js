@@ -16,7 +16,7 @@ module.exports = {
         "sourceType": "module"
     },
     "rules": {
-      "no-console":0,
+      "no-console": "off",
       "no-unused-vars": "off",
     },
     "parser": "babel-eslint",
