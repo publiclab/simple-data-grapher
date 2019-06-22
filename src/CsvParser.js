@@ -223,4 +223,4 @@ class CsvParser{
     }
 };
 
-export {CsvParser}
+module.exports = CsvParser;
