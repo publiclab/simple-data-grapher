@@ -10,10 +10,11 @@ describe("Sample Test", function(){
 });
 
 describe("Sample csv test",function(){
-    it('Should return csv testing', function () {
-        console.log(CsvParserTest);
-
+    beforeEach(function(){
         var testobj=new CsvParserTest("A,B,C","testid","csvstring");
+    })
+    it('Should return csv testing', function () {
+        
 
     });
 });

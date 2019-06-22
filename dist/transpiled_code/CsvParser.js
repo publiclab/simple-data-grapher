@@ -126,7 +126,11 @@ function () {
     key: "startFileProcessing",
     value: function startFileProcessing(functionParameter) {
       var self = this;
-      SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[self.elementId].view.continueViewManipulation(self);
+      console.log(SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap);
+
+      if (SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap != {}) {
+        SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[self.elementId].view.continueViewManipulation(self);
+      }
     } //preparing sample data for the user to choose the columns from
 
   }, {

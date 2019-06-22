@@ -91,7 +91,10 @@ class CsvParser{
 
     startFileProcessing(functionParameter){
         let self = this;
-        SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[self.elementId].view.continueViewManipulation(self);
+        //checking the elementIdSimpleDataGraphInstanceMap map's length, to be sure it's not empty
+        if (Object.keys(SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap).length!=0){
+            SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[self.elementId].view.continueViewManipulation(self);
+        }
     }
 
     //preparing sample data for the user to choose the columns from

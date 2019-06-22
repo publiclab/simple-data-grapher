@@ -1,6 +1,7 @@
-import {CsvParser} from "./CsvParser";
-import {SimpleDataGrapher} from "./SimpleDataGrapher";
-
+// import {CsvParser} from "./CsvParser";
+// import {SimpleDataGrapher} from "./SimpleDataGrapher";
+const CsvParser=require('./CsvParser');
+const SimpleDataGrapher = require('./SimpleDataGrapher');
 class View{
     'use strict';
     elementId = null;

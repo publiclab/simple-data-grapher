@@ -127,7 +127,9 @@ function () {
     key: "startFileProcessing",
     value: function startFileProcessing(functionParameter) {
       var self = this;
-      SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[self.elementId].view.continueViewManipulation(self);
+      console.log(SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap); // if (SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap!=undefined){
+
+      SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[self.elementId].view.continueViewManipulation(self); // }
     } //preparing sample data for the user to choose the columns from
 
   }, {
@@ -339,10 +341,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.View = void 0;
 
-var _CsvParser = require("./CsvParser");
-
-var _SimpleDataGrapher = require("./SimpleDataGrapher");
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -350,6 +348,12 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+// import {CsvParser} from "./CsvParser";
+// import {SimpleDataGrapher} from "./SimpleDataGrapher";
+var CsvParser = require('./CsvParser');
+
+var SimpleDataGrapher = require('./SimpleDataGrapher');
 
 var View =
 /*#__PURE__*/
@@ -368,7 +372,7 @@ function () {
         var self = this;
 
         document.getElementById(this.uploadButtonId).onclick = function (e) {
-          self.csvParser = new _CsvParser.CsvParser(self.csvFile, self.elementId, "local");
+          self.csvParser = new CsvParser(self.csvFile, self.elementId, "local");
         };
       }
     }
@@ -382,7 +386,7 @@ function () {
 
       document.getElementById(this.uploadButtonId).onclick = function (e) {
         console.log("i am uploading");
-        self.csvParser = new _CsvParser.CsvParser(self.csvFile, self.elementId, "csvstring");
+        self.csvParser = new CsvParser(self.csvFile, self.elementId, "csvstring");
       };
     }
   }, {
@@ -392,7 +396,7 @@ function () {
       var self = this;
 
       document.getElementById(this.uploadButtonId).onclick = function (e) {
-        self.csvParser = new _CsvParser.CsvParser(self.csvFile, self.elementId, "googleSheet");
+        self.csvParser = new CsvParser(self.csvFile, self.elementId, "googleSheet");
       };
     }
   }, {
@@ -427,7 +431,7 @@ function () {
 
       document.getElementById(this.uploadButtonId).onclick = function (e) {
         console.log("i am uploading");
-        self.csvParser = new _CsvParser.CsvParser(self.csvFile, self.elementId, "remote");
+        self.csvParser = new CsvParser(self.csvFile, self.elementId, "remote");
       };
     }
   }, {
