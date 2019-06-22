@@ -1,5 +1,6 @@
-import {SimpleDataGrapher} from "./SimpleDataGrapher";
-
+// import {SimpleDataGrapher} from "./SimpleDataGrapher";
+const SimpleDataGrapher = require('./SimpleDataGrapher');
+const Papa = require("papaparse");
 class CsvParser{
 
     'use strict';
