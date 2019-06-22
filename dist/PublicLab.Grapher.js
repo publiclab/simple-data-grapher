@@ -126,10 +126,11 @@ function () {
   }, {
     key: "startFileProcessing",
     value: function startFileProcessing(functionParameter) {
-      var self = this;
-      console.log(SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap); // if (SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap!=undefined){
+      var self = this; //checking the elementIdSimpleDataGraphInstanceMap map's length, to be sure it's not empty
 
-      SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[self.elementId].view.continueViewManipulation(self); // }
+      if (Object.keys(SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap).length != 0) {
+        SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[self.elementId].view.continueViewManipulation(self);
+      }
     } //preparing sample data for the user to choose the columns from
 
   }, {

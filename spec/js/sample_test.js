@@ -9,12 +9,13 @@ describe("Sample Test", function(){
     });
 });
 
-describe("Sample csv test",function(){
+describe("CSV string test",function(){
+    var CsvParserTestObj;
     beforeEach(function(){
-        var testobj=new CsvParserTest("A,B,C","testid","csvstring");
+        CsvParserTestObj=new CsvParserTest("1,2,3","testid","csvstring");
     })
     it('Should return csv testing', function () {
-        
+        // console.log(CsvParserTestObj.csvMatrix);
 
     });
 });
