@@ -45,36 +45,63 @@ function () {
     _defineProperty(this, "elementId", null);
 
     this.elementId = elementId;
-
-    if (functionParameter == "local") {
-      this.csvFile = file;
-      this.parse(functionParameter);
-    } else if (functionParameter == "csvstring" || functionParameter == "remote") {
-      this.csvFile = file;
-      this.parseString(functionParameter);
-    } else if (functionParameter == "googleSheet") {
-      this.csvFile = file;
-      this.startFileProcessing(functionParameter);
-    }
+    this.csvFile = file;
+    this.allFunctionHandler(functionParameter);
   }
 
   _createClass(CsvParser, [{
+    key: "callbackForLocalFile",
+    value: function callbackForLocalFile(csvMatrixLocal) {
+      this.csvMatrix = csvMatrixLocal;
+      this.csvHeaders = this.determineHeaders();
+      this.completeCsvMatrix = this.matrixForCompleteData();
+      var totalData = this.extractSampleData();
+      this.csvSampleData = totalData[0];
+      this.csvValidForYAxis = totalData[1];
+      this.completeCsvMatrixTranspose = this.createTranspose();
+      this.startFileProcessing();
+    }
+  }, {
+    key: "allFunctionHandler",
+    value: function allFunctionHandler(functionParameter) {
+      // if (functionParameter=="local" || functionParameter=="csvstring" || functionParameter=="remote"){
+      if (functionParameter == "local") {
+        this.csvMatrix = this.parse();
+      } else {
+        if (functionParameter == "csvstring" || functionParameter == "remote") {
+          this.csvMatrix = this.parseString();
+          this.csvHeaders = this.determineHeaders();
+          this.completeCsvMatrix = this.matrixForCompleteData();
+        } else {
+          this.csvHeaders = this.headersForGoogleSheet();
+          this.completeCsvMatrix = this.completeMatrixForGoogleSheet();
+        }
+
+        var totalData = this.extractSampleData();
+        this.csvSampleData = totalData[0];
+        this.csvValidForYAxis = totalData[1];
+        this.completeCsvMatrixTranspose = this.createTranspose();
+        this.startFileProcessing();
+      }
+    }
+  }, {
     key: "parse",
     value: function parse(functionParameter) {
       var _this = this;
 
+      var csvMatrixLocal = [];
       var count = 0;
+      var f = this.parseReturn;
       Papa.parse(this.csvFile, {
         download: true,
         dynamicTyping: true,
         comments: true,
         step: function step(row) {
-          _this.csvMatrix[count] = row.data[0];
+          csvMatrixLocal[count] = row.data[0];
           count += 1;
         },
         complete: function complete() {
-          //calling a function to determine headers for columns
-          _this.startFileProcessing(functionParameter);
+          _this.callbackForLocalFile(csvMatrixLocal);
         }
       });
     }
@@ -95,23 +122,11 @@ function () {
         mat[i] = dataHash['data'][0];
       }
 
-      this.csvMatrix = mat;
-      this.startFileProcessing(functionParameter);
+      return mat;
     }
   }, {
     key: "startFileProcessing",
     value: function startFileProcessing(functionParameter) {
-      if (functionParameter == "local" || functionParameter == "csvstring" || functionParameter == "remote") {
-        this.determineHeaders();
-        this.matrixForCompleteData();
-        this.extractSampleData();
-      } else if (functionParameter == "googleSheet") {
-        this.headersForGoogleSheet();
-        this.completeMatrixForGoogleSheet();
-        this.extractSampleData();
-      }
-
-      this.createTranspose();
       var self = this;
 
       _SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[self.elementId].view.continueViewManipulation(self);
@@ -121,9 +136,12 @@ function () {
     key: "extractSampleData",
     value: function extractSampleData() {
       var maxval = 5;
+      var csvSampleDataLocal = [];
+      var csvValidForYAxisLocal = [];
+      var totalDataLocal = [];
 
       for (var i = 0; i < this.csvHeaders.length; i++) {
-        this.csvSampleData[i] = [];
+        csvSampleDataLocal[i] = [];
       }
 
       if (this.completeCsvMatrix.length[0] < 5) {
@@ -143,28 +161,35 @@ function () {
             }
 
             counter += 1;
-            this.csvSampleData[i].push(this.completeCsvMatrix[i][j]);
+            csvSampleDataLocal[i].push(this.completeCsvMatrix[i][j]);
           }
         }
 
         if (bool) {
-          this.csvValidForYAxis.push(this.csvHeaders[i]);
+          csvValidForYAxisLocal.push(this.csvHeaders[i]);
         }
       }
+
+      totalDataLocal = [csvSampleDataLocal, csvValidForYAxisLocal];
+      return totalDataLocal;
     } //makes a 2D matrix with the transpose of the CSV file, each column having the same index as its column heading
 
   }, {
     key: "matrixForCompleteData",
     value: function matrixForCompleteData() {
+      var completeCsvMatrixLocal = [];
+
       for (var i = 0; i < this.csvHeaders.length; i++) {
-        this.completeCsvMatrix[i] = [];
+        completeCsvMatrixLocal[i] = [];
       }
 
       for (var i = this.csvFileStart; i < this.csvMatrix.length; i++) {
         for (var j = 0; j < this.csvHeaders.length; j++) {
-          this.completeCsvMatrix[j].push(this.csvMatrix[i][j]);
+          completeCsvMatrixLocal[j].push(this.csvMatrix[i][j]);
         }
       }
+
+      return completeCsvMatrixLocal;
     }
   }, {
     key: "completeMatrixForGoogleSheet",
@@ -191,21 +216,22 @@ function () {
         this.csvHeaders[i] = this.csvHeaders[i].slice(4, this.csvHeaders[i].length);
       }
 
-      this.completeCsvMatrix = matrixComplete;
+      return matrixComplete;
     }
   }, {
     key: "determineHeaders",
     value: function determineHeaders() {
+      var csvHeadersLocal = [];
       var flag = false;
 
       for (var i = 0; i < this.csvMatrix[0].length; i++) {
         if (i == 0) {
-          this.csvHeaders[i] = this.csvMatrix[0][i];
+          csvHeadersLocal[i] = this.csvMatrix[0][i];
         } else {
           if (_typeof(this.csvMatrix[0][i]) == _typeof(this.csvMatrix[0][i - 1]) && _typeof(this.csvMatrix[0][i]) != 'object') {
-            this.csvHeaders[i] = this.csvMatrix[0][i];
+            csvHeadersLocal[i] = this.csvMatrix[0][i];
           } else if (_typeof(this.csvMatrix[0][i]) == 'object') {
-            this.csvHeaders[i] = "Column" + (i + 1);
+            csvHeadersLocal[i] = "Column" + (i + 1);
           } else {
             flag = true;
             break;
@@ -214,13 +240,15 @@ function () {
       } //if there are no headers present, make dummy header names
 
 
-      if (flag && this.csvHeaders.length != this.csvMatrix[0].length) {
+      if (flag && csvHeadersLocal.length != this.csvMatrix[0].length) {
         this.csvFileStart = 0;
 
         for (var i = 0; i < this.csvMatrix[0].length; i++) {
-          this.csvHeaders[i] = "Column" + (i + 1);
+          csvHeadersLocal[i] = "Column" + (i + 1);
         }
       }
+
+      return csvHeadersLocal;
     }
   }, {
     key: "headersForGoogleSheet",
@@ -239,24 +267,28 @@ function () {
         break;
       }
 
-      this.csvHeaders = headers_sheet;
+      return headers_sheet;
     }
   }, {
     key: "createTranspose",
     value: function createTranspose() {
+      var completeCsvMatrixTransposeLocal = [];
+
       for (var i = 0; i <= this.completeCsvMatrix[0].length; i++) {
-        this.completeCsvMatrixTranspose[i] = [];
+        completeCsvMatrixTransposeLocal[i] = [];
       }
 
       for (var i = 0; i < this.completeCsvMatrix.length; i++) {
-        this.completeCsvMatrixTranspose[0][i] = this.csvHeaders[i];
+        completeCsvMatrixTransposeLocal[0][i] = this.csvHeaders[i];
       }
 
       for (var i = 0; i < this.completeCsvMatrix.length; i++) {
         for (var j = 0; j < this.completeCsvMatrix[0].length; j++) {
-          this.completeCsvMatrixTranspose[j + 1][i] = this.completeCsvMatrix[i][j];
+          completeCsvMatrixTransposeLocal[j + 1][i] = this.completeCsvMatrix[i][j];
         }
       }
+
+      return completeCsvMatrixTransposeLocal;
     }
   }]);
 
