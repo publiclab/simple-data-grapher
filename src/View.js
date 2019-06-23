@@ -33,6 +33,7 @@ class View{
 
     handleFileSelectlocal(event) {
         this.csvFile = event.target.files[0];
+        console.log(event.target.files[0]);
         console.log("iam here in handle");
         console.log(this);
         if 	(this.csvFile['name'].split(".")[1]!="csv"){
@@ -47,9 +48,9 @@ class View{
         }
     }
     handleFileSelectstring(val){
-        console.log("i am at csv string handler");
-        var csv_string = val.split("\n");
-        this.csvFile=csv_string;        
+        console.log("i am at csv string handler",val);
+        // var csv_string = val.split("\n");
+        this.csvFile=val;        
         let self = this;
         document.getElementById(this.uploadButtonId).onclick = (e) => {
             console.log("i am uploading");
@@ -82,8 +83,8 @@ class View{
 
     }
     handleFileSelectremote(remoteVal){
-        var remoteValSplit = remoteVal.split("\n");
-        this.csvFile=remoteValSplit;
+        // var remoteValSplit = remoteVal.split("\n");
+        this.csvFile=remoteVal;
         let self = this;
         document.getElementById(this.uploadButtonId).onclick = (e) => {
             console.log("i am uploading");

@@ -32,12 +32,12 @@ class CsvParser{
         this.startFileProcessing();
     }
     allFunctionHandler(functionParameter){
-        // if (functionParameter=="local" || functionParameter=="csvstring" || functionParameter=="remote"){
             if (functionParameter=="local"){
                 this.csvMatrix=this.parse();
             }
             else{
                 if (functionParameter=="csvstring" || functionParameter=="remote"){
+                    this.csvFile=this.csvFile.split("\n");
                     this.csvMatrix=this.parseString();
                     this.csvHeaders=this.determineHeaders();
                     this.completeCsvMatrix=this.matrixForCompleteData();
@@ -55,7 +55,7 @@ class CsvParser{
 
     }
 
-    parse(functionParameter){
+    parse(){
         var csvMatrixLocal=[];
         var count = 0;
         var f=this.parseReturn;
@@ -74,7 +74,7 @@ class CsvParser{
         });
     }
 
-    parseString(functionParameter){
+    parseString(){
         var mat=[];
         for (var i=0;i<this.csvFile.length;i++){
             if (this.csvFile[i]=="" || this.csvFile[i]==" "){
@@ -89,10 +89,10 @@ class CsvParser{
         return mat;
     }
 
-    startFileProcessing(functionParameter){
+    startFileProcessing(){
         let self = this;
-        //checking the elementIdSimpleDataGraphInstanceMap map's length, to be sure it's not empty
-        if (Object.keys(SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap).length!=0){
+        //checking if elementId is in elementIdSimpleDataGraphInstanceMap
+        if (self.elementId in SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap){
             SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[self.elementId].view.continueViewManipulation(self);
         }
     }
@@ -144,7 +144,7 @@ class CsvParser{
                 completeCsvMatrixLocal[j].push(this.csvMatrix[i][j]);
             }
         }
-        return completeCsvMatrixLocal
+        return completeCsvMatrixLocal;
     }
     completeMatrixForGoogleSheet(){
         var matrixComplete=[];
@@ -172,10 +172,16 @@ class CsvParser{
         var flag = false;
         for (var i=0;i<this.csvMatrix[0].length;i++){
             if (i==0){
-                csvHeadersLocal[i]=this.csvMatrix[0][i];
+                if (typeof(this.csvMatrix[0][i])=="string"){
+                    csvHeadersLocal[i]=this.csvMatrix[0][i];
+                }
+                else{
+                    flag=true;
+                    break;
+                }
             }
             else{
-                if (typeof(this.csvMatrix[0][i])==typeof(this.csvMatrix[0][i-1]) && typeof(this.csvMatrix[0][i])!='object'){
+                if ((typeof(this.csvMatrix[0][i])==typeof(this.csvMatrix[0][i-1]) && typeof(this.csvMatrix[0][i])!='object') || (typeof(this.csvMatrix[0][i])!=typeof(this.csvMatrix[0][i-1]) && csvHeadersLocal[i-1].substring(0,6)=="Column")){
                     csvHeadersLocal[i]=this.csvMatrix[0][i];
                 }
                 else if(typeof(this.csvMatrix[0][i])=='object'){

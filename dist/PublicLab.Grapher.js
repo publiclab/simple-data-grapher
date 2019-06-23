@@ -63,11 +63,11 @@ function () {
   }, {
     key: "allFunctionHandler",
     value: function allFunctionHandler(functionParameter) {
-      // if (functionParameter=="local" || functionParameter=="csvstring" || functionParameter=="remote"){
       if (functionParameter == "local") {
         this.csvMatrix = this.parse();
       } else {
         if (functionParameter == "csvstring" || functionParameter == "remote") {
+          this.csvFile = this.csvFile.split("\n");
           this.csvMatrix = this.parseString();
           this.csvHeaders = this.determineHeaders();
           this.completeCsvMatrix = this.matrixForCompleteData();
@@ -85,7 +85,7 @@ function () {
     }
   }, {
     key: "parse",
-    value: function parse(functionParameter) {
+    value: function parse() {
       var _this = this;
 
       var csvMatrixLocal = [];
@@ -106,7 +106,7 @@ function () {
     }
   }, {
     key: "parseString",
-    value: function parseString(functionParameter) {
+    value: function parseString() {
       var mat = [];
 
       for (var i = 0; i < this.csvFile.length; i++) {
@@ -125,10 +125,10 @@ function () {
     }
   }, {
     key: "startFileProcessing",
-    value: function startFileProcessing(functionParameter) {
+    value: function startFileProcessing() {
       var self = this; //checking the elementIdSimpleDataGraphInstanceMap map's length, to be sure it's not empty
 
-      if (Object.keys(SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap).length != 0) {
+      if (self.elementId in SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap) {
         SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[self.elementId].view.continueViewManipulation(self);
       }
     } //preparing sample data for the user to choose the columns from
@@ -227,9 +227,14 @@ function () {
 
       for (var i = 0; i < this.csvMatrix[0].length; i++) {
         if (i == 0) {
-          csvHeadersLocal[i] = this.csvMatrix[0][i];
+          if (typeof this.csvMatrix[0][i] == "string") {
+            csvHeadersLocal[i] = this.csvMatrix[0][i];
+          } else {
+            flag = true;
+            break;
+          }
         } else {
-          if (_typeof(this.csvMatrix[0][i]) == _typeof(this.csvMatrix[0][i - 1]) && _typeof(this.csvMatrix[0][i]) != 'object') {
+          if (_typeof(this.csvMatrix[0][i]) == _typeof(this.csvMatrix[0][i - 1]) && _typeof(this.csvMatrix[0][i]) != 'object' || _typeof(this.csvMatrix[0][i]) != _typeof(this.csvMatrix[0][i - 1]) && csvHeadersLocal[i - 1].substring(0, 6) == "Column") {
             csvHeadersLocal[i] = this.csvMatrix[0][i];
           } else if (_typeof(this.csvMatrix[0][i]) == 'object') {
             csvHeadersLocal[i] = "Column" + (i + 1);
@@ -363,6 +368,7 @@ function () {
     key: "handleFileSelectlocal",
     value: function handleFileSelectlocal(event) {
       this.csvFile = event.target.files[0];
+      console.log(event.target.files[0]);
       console.log("iam here in handle");
       console.log(this);
 
@@ -380,9 +386,9 @@ function () {
   }, {
     key: "handleFileSelectstring",
     value: function handleFileSelectstring(val) {
-      console.log("i am at csv string handler");
-      var csv_string = val.split("\n");
-      this.csvFile = csv_string;
+      console.log("i am at csv string handler", val); // var csv_string = val.split("\n");
+
+      this.csvFile = val;
       var self = this;
 
       document.getElementById(this.uploadButtonId).onclick = function (e) {
@@ -426,8 +432,8 @@ function () {
   }, {
     key: "handleFileSelectremote",
     value: function handleFileSelectremote(remoteVal) {
-      var remoteValSplit = remoteVal.split("\n");
-      this.csvFile = remoteValSplit;
+      // var remoteValSplit = remoteVal.split("\n");
+      this.csvFile = remoteVal;
       var self = this;
 
       document.getElementById(this.uploadButtonId).onclick = function (e) {

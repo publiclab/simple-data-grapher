@@ -26,6 +26,7 @@ function () {
     key: "handleFileSelectlocal",
     value: function handleFileSelectlocal(event) {
       this.csvFile = event.target.files[0];
+      console.log(event.target.files[0]);
       console.log("iam here in handle");
       console.log(this);
 
@@ -43,9 +44,9 @@ function () {
   }, {
     key: "handleFileSelectstring",
     value: function handleFileSelectstring(val) {
-      console.log("i am at csv string handler");
-      var csv_string = val.split("\n");
-      this.csvFile = csv_string;
+      console.log("i am at csv string handler", val); // var csv_string = val.split("\n");
+
+      this.csvFile = val;
       var self = this;
 
       document.getElementById(this.uploadButtonId).onclick = function (e) {
@@ -89,8 +90,8 @@ function () {
   }, {
     key: "handleFileSelectremote",
     value: function handleFileSelectremote(remoteVal) {
-      var remoteValSplit = remoteVal.split("\n");
-      this.csvFile = remoteValSplit;
+      // var remoteValSplit = remoteVal.split("\n");
+      this.csvFile = remoteVal;
       var self = this;
 
       document.getElementById(this.uploadButtonId).onclick = function (e) {
