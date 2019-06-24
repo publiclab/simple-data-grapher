@@ -25,7 +25,6 @@
   },
   "homepage": "https://github.com/publiclab/simple-data-grapher#readme",
   "dependencies": {
-    "chai": "^4.2.0",
     "chartjs": "^0.3.24",
     "file-saver": "^2.0.2",
     "jquery": "^3.4.1",

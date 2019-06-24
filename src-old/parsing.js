@@ -260,7 +260,7 @@ function tableGenerator(sampleData, headers, name, tableName, typeOfInput, valid
 
 function sampleDataXandY(sampleData, headers, validForYAxis, completeData) {
 	// console.log("at sampleDataXandY");
-	document.getElementById("add_graph").onclick = function (e) {
+	document.getElementById("add_graph").onclick = function () {
 		// console.log("at add_graph");
 		counting++;
 		$('.carousel').carousel(1);
@@ -395,7 +395,7 @@ function handleFileSelectlocal(evt) {
 		alert("Invalid file type");
 	} else {
 		$('.drag_drop_heading').text(csv_file_local['name']);
-		document.getElementById("upload").onclick = function (e) {
+		document.getElementById("upload").onclick = function () {
 			parse(csv_file_local);
 		}
 
@@ -408,7 +408,7 @@ function handleFileSelectremote(val) {
 	if (csv_file_remote.slice(l - 3, l) != "csv") {
 		alert("Invalid URL");
 	} else {
-		document.getElementById("upload").onclick = function (e) {
+		document.getElementById("upload").onclick = function () {
 
 			parse(csv_file_remote);
 		}
@@ -418,7 +418,7 @@ function handleFileSelectremote(val) {
 function handleFileSelectstring(val) {
 	var csv_string = val.split("\n");
 	var mat = [];
-	document.getElementById("upload").onclick = function (e) {
+	document.getElementById("upload").onclick = function () {
 		for (var i = 0; i < csv_string.length; i++) {
 			if (csv_string[i] == "" || csv_string[i] == " ") {
 				continue;
@@ -446,7 +446,7 @@ $(document).ready(function () {
 	});
 
 });
-document.getElementById("update_graph").onclick = function (e) {
+document.getElementById("update_graph").onclick = function () {
 	$('.carousel').carousel(1);
 }
 $('.carousel').carousel({

@@ -1,5 +1,5 @@
 import {CsvParser} from "./CsvParser";
-import {SimpleDataGrapher} from "./SimpleDataGrapher";
+// import {SimpleDataGrapher} from "./SimpleDataGrapher";
 import XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
 import Chart from 'chartjs'
@@ -44,7 +44,7 @@ class View{
         else{
             $('#' + this.dragDropHeadingId).text(this.csvFile['name']);
             let self=this;
-            document.getElementById(this.uploadButtonId).onclick = (e) => {
+            document.getElementById(this.uploadButtonId).onclick = () => {
                 self.csvParser = new CsvParser(self.csvFile, self.elementId, "local");
             }
         }
@@ -65,7 +65,7 @@ class View{
         }
         this.csvFile=mat;
         let self = this;
-        document.getElementById(this.uploadButtonId).onclick = (e) => {
+        document.getElementById(this.uploadButtonId).onclick = () => {
             console.log("i am uploading");
             self.csvParser = new CsvParser(self.csvFile, self.elementId,"csvstring");
         };
@@ -113,7 +113,7 @@ class View{
         }
         this.csvFile=[headers_sheet,matrixComplete];
         let self=this;
-        document.getElementById(this.uploadButtonId).onclick = (e) => {
+        document.getElementById(this.uploadButtonId).onclick = () => {
             self.csvParser = new CsvParser(self.csvFile, self.elementId, "googleSheet");
         };
     }
@@ -273,7 +273,7 @@ class View{
         canvasDiv.appendChild(saveImageButton);
         console.log(this,"this");
         let self=this;
-        document.getElementById(saveImageButton.id).onclick = (e) => {
+        document.getElementById(saveImageButton.id).onclick = () => {
         self.saveAsImageFunction(canvasId);
         }
     }
@@ -417,7 +417,7 @@ class View{
 
     showSampleDataXandY(){
         console.log("at sampleDataXandY",this);
-        document.getElementById(this.addGraphButtonId).onclick = (e) => {
+        document.getElementById(this.addGraphButtonId).onclick = () => {
             console.log("at " + this.addGraphButtonId);
             this.graphCounting++;
             $('.'+this.carousalClass).carousel(1); /// ---------------> after

@@ -1,8 +1,8 @@
-import { assert } from 'chai';
-import { sampleTest } from '../../src/sample';
+const assert = require('chai').assert;
+const sampleTest = require('../../src/sample').sampleTest;
 
-assert.describe("Sample Test", function () {
-    assert.it('Should return Mocha Testing', function () {
+describe("Sample Test", function(){
+    it('Should return Mocha Testing', function () {
         var result = sampleTest();
         assert.equal(result, "Mocha Testing");
     });
