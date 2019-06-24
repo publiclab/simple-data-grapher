@@ -96,7 +96,7 @@ class CsvParser{
         }
     }
 
-    //makes a 2D matrxx with the transpose of the CSV file, each column having the same index as its column heading
+    //makes a 2D matrix with the transpose of the CSV file, each column having the same index as its column heading
     matrixForCompleteData(){
         for (var y=0;y<this.csvHeaders.length;y++){
             this.completeCsvMatrix[y]=[];
