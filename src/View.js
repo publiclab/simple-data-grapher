@@ -2,6 +2,7 @@
 // import {SimpleDataGrapher} from "./SimpleDataGrapher";
 const CsvParser=require('./CsvParser');
 const SimpleDataGrapher = require('./SimpleDataGrapher');
+const ChartjsPlotter = require('./ChartjsPlotter');
 class View{
     'use strict';
     elementId = null;
@@ -14,6 +15,7 @@ class View{
     dragDropHeadingId = null;
     uploadButtonId = null;
     csvParser = null;
+    chartjsPlotter = null;
     graphCounting = 0;
     addGraphButtonId = null;
     tableXId = null;
@@ -92,160 +94,147 @@ class View{
         };
     }
 
-    determineType(type){
-        console.log("at type");
-        console.log(type);
-        if (type=="Basic" || type=="Stepped" || type=="Point"){
-            return 'line';
-        }
-        else if (type=="Horizontal"){
-            return 'horizontalBar';
-        }
-        else if (type=="Vertical"){
+    // determineType(type){
+    //     console.log("at type");
+    //     console.log(type);
+    //     if (type=="Basic" || type=="Stepped" || type=="Point"){
+    //         return 'line';
+    //     }
+    //     else if (type=="Horizontal"){
+    //         return 'horizontalBar';
+    //     }
+    //     else if (type=="Vertical"){
 
-            return 'bar';
-        }
-        else{
-            return type.toLowerCase();
-        }
-    }
+    //         return 'bar';
+    //     }
+    //     else{
+    //         return type.toLowerCase();
+    //     }
+    // }
 
-    colorGenerator(i,tb,type,count){
-        console.log("at color");
-        var colors=['rgba(255, 77, 210, 0.5)','rgba(0, 204, 255, 0.5)','rgba(128, 0, 255, 0.5)','rgba(255, 77, 77, 0.5)','rgba(0, 179, 0, 0.5)','rgba(255, 255, 0, 0.5)','rgba(255, 0, 102, 0.5)','rgba(0, 115, 230, 0.5)'];
-        var bordercolors=['rgb(255, 0, 191)','rgb(0, 184, 230)','rgb(115, 0, 230)','rgb(255, 51, 51)','rgb(0, 153, 0)','rgb(230, 230, 0)','rgb(230, 0, 92)','rgb(0, 102, 204)'];
-        var length=8;
-        if (type=="Pie" || type=="Doughnut"){
-            var colorSet=[];
-            var borderColorSet=[];
-            for (var j=0;j<count;j++){
-                colorSet.push(colors[j%length]);
-                borderColorSet.push(bordercolors[j%length]);
-            }
-            if (tb=="bg"){
-                return colorSet;
-            }
-            else{
-                return borderColorSet;
-            }
-        }
-        else{
-            if (tb=="bg"){
-                return colors[i%length];
-            }
-            else{
-                return bordercolors[i%length];
-            }
-        }
-    }
+    // colorGenerator(i,tb,type,count){
+    //     console.log("at color");
+    //     var colors=['rgba(255, 77, 210, 0.5)','rgba(0, 204, 255, 0.5)','rgba(128, 0, 255, 0.5)','rgba(255, 77, 77, 0.5)','rgba(0, 179, 0, 0.5)','rgba(255, 255, 0, 0.5)','rgba(255, 0, 102, 0.5)','rgba(0, 115, 230, 0.5)'];
+    //     var bordercolors=['rgb(255, 0, 191)','rgb(0, 184, 230)','rgb(115, 0, 230)','rgb(255, 51, 51)','rgb(0, 153, 0)','rgb(230, 230, 0)','rgb(230, 0, 92)','rgb(0, 102, 204)'];
+    //     var length=8;
+    //     if (type=="Pie" || type=="Doughnut"){
+    //         var colorSet=[];
+    //         var borderColorSet=[];
+    //         for (var j=0;j<count;j++){
+    //             colorSet.push(colors[j%length]);
+    //             borderColorSet.push(bordercolors[j%length]);
+    //         }
+    //         if (tb=="bg"){
+    //             return colorSet;
+    //         }
+    //         else{
+    //             return borderColorSet;
+    //         }
+    //     }
+    //     else{
+    //         if (tb=="bg"){
+    //             return colors[i%length];
+    //         }
+    //         else{
+    //             return bordercolors[i%length];
+    //         }
+    //     }
+    // }
 
-    determineData(type,i,hash){
-        console.log("at data");
-        var h = {};
-        if (type=="Basic"){
-            h['fill'] = false;
-        }
-        else if (type=="Stepped"){
-            h['steppedLine']= true;
-            h['fill']= false;
-        }
-        else if (type=="Point"){
-            h['showLine']= false;
-            h['pointRadius']= 10;
-        }
-        h['backgroundColor']=this.colorGenerator(i,"bg",type,hash['y_axis_values'+i].length);
-        h['borderColor']=this.colorGenerator(i,"bo",type,hash['y_axis_values'+i].length);
-        h['borderWidth']=1;
-        h['label']=hash['labels'][1][i];
-        h['data']=hash['y_axis_values'+i];
-        return h;
-    }
+    // determineData(type,i,hash){
+    //     console.log("at data");
+    //     var h = {};
+    //     if (type=="Basic"){
+    //         h['fill'] = false;
+    //     }
+    //     else if (type=="Stepped"){
+    //         h['steppedLine']= true;
+    //         h['fill']= false;
+    //     }
+    //     else if (type=="Point"){
+    //         h['showLine']= false;
+    //         h['pointRadius']= 10;
+    //     }
+    //     h['backgroundColor']=this.colorGenerator(i,"bg",type,hash['y_axis_values'+i].length);
+    //     h['borderColor']=this.colorGenerator(i,"bo",type,hash['y_axis_values'+i].length);
+    //     h['borderWidth']=1;
+    //     h['label']=hash['labels'][1][i];
+    //     h['data']=hash['y_axis_values'+i];
+    //     return h;
+    // }
 
-    determineConfig(hash,length,type){
-        console.log("at config");
-        var config = {};
-        config['type'] = this.determineType(type);
-        var data={};
-        data['labels']= hash['x_axis_labels'];
-        var datasets=[];
-        for (var i=0;i<length;i++){
-            var h = this.determineData(type,i,hash);
-            datasets.push(h);
-        }
-        var options={'responsive':true, 'maintainAspectRatio': true, 'chartArea': {
-                backgroundColor: 'rgb(204, 102, 255)'
-            }};
-        options['scales']= this.scales(hash);
-        config['options']=options;
-        data['datasets']=datasets;
-        config['data']=data;
-        return config;
-    }
+    // determineConfig(hash,length,type){
+    //     console.log("at config");
+    //     var config = {};
+    //     config['type'] = this.determineType(type);
+    //     var data={};
+    //     data['labels']= hash['x_axis_labels'];
+    //     var datasets=[];
+    //     for (var i=0;i<length;i++){
+    //         var h = this.determineData(type,i,hash);
+    //         datasets.push(h);
+    //     }
+    //     var options={'responsive':true, 'maintainAspectRatio': true, 'chartArea': {
+    //             backgroundColor: 'rgb(204, 102, 255)'
+    //         }};
+    //     options['scales']= this.scales(hash);
+    //     config['options']=options;
+    //     data['datasets']=datasets;
+    //     config['data']=data;
+    //     return config;
+    // }
 
-    scales(hash){
-        console.log("at scales");
-        var scales= {
-            xAxes: [{
-                display: true,
-                scaleLabel: {
-                    display: true,
-                    labelString: hash['labels'][0]
-                }
-            }],
-            yAxes: [{
-                display: true,
-                scaleLabel: {
-                    display: true,
-                    labelString: 'Value'
-                }
-            }]
-        }
-        return scales;
-    }
-    saveAsImageFunction(xx){
-        console.log("entered image");
-        var x=new Date();
-        var timestamp=x.getTime();
-        var temp=xx;
-        temp="#"+temp;
-        console.log(temp,"omg");
-        // var temp2=temp.slice(0,temp.length-5);
-        // console.log(temp2);
-        console.log(document.getElementById(xx));
-        var tt=document.getElementById(xx);
-        $(temp).get(0).toBlob(function(blob) {
-            saveAs(blob, "chart"+timestamp);
-        });
+    // scales(hash){
+    //     console.log("at scales");
+    //     var scales= {
+    //         xAxes: [{
+    //             display: true,
+    //             scaleLabel: {
+    //                 display: true,
+    //                 labelString: hash['labels'][0]
+    //             }
+    //         }],
+    //         yAxes: [{
+    //             display: true,
+    //             scaleLabel: {
+    //                 display: true,
+    //                 labelString: 'Value'
+    //             }
+    //         }]
+    //     }
+    //     return scales;
+    // }
+    // saveAsImageFunction(xx){
+    //     console.log("entered image");
+    //     var x=new Date();
+    //     var timestamp=x.getTime();
+    //     var temp=xx;
+    //     temp="#"+temp;
+    //     console.log(temp,"omg");
+    //     // var temp2=temp.slice(0,temp.length-5);
+    //     // console.log(temp2);
+    //     console.log(document.getElementById(xx));
+    //     var tt=document.getElementById(xx);
+    //     $(temp).get(0).toBlob(function(blob) {
+    //         saveAs(blob, "chart"+timestamp);
+    //     });
 
-    }
-    createSaveAsImageButton(canvasDiv,canvasId){
-        var saveImageButton=document.createElement("BUTTON");
-        saveImageButton.classList.add("btn");
-        saveImageButton.classList.add("btn-primary");
-        saveImageButton.innerHTML="Save as Image";
-        saveImageButton.id=canvasId+"image";
-        canvasDiv.appendChild(saveImageButton);
-        console.log(this,"this");
-        let self=this;
-        document.getElementById(saveImageButton.id).onclick = (e) => {
-        self.saveAsImageFunction(canvasId);
-        }
-    }
+    // }
+    // createSaveAsImageButton(canvasDiv,canvasId){
+    //     var saveImageButton=document.createElement("BUTTON");
+    //     saveImageButton.classList.add("btn");
+    //     saveImageButton.classList.add("btn-primary");
+    //     saveImageButton.innerHTML="Save as Image";
+    //     saveImageButton.id=canvasId+"image";
+    //     canvasDiv.appendChild(saveImageButton);
+    //     console.log(this,"this");
+    //     let self=this;
+    //     document.getElementById(saveImageButton.id).onclick = (e) => {
+    //     self.saveAsImageFunction(canvasId);
+    //     }
+    // }
     plotGraph(hash,length,type,flag){
-        if (flag){
-            console.log("at plotGraph");
-            document.getElementById(this.canvasContinerId).innerHTML="";
-        }
-        var div = document.createElement('div');
-        div.classList.add(this.elementId + '_chart_container_'+this.graphCounting);
-        var canv = document.createElement('canvas');
-        canv.id= this.elementId + '_canvas_'+ this.graphCounting;
-        div.appendChild(canv);
-        document.getElementById(this.canvasContinerId).appendChild(div);
-        var ctx = canv.getContext('2d');
-        var configuration = this.determineConfig(hash,length,type);
-        new Chart(ctx, configuration);
-        this.createSaveAsImageButton(div,canv.id);
+        this.chartjsPlotter=new ChartjsPlotter(hash,length,type,flag,this.canvasContinerId,this.elementId,this.graphCounting);
         $('.'+this.carousalClass).carousel(2);
     }
     createSheet(){

@@ -19,6 +19,8 @@ var CsvParser = require('./CsvParser');
 
 var SimpleDataGrapher = require('./SimpleDataGrapher');
 
+var ChartjsPlotter = require('./ChartjsPlotter');
+
 var View =
 /*#__PURE__*/
 function () {
@@ -254,21 +256,22 @@ function () {
   }, {
     key: "plotGraph",
     value: function plotGraph(hash, length, type, flag) {
-      if (flag) {
-        console.log("at plotGraph");
-        document.getElementById(this.canvasContinerId).innerHTML = "";
-      }
-
-      var div = document.createElement('div');
-      div.classList.add(this.elementId + '_chart_container_' + this.graphCounting);
-      var canv = document.createElement('canvas');
-      canv.id = this.elementId + '_canvas_' + this.graphCounting;
-      div.appendChild(canv);
-      document.getElementById(this.canvasContinerId).appendChild(div);
-      var ctx = canv.getContext('2d');
-      var configuration = this.determineConfig(hash, length, type);
-      new Chart(ctx, configuration);
-      this.createSaveAsImageButton(div, canv.id);
+      // if (flag){
+      //     console.log("at plotGraph");
+      //     document.getElementById(this.canvasContinerId).innerHTML="";
+      // }
+      // var div = document.createElement('div');
+      // div.classList.add(this.elementId + '_chart_container_'+this.graphCounting);
+      // var canv = document.createElement('canvas');
+      // canv.id= this.elementId + '_canvas_'+ this.graphCounting;
+      // div.appendChild(canv);
+      // document.getElementById(this.canvasContinerId).appendChild(div);
+      // var ctx = canv.getContext('2d');
+      // var configuration = this.determineConfig(hash,length,type);
+      // new Chart(ctx, configuration);
+      // this.createSaveAsImageButton(div,canv.id);
+      this.chartjsPlotter = new ChartjsPlotter(hash, length, type, flag, this.canvasContinerId, this.elementId, this.graphCounting);
+      console.log("new class for chartjs");
       $('.' + this.carousalClass).carousel(2);
     }
   }, {
@@ -478,6 +481,8 @@ function () {
     _defineProperty(this, "uploadButtonId", null);
 
     _defineProperty(this, "csvParser", null);
+
+    _defineProperty(this, "chartjsPlotter", null);
 
     _defineProperty(this, "graphCounting", 0);
 
