@@ -5,7 +5,7 @@
   "main": "src/PublicLab.Grapher.js",
   "scripts": {
     "build": "watch 'babel src -d dist/transpiled_code & browserify dist/transpiled_code/SimpleDataGrapher.js -o dist/PublicLab.Grapher.js' src",
-    "test": "mocha spec/js/",
+    "test": "./node_modules/mocha/bin/mocha --require @babel/register --require @babel/polyfill --require jsdom-global/register spec/js/",
     "lint": "eslint ./src ./dist ./spec --fix"
   },
   "repository": {
@@ -35,10 +35,13 @@
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.5",
     "@babel/plugin-proposal-class-properties": "^7.4.4",
+    "@babel/polyfill": "^7.4.4",
     "@babel/preset-env": "^7.4.5",
-    "babel-core": "^6.26.3",
+    "@babel/register": "^7.4.4",
     "babelify": "^10.0.0",
     "browserify": "^16.2.3",
+    "jsdom": "15.1.1",
+    "jsdom-global": "3.0.2",
     "eslint": "^5.16.0",
     "watch": "^1.0.2"
   }
