@@ -21,6 +21,7 @@ class CsvParser{
         this.allFunctionHandler(functionParameter);
 
     }
+    //since parsing a local file works asynchronously, a callback function is required to call the remaining functions after the parsing is complete
     callbackForLocalFile(csvMatrixLocal){
         this.csvMatrix=csvMatrixLocal;
         this.csvHeaders=this.determineHeaders();
@@ -31,6 +32,7 @@ class CsvParser{
         this.completeCsvMatrixTranspose=this.createTranspose();
         this.startFileProcessing();
     }
+    //a function handler that calls one function after the other after assigning the correct values to different class variables.
     allFunctionHandler(functionParameter){
             if (functionParameter=="local"){
                 this.csvMatrix=this.parse();
@@ -54,7 +56,7 @@ class CsvParser{
             }
 
     }
-
+     //parsing a local file, works asynchronously
     parse(){
         var csvMatrixLocal=[];
         var count = 0;
@@ -73,7 +75,7 @@ class CsvParser{
             }
         });
     }
-
+    // parsing string: for remote and csvString import options. Dat is parsed line by line but NOT asynchronously.
     parseString(){
         var mat=[];
         for (var i=0;i<this.csvFile.length;i++){
@@ -88,10 +90,9 @@ class CsvParser{
         }
         return mat;
     }
-
+    // checks for the presence of the corresponding View object in elementIdSimpleDataGraphInstanceMap, if present, the CsvParser object is assigned to the View object and the flow resumes from View.js file
     startFileProcessing(){
         let self = this;
-        //checking if elementId is in elementIdSimpleDataGraphInstanceMap
         if (self.elementId in SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap){
             SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[self.elementId].view.continueViewManipulation(self);
         }
@@ -146,6 +147,7 @@ class CsvParser{
         }
         return completeCsvMatrixLocal;
     }
+    //Google Sheet's data is in a JSON, traversal through the JSON and string manipulation are used to extract the data
     completeMatrixForGoogleSheet(){
         var matrixComplete=[];
         for (var i=0;i<this.csvHeaders.length;i++){
@@ -166,7 +168,7 @@ class CsvParser{
         }
        return matrixComplete;
     }
-
+    //checks if the first row has most of the potential header names, if not, assign dummy headers to the file.
     determineHeaders(){
         var csvHeadersLocal=[];
         var flag = false;
@@ -184,6 +186,7 @@ class CsvParser{
                 if ((typeof(this.csvMatrix[0][i])==typeof(this.csvMatrix[0][i-1]) && typeof(this.csvMatrix[0][i])!='object') || (typeof(this.csvMatrix[0][i])!=typeof(this.csvMatrix[0][i-1]) && csvHeadersLocal[i-1].substring(0,6)=="Column")){
                     csvHeadersLocal[i]=this.csvMatrix[0][i];
                 }
+                //in case of an unnamed column
                 else if(typeof(this.csvMatrix[0][i])=='object'){
 
                     csvHeadersLocal[i]="Column"+(i+1);
@@ -203,6 +206,7 @@ class CsvParser{
         }
         return csvHeadersLocal;
     }
+    //Google Sheet's data is in a JSON, extracting column names by string slicing
     headersForGoogleSheet(){
         var headers_sheet=[];
         for (var key in this.csvFile){
@@ -216,6 +220,7 @@ class CsvParser{
         }
         return headers_sheet;
     }
+    // creating the transpose of the entire data ie complete data + headers, for createSpreadsheet in View.js
     createTranspose(){
         var completeCsvMatrixTransposeLocal=[];
         for (var i=0;i<=this.completeCsvMatrix[0].length;i++){

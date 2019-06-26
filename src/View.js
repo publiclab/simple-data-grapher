@@ -34,7 +34,7 @@ class View{
     xyToggleName = null;
     tableXParentId = null;
     tableYParentId = null;
-
+    //extracts the uploaded file from input field and creates an object of CsvParser class with the file as one of the parameters
     handleFileSelectlocal(event) {
         this.csvFile = event.target.files[0];
         console.log(event.target.files[0]);
@@ -50,6 +50,7 @@ class View{
             }
         }
     }
+    //receives the string value and creates an object of CsvParser class with the string as one of the parameters
     handleFileSelectstring(val){
         console.log("i am at csv string handler",val);
         // var csv_string = val.split("\n");
@@ -61,6 +62,7 @@ class View{
         };
 
     }
+    //receives the JSON file value and creates an object of CsvParser class with the file as one of the parameters
     handleFileSelectGoogleSheet(googleSheetData){
         this.csvFile=googleSheetData;
         let self=this;
@@ -68,6 +70,7 @@ class View{
             self.csvParser = new CsvParser(self.csvFile, self.elementId, "googleSheet");
         };
     }
+    // get's the JSON form of the Google Sheet through Google Sheet's URL and passes it to the handler
     getValueGoogleSheet(googleSheetLink){
         let self=this;
         $.getJSON(googleSheetLink, function(data) {
@@ -75,7 +78,7 @@ class View{
         });
 
     }
-    
+    // uses a CORS proxy to fetch the value of a remote files and passes the received value to a callback function
     sendRemoteFileToHandler(val){
         const proxyurl = "https://cors-anywhere.herokuapp.com/"; 
         const url = val;
@@ -85,8 +88,8 @@ class View{
         .catch((e) => console.log(e)) ;
 
     }
+    // callback function which receives the remote file's value and creates an object of CsvParser class with the file as one of the parameters
     handleFileSelectremote(remoteVal){
-        // var remoteValSplit = remoteVal.split("\n");
         this.csvFile=remoteVal;
         let self = this;
         document.getElementById(this.uploadButtonId).onclick = (e) => {
@@ -94,6 +97,7 @@ class View{
             self.csvParser = new CsvParser(self.csvFile, self.elementId,"remote");
         };
     }
+    // adapter function which switches between Plotly.js and Chart.js as a graph plotting library and creates theri respective objects which take over the graph plotting
     plotGraph(hash,length,type,flag,library){
         if (library=="chartjs"){
             this.chartjsPlotter=new ChartjsPlotter(hash,length,type,flag,this.canvasContinerId,this.elementId,this.graphCounting);}
@@ -102,6 +106,7 @@ class View{
         }
         $('.'+this.carousalClass).carousel(2);
     }
+    // creates a downloadable spreadsheet for the imported data using SheetJS
     createSheet(){
         var wb = XLSX.utils.book_new();
         wb.Props = {
@@ -125,7 +130,8 @@ class View{
         saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), 'newSpreadsheet'+this.elementId+'.xlsx');
 
     }
-
+    // creates a hash of the entire data in an accesible format for the charting libraries {labels: [legendx, [legendy0, legendy1 ... lengendyn]], x_axis_values: [...], y_axis_0: [...], y_axis_1: [...], ... y_axis_n: [...]} n: selected number of columns
+    // flag is just for seeing if we're plotting the graph for the first time, if yes, we will have to clear the canvas.
     afterSampleData(flag){
         console.log("at checkbox");
         document.getElementById(this.plotGraphId).onclick = (e) => {
@@ -152,7 +158,7 @@ class View{
 
         };
     }
-
+    // generates a graph menu with different graph options
     graphMenu(){
         $('.' + this.carousalClass).carousel(1); 
         console.log("at menu");
@@ -180,9 +186,7 @@ class View{
             document.getElementById(this.graphMenuId).appendChild(tr);
         }
     }
-
-
-
+    // generates the sample table data with checkboxes for y-axis and radio buttons for x-axis
     tableGenerator(name,tableId,typeOfInput,validValues,flag,tableType,badgeType){
         console.log("i am in tablegenerator");
         console.log("at tableGenerator");
@@ -221,7 +225,7 @@ class View{
         }
         this.afterSampleData(flag);
     }
-
+    // renders the sample tables
     showSampleDataXandY(){
         console.log("at sampleDataXandY",this);
         document.getElementById(this.addGraphButtonId).onclick = (e) => {
@@ -237,7 +241,7 @@ class View{
         this.tableGenerator(this.tableYInputName, this.tableYId, 'checkbox', this.csvParser.csvValidForYAxis, true, 'table-warning','badge-warning');
         this.graphMenu();
     }
-
+    // view manipulation resumes after the CsvParser object is created and returned
     continueViewManipulation(x){
         console.log(" i am back in view manipulation",this);
         this.csvParser=x;
@@ -296,7 +300,7 @@ class View{
             $('#' + this.tableYParentId).toggle( ixx===1);
         });
     }
-
+    //listen for different inputs for import by the user
     addListeners(){
         console.log("as");
         console.log("#"+this.fileUploadId);
@@ -325,7 +329,7 @@ class View{
     }
 
 
-
+    //renders the entire HTML view
     drawHTMLView(){
         this.element.innerHTML = '<div class="body_container"><div class="main_heading_container"><h2 class="main_heading"> Simple Data Grapher</h2><p class="sub_heading">Plot and Export Graphs with CSV data</p></div><div class="heading_container"><ul class="headings"><li class="item-1">Upload CSV Data</li><li class="item-2">Select Columns & Graph Type</li><li class="item-3">Plotted Graph & Export Options</li></ul></div><div id=' + this.carousalId + ' class="carousel ' + this.carousalClass + ' slide" data-ride="carousel"><div class="indicators"><ol class="carousel-indicators"> <li data-target="#' + this.carousalId + '" data-slide-to="0" class="active" id="up"></li> <li data-target="#' + this.carousalId + '" data-slide-to="1"></li> <li data-target="#' + this.carousalId + '" data-slide-to="2"></li></ol></div><div class="carousel-inner"><div class="carousel-item active"><div class="main_container"><div class="container_drag_drop"><span class="btn btn-outline-primary btn-file input_box"><p class="drag_drop_heading" id=' + this.dragDropHeadingId + '> <u> Choose a csv file </u> or drag & drop it here </p><input type="file" class="csv_file" id=' + this.elementId + "_csv_file" + ' accept=".csv"></span></div><h6 class="or"><span>OR</span></h6><div class="container_remote_link"><input type="text" class="remote_file text_field" placeholder="url of remote file" id=' + this.elementId + "_remote_file" + ' ></div><h6 class="or"><span>OR</span></h6><div class="container_csv_string"><textarea class="csv_string text_field" id=' + this.elementId + "_csv_string" + ' placeholder="Paste a CSV string here" ></textarea></div><h6 class="or"><span>OR</span></h6><div class="container_google_sheet"><input type="text" class="google_sheet text_field" id=' + this.elementId + "_google_sheet" + ' placeholder="Link of published Google Sheet" ></div><div class="upload_button"><button type="button" class="btn btn-primary" id=' + this.uploadButtonId + ' >Upload CSV</button></div></div></div><div class="carousel-item tables"><div class="button_container"><div><input type="checkbox" name=' + this.xyToggleName + ' checked data-toggle="toggle" class="xytoggle" data-width="150" data-onstyle="success" data-offstyle="warning" data-height="40"></div><div class="plot_button"><button type="button" class="btn btn-primary" id=' + this.plotGraphId + ' >Plot Graph</button></div></div><div class="table_container"><div id=' + this.tableXParentId + ' ><table id=' + this.tableXId + ' class="table"></table></div><div id=' + this.tableYParentId + ' class="hidden"><table id=' + this.tableYId + ' class="table"></table></div><div><table id=' + this.graphMenuId + ' class="table table-dark"></table></div></div></div><div class="carousel-item graph"><div class="feature_buttons"><button type="button" class="btn btn-primary" id=' + this.addGraphButtonId + '> Add Graph</button><button type="button" class="btn btn-success" id=' + this.createSpreadsheetButtonId + '> Create Spreadsheet<i class="fa fa-plus" aria-hidden="true"></i></button></div><div id=' + this.canvasContinerId + ' ></div></div></div></div></div>';
     
