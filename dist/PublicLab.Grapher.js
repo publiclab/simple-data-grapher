@@ -1,12 +1,219 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.CsvParser = void 0;
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _SimpleDataGrapher = require("./SimpleDataGrapher");
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var ChartjsPlotter =
+/*#__PURE__*/
+function () {
+  _createClass(ChartjsPlotter, [{
+    key: "determineType",
+    value: function determineType() {
+      console.log("at type");
+
+      if (this.graphType == "Basic" || this.graphType == "Stepped" || this.graphType == "Point") {
+        return 'line';
+      } else if (this.graphType == "Horizontal") {
+        return 'horizontalBar';
+      } else if (this.graphType == "Vertical") {
+        return 'bar';
+      } else {
+        return this.graphType.toLowerCase();
+      }
+    }
+  }, {
+    key: "colorGenerator",
+    value: function colorGenerator(i, tb, count) {
+      console.log("at color");
+      var colors = ['rgba(255, 77, 210, 0.5)', 'rgba(0, 204, 255, 0.5)', 'rgba(128, 0, 255, 0.5)', 'rgba(255, 77, 77, 0.5)', 'rgba(0, 179, 0, 0.5)', 'rgba(255, 255, 0, 0.5)', 'rgba(255, 0, 102, 0.5)', 'rgba(0, 115, 230, 0.5)'];
+      var bordercolors = ['rgb(255, 0, 191)', 'rgb(0, 184, 230)', 'rgb(115, 0, 230)', 'rgb(255, 51, 51)', 'rgb(0, 153, 0)', 'rgb(230, 230, 0)', 'rgb(230, 0, 92)', 'rgb(0, 102, 204)'];
+      var length = 8;
+
+      if (this.graphType == "Pie" || this.graphType == "Doughnut") {
+        var colorSet = [];
+        var borderColorSet = [];
+
+        for (var j = 0; j < count; j++) {
+          colorSet.push(colors[j % length]);
+          borderColorSet.push(bordercolors[j % length]);
+        }
+
+        if (tb == "bg") {
+          return colorSet;
+        } else {
+          return borderColorSet;
+        }
+      } else {
+        if (tb == "bg") {
+          return colors[i % length];
+        } else {
+          return bordercolors[i % length];
+        }
+      }
+    }
+  }, {
+    key: "determineData",
+    value: function determineData(i) {
+      console.log("at data");
+      var h = {};
+
+      if (this.graphType == "Basic") {
+        h['fill'] = false;
+      } else if (this.graphType == "Stepped") {
+        h['steppedLine'] = true;
+        h['fill'] = false;
+      } else if (this.graphType == "Point") {
+        h['showLine'] = false;
+        h['pointRadius'] = 10;
+      }
+
+      h['backgroundColor'] = this.colorGenerator(i, "bg", this.dataHash['y_axis_values' + i].length);
+      h['borderColor'] = this.colorGenerator(i, "bo", this.dataHash['y_axis_values' + i].length);
+      h['borderWidth'] = 1;
+      h['label'] = this.dataHash['labels'][1][i];
+      h['data'] = this.dataHash['y_axis_values' + i];
+      return h;
+    }
+  }, {
+    key: "determineConfig",
+    value: function determineConfig() {
+      console.log("at config");
+      var config = {};
+      config['type'] = this.determineType();
+      var data = {};
+      data['labels'] = this.dataHash['x_axis_labels'];
+      var datasets = [];
+
+      for (var i = 0; i < this.length; i++) {
+        var h = this.determineData(i);
+        datasets.push(h);
+      }
+
+      var options = {
+        'responsive': true,
+        'maintainAspectRatio': true,
+        'chartArea': {
+          backgroundColor: 'rgb(204, 102, 255)'
+        }
+      };
+      options['scales'] = this.scales();
+      config['options'] = options;
+      data['datasets'] = datasets;
+      config['data'] = data;
+      return config;
+    }
+  }, {
+    key: "scales",
+    value: function scales() {
+      console.log("at scales");
+      var scales = {
+        xAxes: [{
+          display: true,
+          scaleLabel: {
+            display: true,
+            labelString: this.dataHash['labels'][0]
+          }
+        }],
+        yAxes: [{
+          display: true,
+          scaleLabel: {
+            display: true,
+            labelString: 'Value'
+          }
+        }]
+      };
+      return scales;
+    }
+  }, {
+    key: "saveAsImageFunction",
+    value: function saveAsImageFunction(canvId) {
+      console.log("entered image");
+      var newDate = new Date();
+      var timestamp = newDate.getTime();
+      var temp = canvId;
+      temp = "#" + temp;
+      $(temp).get(0).toBlob(function (blob) {
+        saveAs(blob, "chart" + timestamp);
+      });
+    }
+  }, {
+    key: "createSaveAsImageButton",
+    value: function createSaveAsImageButton(canvasDiv, canvasId) {
+      var saveImageButton = document.createElement("BUTTON");
+      saveImageButton.classList.add("btn");
+      saveImageButton.classList.add("btn-primary");
+      saveImageButton.innerHTML = "Save as Image";
+      saveImageButton.id = canvasId + "image";
+      canvasDiv.appendChild(saveImageButton);
+      console.log(this, "this");
+      var self = this;
+
+      document.getElementById(saveImageButton.id).onclick = function (e) {
+        self.saveAsImageFunction(canvasId);
+      };
+    }
+  }, {
+    key: "plotGraph",
+    value: function plotGraph() {
+      if (this.flag) {
+        console.log("at plotGraph");
+        document.getElementById(this.canvasContainerId).innerHTML = "";
+      }
+
+      var div = document.createElement('div');
+      div.classList.add(this.elementId + '_chart_container_' + this.graphCounting);
+      var canv = document.createElement('canvas');
+      canv.id = this.elementId + '_canvas_' + this.graphCounting;
+      div.appendChild(canv);
+      document.getElementById(this.canvasContainerId).appendChild(div);
+      var ctx = canv.getContext('2d');
+      var configuration = this.determineConfig();
+      new Chart(ctx, configuration);
+      this.createSaveAsImageButton(div, canv.id); // $('.'+this.carousalClass).carousel(2);
+    }
+  }]);
+
+  function ChartjsPlotter(hash, length, type, flag, canvasContainerId, elementId, graphCounting) {
+    _classCallCheck(this, ChartjsPlotter);
+
+    _defineProperty(this, 'use strict', void 0);
+
+    _defineProperty(this, "dataHash", {});
+
+    _defineProperty(this, "elementId", null);
+
+    _defineProperty(this, "graphCounting", 0);
+
+    _defineProperty(this, "canvasContainerId", null);
+
+    _defineProperty(this, "graphType", null);
+
+    _defineProperty(this, "length", 0);
+
+    _defineProperty(this, "flag", false);
+
+    this.dataHash = hash;
+    this.length = length;
+    this.graphType = type;
+    this.flag = flag;
+    this.canvasContainerId = canvasContainerId;
+    this.elementId = elementId;
+    this.graphCounting = graphCounting;
+    this.plotGraph();
+  }
+
+  return ChartjsPlotter;
+}();
+
+module.exports = ChartjsPlotter;
+},{}],2:[function(require,module,exports){
+"use strict";
 
 var _papaparse = _interopRequireDefault(require("papaparse"));
 
@@ -21,6 +228,11 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+// import {SimpleDataGrapher} from "./SimpleDataGrapher";
+var SimpleDataGrapher = require('./SimpleDataGrapher');
+
+var Papa = require("papaparse");
 
 var CsvParser =
 /*#__PURE__*/
@@ -50,28 +262,54 @@ function () {
     _defineProperty(this, "elementId", null);
 
     this.elementId = elementId;
+    this.csvFile = file;
+    this.allFunctionHandler(functionParameter);
+  } //since parsing a local file works asynchronously, a callback function is required to call the remaining functions after the parsing is complete
 
-    if (functionParameter == "local") {
-      this.csvFile = file;
-      this.parse(functionParameter);
-    } else if (functionParameter == "csvstring" || functionParameter == "remote") {
-      this.csvMatrix = file;
-      console.log("csv matrix", this.csvMatrix);
-      this.startFileProcessing(functionParameter);
-    } else if (functionParameter == "googleSheet") {
-      console.log(file, "file", file[0], file[1]);
-      this.completeCsvMatrix = file[1];
-      this.csvHeaders = file[0];
-      console.log(this.completeCsvMatrix, this.csvHeaders, "did it");
-      this.startFileProcessing(functionParameter);
-    }
-  }
 
   _createClass(CsvParser, [{
+    key: "callbackForLocalFile",
+    value: function callbackForLocalFile(csvMatrixLocal) {
+      this.csvMatrix = csvMatrixLocal;
+      this.csvHeaders = this.determineHeaders();
+      this.completeCsvMatrix = this.matrixForCompleteData();
+      var totalData = this.extractSampleData();
+      this.csvSampleData = totalData[0];
+      this.csvValidForYAxis = totalData[1];
+      this.completeCsvMatrixTranspose = this.createTranspose();
+      this.startFileProcessing();
+    } //a function handler that calls one function after the other after assigning the correct values to different class variables.
+
+  }, {
+    key: "allFunctionHandler",
+    value: function allFunctionHandler(functionParameter) {
+      if (functionParameter == "local") {
+        this.csvMatrix = this.parse();
+      } else {
+        if (functionParameter == "csvstring" || functionParameter == "remote") {
+          this.csvFile = this.csvFile.split("\n");
+          this.csvMatrix = this.parseString();
+          this.csvHeaders = this.determineHeaders();
+          this.completeCsvMatrix = this.matrixForCompleteData();
+        } else {
+          this.csvHeaders = this.headersForGoogleSheet();
+          this.completeCsvMatrix = this.completeMatrixForGoogleSheet();
+        }
+
+        var totalData = this.extractSampleData();
+        this.csvSampleData = totalData[0];
+        this.csvValidForYAxis = totalData[1];
+        this.completeCsvMatrixTranspose = this.createTranspose();
+        this.startFileProcessing();
+      }
+    } //parsing a local file, works asynchronously
+
+  }, {
     key: "parse",
-    value: function parse(functionParameter) {
+    value: function parse() {
       var _this = this;
 
+      var csvMatrixLocal = [];
       var count = 0;
 
       _papaparse["default"].parse(this.csvFile, {
@@ -79,39 +317,55 @@ function () {
         dynamicTyping: true,
         comments: true,
         step: function step(row) {
-          _this.csvMatrix[count] = row.data[0];
+          csvMatrixLocal[count] = row.data[0];
           count += 1;
         },
         complete: function complete() {
-          //calling a function to determine headers for columns
-          _this.startFileProcessing(functionParameter);
+          _this.callbackForLocalFile(csvMatrixLocal);
         }
       });
-    }
+    } // parsing string: for remote and csvString import options. Dat is parsed line by line but NOT asynchronously.
+
   }, {
-    key: "startFileProcessing",
-    value: function startFileProcessing(functionParameter) {
-      if (functionParameter == "local" || functionParameter == "csvstring" || functionParameter == "remote") {
-        this.determineHeaders();
-        this.matrixForCompleteData();
-        this.extractSampleData();
-      } else if (functionParameter == "googleSheet") {
-        this.extractSampleData();
+    key: "parseString",
+    value: function parseString() {
+      var mat = [];
+
+      for (var i = 0; i < this.csvFile.length; i++) {
+        if (this.csvFile[i] == "" || this.csvFile[i] == " ") {
+          continue;
+        }
+
+        var dataHash = Papa.parse(this.csvFile[i], {
+          dynamicTyping: true,
+          comments: true
+        });
+        mat[i] = dataHash['data'][0];
       }
 
-      this.createTranspose();
+      return mat;
+    } // checks for the presence of the corresponding View object in elementIdSimpleDataGraphInstanceMap, if present, the CsvParser object is assigned to the View object and the flow resumes from View.js file
+
+  }, {
+    key: "startFileProcessing",
+    value: function startFileProcessing() {
       var self = this;
 
-      _SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[self.elementId].view.continueViewManipulation(self);
+      if (self.elementId in SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap) {
+        SimpleDataGrapher.SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[self.elementId].view.continueViewManipulation(self);
+      }
     } //preparing sample data for the user to choose the columns from
 
   }, {
     key: "extractSampleData",
     value: function extractSampleData() {
       var maxval = 5;
+      var csvSampleDataLocal = [];
+      var csvValidForYAxisLocal = [];
+      var totalDataLocal = [];
 
       for (var i = 0; i < this.csvHeaders.length; i++) {
-        this.csvSampleData[i] = [];
+        csvSampleDataLocal[i] = [];
       }
 
       if (this.completeCsvMatrix.length[0] < 5) {
@@ -139,55 +393,96 @@ function () {
           this.csvValidForYAxis.push(this.csvHeaders[x]);
         }
       }
-    } //makes a 2D matrxx with the transpose of the CSV file, each column having the same index as its column heading
+    } //makes a 2D matrix with the transpose of the CSV file, each column having the same index as its column heading
 
   }, {
     key: "matrixForCompleteData",
     value: function matrixForCompleteData() {
-      for (var y = 0; y < this.csvHeaders.length; y++) {
-        this.completeCsvMatrix[y] = [];
       }
+  }, {
+          var valueCell = this.csvFile[key][this.csvHeaders[i]]["$t"];
 
-      for (var v = this.csvFileStart; v < this.csvMatrix.length; v++) {
-        for (var j = 0; j < this.csvHeaders.length; j++) {
-          this.completeCsvMatrix[j].push(this.csvMatrix[v][j]);
+          if (!isNaN(valueCell)) {
+            matrixComplete[i].push(+valueCell);
+          } else {
+            matrixComplete[i].push(valueCell);
+          }
         }
       }
-    }
+
+      for (var i = 0; i < this.csvHeaders.length; i++) {
+        this.csvHeaders[i] = this.csvHeaders[i].slice(4, this.csvHeaders[i].length);
+      }
+
+      return matrixComplete;
+    } //checks if the first row has most of the potential header names, if not, assign dummy headers to the file.
+
   }, {
     key: "determineHeaders",
     value: function determineHeaders() {
+      var csvHeadersLocal = [];
       var flag = false;
 
       for (var i = 0; i < this.csvMatrix[0].length; i++) {
         if (i == 0) {
-          this.csvHeaders[i] = this.csvMatrix[0][i];
-        } else {
-          if (_typeof(this.csvMatrix[0][i]) == _typeof(this.csvMatrix[0][i - 1]) && _typeof(this.csvMatrix[0][i]) != 'object') {
-            this.csvHeaders[i] = this.csvMatrix[0][i];
-          } else if (_typeof(this.csvMatrix[0][i]) == 'object') {
-            this.csvHeaders[i] = "Column" + (i + 1);
+          if (typeof this.csvMatrix[0][i] == "string") {
+            csvHeadersLocal[i] = this.csvMatrix[0][i];
           } else {
             flag = true;
             break;
           }
+        } else {
+          if (_typeof(this.csvMatrix[0][i]) == _typeof(this.csvMatrix[0][i - 1]) && _typeof(this.csvMatrix[0][i]) != 'object' || _typeof(this.csvMatrix[0][i]) != _typeof(this.csvMatrix[0][i - 1]) && csvHeadersLocal[i - 1].substring(0, 6) == "Column") {
+            csvHeadersLocal[i] = this.csvMatrix[0][i];
+          } //in case of an unnamed column
+          else if (_typeof(this.csvMatrix[0][i]) == 'object') {
+              csvHeadersLocal[i] = "Column" + (i + 1);
+            } else {
+              flag = true;
+              break;
+            }
         }
       } //if there are no headers present, make dummy header names
 
 
-      if (flag && this.csvHeaders.length != this.csvMatrix[0].length) {
+      if (flag && csvHeadersLocal.length != this.csvMatrix[0].length) {
         this.csvFileStart = 0;
 
         for (var u = 0; u < this.csvMatrix[0].length; u++) {
           this.csvHeaders[u] = "Column" + (u + 1);
         }
       }
-    }
+
+      return csvHeadersLocal;
+    } //Google Sheet's data is in a JSON, extracting column names by string slicing
+
+  }, {
+    key: "headersForGoogleSheet",
+    value: function headersForGoogleSheet() {
+      var headers_sheet = [];
+
+      for (var key in this.csvFile) {
+        var h = this.csvFile[key];
+
+        for (var headKey in h) {
+          if (headKey.slice(0, 4) == "gsx$") {
+            headers_sheet.push(headKey);
+          }
+        }
+
+        break;
+      }
+
+      return headers_sheet;
+    } // creating the transpose of the entire data ie complete data + headers, for createSpreadsheet in View.js
+
   }, {
     key: "createTranspose",
     value: function createTranspose() {
+      var completeCsvMatrixTransposeLocal = [];
+
       for (var i = 0; i <= this.completeCsvMatrix[0].length; i++) {
-        this.completeCsvMatrixTranspose[i] = [];
+        completeCsvMatrixTransposeLocal[i] = [];
       }
 
       for (var v = 0; v < this.completeCsvMatrix.length; v++) {
@@ -197,16 +492,146 @@ function () {
       for (var s = 0; s < this.completeCsvMatrix.length; s++) {
         for (var j = 0; j < this.completeCsvMatrix[0].length; j++) {
           this.completeCsvMatrixTranspose[j + 1][s] = this.completeCsvMatrix[s][j];
-        }
+
+;
+module.exports = CsvParser;
+},{"./SimpleDataGrapher":4,"papaparse":6}],3:[function(require,module,exports){
+"use strict";
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var PlotlyjsPlotter =
+/*#__PURE__*/
+function () {
+  _createClass(PlotlyjsPlotter, [{
+    key: "determineType2",
+    value: function determineType2() {
+      if (this.graphType == "Horizontal" || this.graphType == "Vertical") {
+        return "bar";
+      } else if (this.graphType == "Pie" || this.graphType == "Doughnut" || this.graphType == "Radar") {
+        return "pie";
+      } else if (this.graphType == "Basic" || this.graphType == "Stepped" || this.graphType == "Point") {
+        return "scatter";
       }
+    }
+  }, {
+    key: "layoutMaker",
+    value: function layoutMaker() {
+      var layout = {};
+
+      if (this.graphType == "Horizontal" || this.graphType == "Vertical") {
+        layout["barmode"] = "group";
+      }
+
+      return layout;
+    }
+  }, {
+    key: "traceMaker",
+    value: function traceMaker() {
+      var trace = {};
+      trace["type"] = this.determineType2();
+
+      if (this.graphType == "Horizontal") {
+        trace["orientation"] = "h";
+      } else if (this.graphType == "Doughnut") {
+        trace["hole"] = 0.5;
+      } else if (this.graphType == "Basic") {
+        trace["mode"] = "lines";
+      } else if (this.graphType == "Point") {
+        trace["mode"] = "markers";
+      } else if (this.graphType == "Stepped") {
+        trace["mode"] = "lines+markers";
+        trace["line"] = {
+          "shape": 'hv'
+        };
+      }
+
+      return trace;
+    }
+  }, {
+    key: "keyDeterminer",
+    value: function keyDeterminer() {
+      var keys = ["x", "y"];
+
+      if (this.graphType == "Pie" || this.graphType == "Doughnut") {
+        keys[1] = "values";
+        keys[0] = "labels";
+      } else if (this.graphType == "Horizontal") {
+        keys[0] = "y";
+        keys[1] = "x";
+      }
+
+      return keys;
+    }
+  }, {
+    key: "plotGraph2",
+    value: function plotGraph2() {
+      if (this.flag) {
+        console.log("at plotGraph");
+        document.getElementById(this.canvasContainerId).innerHTML = "";
+      }
+
+      var layout = this.layoutMaker();
+      var data = [];
+      var keySet = this.keyDeterminer();
+
+      for (var i = 0; i < this.length; i++) {
+        var new_trace = this.traceMaker();
+        new_trace[keySet[0]] = this.dataHash['x_axis_labels'];
+        new_trace[keySet[1]] = this.dataHash['y_axis_values' + i];
+        new_trace["name"] = this.dataHash['labels'][1][i];
+        data.push(new_trace);
+      }
+
+      console.log(data);
+      var div = document.createElement('div');
+      div.id = this.elementId + '_chart_container_' + this.graphCounting;
+      document.getElementById(this.canvasContainerId).appendChild(div);
+      Plotly.newPlot(div.id, data, layout);
     }
   }]);
 
-  return CsvParser;
+  function PlotlyjsPlotter(hash, length, type, flag, canvasContainerId, elementId, graphCounting) {
+    _classCallCheck(this, PlotlyjsPlotter);
+
+    _defineProperty(this, 'use strict', void 0);
+
+    _defineProperty(this, "dataHash", {});
+
+    _defineProperty(this, "elementId", null);
+
+    _defineProperty(this, "graphCounting", 0);
+
+    _defineProperty(this, "canvasContainerId", null);
+
+    _defineProperty(this, "graphType", null);
+
+    _defineProperty(this, "length", 0);
+
+    _defineProperty(this, "flag", false);
+
+    this.dataHash = hash;
+    this.length = length;
+    this.graphType = type;
+    this.flag = flag;
+    this.canvasContainerId = canvasContainerId;
+    this.elementId = elementId;
+    this.graphCounting = graphCounting;
+    this.plotGraph2();
+  }
+
+  return PlotlyjsPlotter;
 }();
 
-exports.CsvParser = CsvParser;
-},{"./SimpleDataGrapher":2,"papaparse":7}],2:[function(require,module,exports){
+module.exports = PlotlyjsPlotter;
+},{}],4:[function(require,module,exports){
+
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -240,8 +665,9 @@ exports.SimpleDataGrapher = SimpleDataGrapher;
 
 _defineProperty(SimpleDataGrapher, "elementIdSimpleDataGraphInstanceMap", {});
 
+;
 window.SimpleDataGrapher = SimpleDataGrapher;
-},{"./CsvParser":1,"./View":3}],3:[function(require,module,exports){
+},{"./CsvParser":2,"./View":5}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -271,15 +697,26 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+// import {CsvParser} from "./CsvParser";
+// import {SimpleDataGrapher} from "./SimpleDataGrapher";
+var CsvParser = require('./CsvParser');
+
+var SimpleDataGrapher = require('./SimpleDataGrapher');
+
+var ChartjsPlotter = require('./ChartjsPlotter');
+
+var PlotlyjsPlotter = require('./PlotlyjsPlotter');
+
 var View =
 /*#__PURE__*/
 function () {
   _createClass(View, [{
     key: "handleFileSelectlocal",
+    //extracts the uploaded file from input field and creates an object of CsvParser class with the file as one of the parameters
     value: function handleFileSelectlocal(event) {
       this.csvFile = event.target.files[0];
+      console.log(event.target.files[0]);
       console.log("iam here in handle");
-      console.log(this);
 
       if (this.csvFile['name'].split(".")[1] != "csv") {
         alert("Invalid file type");
@@ -288,10 +725,11 @@ function () {
         var self = this;
 
         document.getElementById(this.uploadButtonId).onclick = function (e) {
-          self.csvParser = new _CsvParser.CsvParser(self.csvFile, self.elementId, "local");
+          self.csvParser = new CsvParser(self.csvFile, self.elementId, "local");
         };
       }
-    }
+    } //receives the string value and creates an object of CsvParser class with the string as one of the parameters
+
   }, {
     key: "handleFileSelectstring",
     value: function handleFileSelectstring(val) {
@@ -311,13 +749,14 @@ function () {
 
         mat[i] = dataHash['data'][0];
       }
+      console.log("i am at csv string handler", val); // var csv_string = val.split("\n");
 
-      this.csvFile = mat;
+      this.csvFile = val;
       var self = this;
 
       document.getElementById(this.uploadButtonId).onclick = function (e) {
         console.log("i am uploading");
-        self.csvParser = new _CsvParser.CsvParser(self.csvFile, self.elementId, "csvstring");
+        self.csvParser = new CsvParser(self.csvFile, self.elementId, "csvstring");
       };
     }
   }, {
@@ -359,27 +798,19 @@ function () {
           }
         }
       }
+    } //receives the JSON file value and creates an object of CsvParser class with the file as one of the parameters
 
-      return matrixComplete;
-    }
   }, {
     key: "handleFileSelectGoogleSheet",
-    value: function handleFileSelectGoogleSheet(mydata) {
-      var hashSheet = mydata;
-      var headers_sheet = this.headersForGoogleSheet(hashSheet);
-      var matrixComplete = this.completeMatrixForGoogleSheet(hashSheet, headers_sheet);
-
-      for (var i = 0; i < headers_sheet.length; i++) {
-        headers_sheet[i] = headers_sheet[i].slice(4, headers_sheet[i].length);
-      }
-
-      this.csvFile = [headers_sheet, matrixComplete];
+    value: function handleFileSelectGoogleSheet(googleSheetData) {
+      this.csvFile = googleSheetData;
       var self = this;
 
       document.getElementById(this.uploadButtonId).onclick = function (e) {
-        self.csvParser = new _CsvParser.CsvParser(self.csvFile, self.elementId, "googleSheet");
+        self.csvParser = new CsvParser(self.csvFile, self.elementId, "googleSheet");
       };
-    }
+    } // get's the JSON form of the Google Sheet through Google Sheet's URL and passes it to the handler
+
   }, {
     key: "getValueGoogleSheet",
     value: function getValueGoogleSheet(googleSheetLink) {
@@ -387,16 +818,11 @@ function () {
       $.getJSON(googleSheetLink, function (data) {
         self.handleFileSelectGoogleSheet(data.feed.entry);
       });
-    }
+    } // uses a CORS proxy to fetch the value of a remote files and passes the received value to a callback function
+
   }, {
     key: "sendRemoteFileToHandler",
-    value: function sendRemoteFileToHandler(remoteVal) {
-      this.csvFile = remoteVal;
-      this.handleFileSelectstring(this.csvFile);
-    }
-  }, {
-    key: "handleFileSelectremote",
-    value: function handleFileSelectremote(val) {
+    value: function sendRemoteFileToHandler(val) {
       var _this = this;
 
       var proxyurl = "https://cors-anywhere.herokuapp.com/";
@@ -404,38 +830,11 @@ function () {
       fetch(proxyurl + url).then(function (response) {
         return response.text();
       }).then(function (contents) {
-        return _this.sendRemoteFileToHandler(contents);
+        return _this.handleFileSelectremote(contents);
       })["catch"](function (e) {
         return console.log(e);
       });
-    }
-  }, {
-    key: "determineType",
-    value: function determineType(type) {
-      console.log("at type");
-      console.log(type);
-
-      if (type == "Basic" || type == "Stepped" || type == "Point") {
-        return 'line';
-      } else if (type == "Horizontal") {
-        return 'horizontalBar';
-      } else if (type == "Vertical") {
-        return 'bar';
-      } else {
-        return type.toLowerCase();
-      }
-    }
-  }, {
-    key: "colorGenerator",
-    value: function colorGenerator(i, tb, type, count) {
-      console.log("at color");
-      var colors = ['rgba(255, 77, 210, 0.5)', 'rgba(0, 204, 255, 0.5)', 'rgba(128, 0, 255, 0.5)', 'rgba(255, 77, 77, 0.5)', 'rgba(0, 179, 0, 0.5)', 'rgba(255, 255, 0, 0.5)', 'rgba(255, 0, 102, 0.5)', 'rgba(0, 115, 230, 0.5)'];
-      var bordercolors = ['rgb(255, 0, 191)', 'rgb(0, 184, 230)', 'rgb(115, 0, 230)', 'rgb(255, 51, 51)', 'rgb(0, 153, 0)', 'rgb(230, 230, 0)', 'rgb(230, 0, 92)', 'rgb(0, 102, 204)'];
-      var length = 8;
-
-      if (type == "Pie" || type == "Doughnut") {
-        var colorSet = [];
-        var borderColorSet = [];
+    } // callback function which receives the remote file's value and creates an object of CsvParser class with the file as one of the parameters
 
         for (var j = 0; j < count; j++) {
           colorSet.push(colors[j % length]);
@@ -546,27 +945,24 @@ function () {
       });
     }
   }, {
-    key: "createSaveAsImageButton",
-    value: function createSaveAsImageButton(canvasDiv, canvasId) {
-      var saveImageButton = document.createElement("BUTTON");
-      saveImageButton.classList.add("btn");
-      saveImageButton.classList.add("btn-primary");
-      saveImageButton.innerHTML = "Save as Image";
-      saveImageButton.id = canvasId + "image";
-      canvasDiv.appendChild(saveImageButton);
-      console.log(this, "this");
+    key: "handleFileSelectremote",
+    value: function handleFileSelectremote(remoteVal) {
+      this.csvFile = remoteVal;
       var self = this;
 
-      document.getElementById(saveImageButton.id).onclick = function (e) {
-        self.saveAsImageFunction(canvasId);
+      document.getElementById(this.uploadButtonId).onclick = function (e) {
+        console.log("i am uploading");
+        self.csvParser = new CsvParser(self.csvFile, self.elementId, "remote");
       };
-    }
+    } // adapter function which switches between Plotly.js and Chart.js as a graph plotting library and creates theri respective objects which take over the graph plotting
+
   }, {
     key: "plotGraph",
-    value: function plotGraph(hash, length, type, flag) {
-      if (flag) {
-        console.log("at plotGraph");
-        document.getElementById(this.canvasContinerId).innerHTML = "";
+    value: function plotGraph(hash, length, type, flag, library) {
+      if (library == "chartjs") {
+        this.chartjsPlotter = new ChartjsPlotter(hash, length, type, flag, this.canvasContinerId, this.elementId, this.graphCounting);
+      } else {
+        this.plotlyjsPlotter = new PlotlyjsPlotter(hash, length, type, flag, this.canvasContinerId, this.elementId, this.graphCounting);
       }
 
       var div = document.createElement('div');
@@ -580,7 +976,8 @@ function () {
       new _chartjs["default"](ctx, configuration);
       this.createSaveAsImageButton(div, canv.id);
       $('.' + this.carousalClass).carousel(2);
-    }
+    } // creates a downloadable spreadsheet for the imported data using SheetJS
+
   }, {
     key: "createSheet",
     value: function createSheet() {
@@ -616,14 +1013,15 @@ function () {
       (0, _fileSaver.saveAs)(new Blob([s2ab(wbout)], {
         type: "application/octet-stream"
       }), 'newSpreadsheet' + this.elementId + '.xlsx');
-    }
+    } // creates a hash of the entire data in an accesible format for the charting libraries {labels: [legendx, [legendy0, legendy1 ... lengendyn]], x_axis_values: [...], y_axis_0: [...], y_axis_1: [...], ... y_axis_n: [...]} n: selected number of columns
+    // flag is just for seeing if we're plotting the graph for the first time, if yes, we will have to clear the canvas.
+
   }, {
     key: "afterSampleData",
     value: function afterSampleData(flag) {
       var _this2 = this;
 
       console.log("at checkbox");
-      console.log(this.csvParser.completeCsvMatrix);
 
       document.getElementById(this.plotGraphId).onclick = function (e) {
         console.log("at click on plot_graph");
@@ -648,9 +1046,10 @@ function () {
         var type = $('input[name=' + _this2.graphMenuTypeInputName + ']:checked').val();
         console.log(hash);
 
-        _this2.plotGraph(hash, columns.length, type, flag);
+        _this2.plotGraph(hash, columns.length, type, flag, "plotly");
       };
-    }
+    } // generates a graph menu with different graph options
+
   }, {
     key: "graphMenu",
     value: function graphMenu() {
@@ -682,7 +1081,8 @@ function () {
 
         document.getElementById(this.graphMenuId).appendChild(tr);
       }
-    }
+    } // generates the sample table data with checkboxes for y-axis and radio buttons for x-axis
+
   }, {
     key: "tableGenerator",
     value: function tableGenerator(name, tableId, typeOfInput, validValues, flag, tableType, badgeType) {
@@ -731,7 +1131,8 @@ function () {
       }
 
       this.afterSampleData(flag);
-    }
+    } // renders the sample tables
+
   }, {
     key: "showSampleDataXandY",
     value: function showSampleDataXandY() {
@@ -754,7 +1155,8 @@ function () {
       this.tableGenerator(this.tableXInputName, this.tableXId, 'radio', this.csvParser.csvHeaders, true, 'table-success', 'badge-success');
       this.tableGenerator(this.tableYInputName, this.tableYId, 'checkbox', this.csvParser.csvValidForYAxis, true, 'table-warning', 'badge-warning');
       this.graphMenu();
-    }
+    } // view manipulation resumes after the CsvParser object is created and returned
+
   }, {
     key: "continueViewManipulation",
     value: function continueViewManipulation(x) {
@@ -792,6 +1194,10 @@ function () {
     _defineProperty(this, "uploadButtonId", null);
 
     _defineProperty(this, "csvParser", null);
+
+    _defineProperty(this, "chartjsPlotter", null);
+
+    _defineProperty(this, "plotlyjsPlotter", null);
 
     _defineProperty(this, "graphCounting", 0);
 
@@ -876,7 +1282,8 @@ function () {
       $('#' + _this4.tableXParentId).toggle(ixx === 0);
       $('#' + _this4.tableYParentId).toggle(ixx === 1);
     });
-  }
+  } //listen for different inputs for import by the user
+
 
   _createClass(View, [{
     key: "addListeners",
@@ -905,16 +1312,17 @@ function () {
       $("#" + this.remoteFileUploadId).change(function () {
         console.log(document.getElementById(_this5.remoteFileUploadId).value);
 
-        _this5.handleFileSelectremote(document.getElementById(_this5.remoteFileUploadId).value);
+        _this5.sendRemoteFileToHandler(document.getElementById(_this5.remoteFileUploadId).value);
       });
       $("#" + this.createSpreadsheetButtonId).click(function () {
         _this5.createSheet();
       });
-    }
+    } //renders the entire HTML view
+
   }, {
     key: "drawHTMLView",
     value: function drawHTMLView() {
-      this.element.innerHTML = '<div class="body_container"><div class="main_heading_container"><h2 class="main_heading"> Simple Data Grapher</h2><p class="sub_heading">Plot and Export Graphs with CSV data</p></div><div class="heading_container"><ul class="headings"><li class="item-1">Upload CSV Data</li><li class="item-2">Select Columns & Graph Type</li><li class="item-3">Plotted Graph & Export Options</li></ul></div><div id=' + this.carousalId + ' class="carousel ' + this.carousalClass + ' slide" data-ride="carousel"><div class="indicators"><ol class="carousel-indicators"> <li data-target="#' + this.carousalId + '" data-slide-to="0" class="active" id="up"></li> <li data-target="#' + this.carousalId + '" data-slide-to="1"></li> <li data-target="#' + this.carousalId + '" data-slide-to="2"></li></ol></div><div class="carousel-inner"><div class="carousel-item active"><div class="main_container"><div class="container_drag_drop"><span class="btn btn-outline-primary btn-file input_box"><p class="drag_drop_heading" id=' + this.dragDropHeadingId + '> <u> Choose a csv file </u> or drag & drop it here </p><input type="file" class="csv_file" id=' + this.elementId + "_csv_file" + ' accept=".csv"></span></div><h6 class="or"><span>OR</span></h6><div class="container_remote_link"><input type="text" class="remote_file text_field" placeholder="url of remote file" id=' + this.elementId + "_remote_file" + ' ></div><h6 class="or"><span>OR</span></h6><div class="container_csv_string"><textarea class="csv_string text_field" id=' + this.elementId + "_csv_string" + ' placeholder="Paste a CSV string here" ></textarea></div><h6 class="or"><span>OR</span></h6><div class="container_google_sheet"><input type="text" class="google_sheet text_field" id=' + this.elementId + "_google_sheet" + ' placeholder="Link of published Google Sheet" ></div><div class="upload_button"><button type="button" class="btn btn-primary" id=' + this.uploadButtonId + ' >Upload CSV</button></div></div></div><div class="carousel-item tables"><div class="button_container"><div><input type="checkbox" name=' + this.xyToggleName + ' checked data-toggle="toggle" class="xytoggle" data-width="150" data-onstyle="success" data-offstyle="warning" data-height="40"></div><div class="plot_button"><button type="button" class="btn btn-primary" id=' + this.plotGraphId + ' >Plot Graph</button></div></div><div class="table_container"><div id=' + this.tableXParentId + ' ><table id=' + this.tableXId + ' class="table"></table></div><div id=' + this.tableYParentId + ' class="hidden"><table id=' + this.tableYId + ' class="table"></table></div><div><table id=' + this.graphMenuId + ' class="table table-dark"></table></div></div></div><div class="carousel-item graph"><div class="feature_buttons"><button type="button" class="btn btn-primary" id=' + this.addGraphButtonId + '> Add Graph</button><button type="button" class="btn btn-primary" id=' + this.createSpreadsheetButtonId + '> Create Spreadsheet</button></div><div id=' + this.canvasContinerId + ' ></div></div></div></div></div>';
+      this.element.innerHTML = '<div class="body_container"><div class="main_heading_container"><h2 class="main_heading"> Simple Data Grapher</h2><p class="sub_heading">Plot and Export Graphs with CSV data</p></div><div class="heading_container"><ul class="headings"><li class="item-1">Upload CSV Data</li><li class="item-2">Select Columns & Graph Type</li><li class="item-3">Plotted Graph & Export Options</li></ul></div><div id=' + this.carousalId + ' class="carousel ' + this.carousalClass + ' slide" data-ride="carousel"><div class="indicators"><ol class="carousel-indicators"> <li data-target="#' + this.carousalId + '" data-slide-to="0" class="active" id="up"></li> <li data-target="#' + this.carousalId + '" data-slide-to="1"></li> <li data-target="#' + this.carousalId + '" data-slide-to="2"></li></ol></div><div class="carousel-inner"><div class="carousel-item active"><div class="main_container"><div class="container_drag_drop"><span class="btn btn-outline-primary btn-file input_box"><p class="drag_drop_heading" id=' + this.dragDropHeadingId + '> <u> Choose a csv file </u> or drag & drop it here </p><input type="file" class="csv_file" id=' + this.elementId + "_csv_file" + ' accept=".csv"></span></div><h6 class="or"><span>OR</span></h6><div class="container_remote_link"><input type="text" class="remote_file text_field" placeholder="url of remote file" id=' + this.elementId + "_remote_file" + ' ></div><h6 class="or"><span>OR</span></h6><div class="container_csv_string"><textarea class="csv_string text_field" id=' + this.elementId + "_csv_string" + ' placeholder="Paste a CSV string here" ></textarea></div><h6 class="or"><span>OR</span></h6><div class="container_google_sheet"><input type="text" class="google_sheet text_field" id=' + this.elementId + "_google_sheet" + ' placeholder="Link of published Google Sheet" ></div><div class="upload_button"><button type="button" class="btn btn-primary" id=' + this.uploadButtonId + ' >Upload CSV</button></div></div></div><div class="carousel-item tables"><div class="button_container"><div><input type="checkbox" name=' + this.xyToggleName + ' checked data-toggle="toggle" class="xytoggle" data-width="150" data-onstyle="success" data-offstyle="warning" data-height="40"></div><div class="plot_button"><button type="button" class="btn btn-primary" id=' + this.plotGraphId + ' >Plot Graph</button></div></div><div class="table_container"><div id=' + this.tableXParentId + ' ><table id=' + this.tableXId + ' class="table"></table></div><div id=' + this.tableYParentId + ' class="hidden"><table id=' + this.tableYId + ' class="table"></table></div><div><table id=' + this.graphMenuId + ' class="table table-dark"></table></div></div></div><div class="carousel-item graph"><div class="feature_buttons"><button type="button" class="btn btn-primary" id=' + this.addGraphButtonId + '> Add Graph</button><button type="button" class="btn btn-success" id=' + this.createSpreadsheetButtonId + '> Create Spreadsheet<i class="fa fa-plus" aria-hidden="true"></i></button></div><div id=' + this.canvasContinerId + ' ></div></div></div></div></div>';
     }
   }]);
 
@@ -33524,3 +33932,4 @@ var XLS = XLSX, ODS = XLSX;
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
 },{"./dist/cpexcel.js":9,"./jszip.js":10,"_process":8,"buffer":4,"crypto":4,"fs":4,"stream":4}]},{},[2]);
+},{}]},{},[4]);
