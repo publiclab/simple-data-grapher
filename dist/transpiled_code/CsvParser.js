@@ -1,16 +1,5 @@
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.CsvParser = void 0;
-
-var _SimpleDataGrapher = require("./SimpleDataGrapher");
-
-var _papaparse = _interopRequireDefault(require("papaparse"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -103,8 +92,8 @@ function () {
 
       var csvMatrixLocal = [];
       var count = 0;
-
-      _papaparse["default"].parse(this.csvFile, {
+      var f = this.parseReturn;
+      Papa.parse(this.csvFile, {
         download: true,
         dynamicTyping: true,
         comments: true,
@@ -185,18 +174,23 @@ function () {
           this.csvValidForYAxis.push(this.csvHeaders[x]);
         }
       }
+
+      totalDataLocal = [csvSampleDataLocal, csvValidForYAxisLocal];
+      return totalDataLocal;
     } //makes a 2D matrix with the transpose of the CSV file, each column having the same index as its column heading
 
   }, {
     key: "matrixForCompleteData",
     value: function matrixForCompleteData() {
+      var completeCsvMatrixLocal = [];
+
       for (var y = 0; y < this.csvHeaders.length; y++) {
-        this.completeCsvMatrix[y] = [];
+        completeCsvMatrixLocal[y] = [];
       }
 
       for (var v = this.csvFileStart; v < this.csvMatrix.length; v++) {
         for (var j = 0; j < this.csvHeaders.length; j++) {
-          this.completeCsvMatrix[j].push(this.csvMatrix[v][j]);
+          completeCsvMatrixLocal[j].push(this.csvMatrix[v][j]);
         }
       }
 
@@ -212,20 +206,20 @@ function () {
         matrixComplete[i] = [];
       }
 
-      for (var i = 0; i < this.csvHeaders.length; i++) {
+      for (var x = 0; i < this.csvHeaders.length; x++) {
         for (var key in this.csvFile) {
-          var valueCell = this.csvFile[key][this.csvHeaders[i]]["$t"];
+          var valueCell = this.csvFile[key][this.csvHeaders[x]]["$t"];
 
           if (!isNaN(valueCell)) {
-            matrixComplete[i].push(+valueCell);
+            matrixComplete[x].push(+valueCell);
           } else {
-            matrixComplete[i].push(valueCell);
+            matrixComplete[x].push(valueCell);
           }
         }
       }
 
-      for (var i = 0; i < this.csvHeaders.length; i++) {
-        this.csvHeaders[i] = this.csvHeaders[i].slice(4, this.csvHeaders[i].length);
+      for (var j = 0; j < this.csvHeaders.length; j++) {
+        this.csvHeaders[j] = this.csvHeaders[j].slice(4, this.csvHeaders[j].length);
       }
 
       return matrixComplete;
@@ -263,7 +257,7 @@ function () {
         this.csvFileStart = 0;
 
         for (var u = 0; u < this.csvMatrix[0].length; u++) {
-          this.csvHeaders[u] = "Column" + (u + 1);
+          csvHeadersLocal[u] = "Column" + (u + 1);
         }
       }
 
@@ -300,12 +294,12 @@ function () {
       }
 
       for (var v = 0; v < this.completeCsvMatrix.length; v++) {
-        this.completeCsvMatrixTranspose[0][v] = this.csvHeaders[v];
+        completeCsvMatrixTransposeLocal[0][v] = this.csvHeaders[v];
       }
 
       for (var s = 0; s < this.completeCsvMatrix.length; s++) {
         for (var j = 0; j < this.completeCsvMatrix[0].length; j++) {
-          this.completeCsvMatrixTranspose[j + 1][s] = this.completeCsvMatrix[s][j];
+          completeCsvMatrixTransposeLocal[j + 1][s] = this.completeCsvMatrix[s][j];
         }
       }
 
@@ -315,6 +309,5 @@ function () {
 
   return CsvParser;
 }();
-
 
 module.exports = CsvParser;

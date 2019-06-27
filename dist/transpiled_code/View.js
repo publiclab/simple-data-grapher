@@ -5,19 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.View = void 0;
 
-var _CsvParser = require("./CsvParser");
-
-var _SimpleDataGrapher = require("./SimpleDataGrapher");
-
-var _xlsx = _interopRequireDefault(require("xlsx"));
-
 var _fileSaver = require("file-saver");
-
-var _chartjs = _interopRequireDefault(require("chartjs"));
-
-var _papaparse = _interopRequireDefault(require("papaparse"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -27,8 +15,6 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-// import {CsvParser} from "./CsvParser";
-// import {SimpleDataGrapher} from "./SimpleDataGrapher";
 var CsvParser = require('./CsvParser');
 
 var SimpleDataGrapher = require('./SimpleDataGrapher');
@@ -36,6 +22,8 @@ var SimpleDataGrapher = require('./SimpleDataGrapher');
 var ChartjsPlotter = require('./ChartjsPlotter');
 
 var PlotlyjsPlotter = require('./PlotlyjsPlotter');
+
+var XLSX = require('./xlsx');
 
 var View =
 /*#__PURE__*/
@@ -63,22 +51,6 @@ function () {
   }, {
     key: "handleFileSelectstring",
     value: function handleFileSelectstring(val) {
-      console.log("i am at csv string handler");
-      var csv_string = val.split("\n");
-      var mat = [];
-
-      for (var i = 0; i < csv_string.length; i++) {
-        if (csv_string[i] == "" || csv_string[i] == " ") {
-          continue;
-        }
-
-        var dataHash = _papaparse["default"].parse(csv_string[i], {
-          dynamicTyping: true,
-          comments: true
-        });
-
-        mat[i] = dataHash['data'][0];
-      }
       console.log("i am at csv string handler", val); // var csv_string = val.split("\n");
 
       this.csvFile = val;
@@ -132,7 +104,7 @@ function () {
       this.csvFile = remoteVal;
       var self = this;
 
-      document.getElementById(this.uploadButtonId).onclick = function (e) {
+      document.getElementById(this.uploadButtonId).onclick = function () {
         console.log("i am uploading");
         self.csvParser = new CsvParser(self.csvFile, self.elementId, "remote");
       };
@@ -153,20 +125,16 @@ function () {
   }, {
     key: "createSheet",
     value: function createSheet() {
-      var wb = _xlsx["default"].utils.book_new();
-
+      var wb = XLSX.utils.book_new();
       wb.Props = {
         Title: "New Spreadsheet" + this.elementId,
         CreatedDate: new Date()
       };
       wb.SheetNames.push("Sheet" + this.elementId);
       var ws_data = this.csvParser.completeCsvMatrixTranspose;
-
-      var ws = _xlsx["default"].utils.aoa_to_sheet(ws_data);
-
+      var ws = XLSX.utils.aoa_to_sheet(ws_data);
       wb.Sheets["Sheet" + this.elementId] = ws;
-
-      var wbout = _xlsx["default"].write(wb, {
+      var wbout = XLSX.write(wb, {
         bookType: 'xlsx',
         type: 'binary'
       });
