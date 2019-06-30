@@ -12,7 +12,7 @@ Turns CSVs into graphs in a few simple steps; embeds onto other websites!
 ### Instructions for a developer:
 1. Make the changes you are working on in respective /src files.
 2. After doing or while doing the changes run `npm run build` for making the changes in the `dist/`.
-3. Run 'npm run test' to run the tests.
+3. Run `npm run test` to run the tests.
 4. Test your changes on a browser by opening `examples/index.html`.
 5. For finding linting issues run `npm run lint`
 
