@@ -5,7 +5,7 @@
   "main": "src/PublicLab.Grapher.js",
   "scripts": {
     "build": "watch 'babel src -d dist/transpiled_code & browserify dist/transpiled_code/SimpleDataGrapher.js -o dist/PublicLab.Grapher.js' src",
-    "build:heroku": "babel src -d dist/transpiled_code & browserify dist/transpiled_code/SimpleDataGrapher.js -o dist/PublicLab.Grapher.js",
+    "heroku-postbuild": "babel src -d dist/transpiled_code & browserify dist/transpiled_code/SimpleDataGrapher.js -o dist/PublicLab.Grapher.js",
     "test": "./node_modules/mocha/bin/mocha --require @babel/register --require @babel/polyfill --require jsdom-global/register spec/js/",
     "lint": "eslint ./src ./dist ./spec --fix",
     "start": "http-server -c-1 -p 8000"
