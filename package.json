@@ -8,7 +8,8 @@
     "heroku-postbuild": "babel src -d dist/transpiled_code & browserify dist/transpiled_code/SimpleDataGrapher.js -o dist/PublicLab.Grapher.js",
     "test": "./node_modules/mocha/bin/mocha --require @babel/register --require @babel/polyfill --require jsdom-global/register spec/js/",
     "lint": "eslint ./src ./dist ./spec --fix",
-    "start": "http-server -c-1 -p 8000"
+    "start": "http-server -c-1 -p $process.env.NODE_PORT",
+    "dev_start": "http-server -c-1 -p 8000"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,7 @@
   "dependencies": {
     "chai": "^4.2.0",
     "chartjs": "^0.3.24",
+    "express": "^4.17.1",
     "file-system": "^2.2.2",
     "googleapis": "^39.2.0",
     "http-server": "^0.11.1",
