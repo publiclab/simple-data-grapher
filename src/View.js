@@ -112,6 +112,7 @@ class View{
     // creates a downloadable spreadsheet for the imported data using SheetJS
     exportSheet(){
         console.log("clicked");
+        Gsheet.readValue("go");
     }
     createSheet(){
         var wb = XLSX.utils.book_new();

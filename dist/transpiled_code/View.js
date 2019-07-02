@@ -126,6 +126,7 @@ function () {
     key: "exportSheet",
     value: function exportSheet() {
       console.log("clicked");
+      Gsheet.readValue("go");
     }
   }, {
     key: "createSheet",
