@@ -9,21 +9,21 @@ window.addEventListener('load', function(){
 //   auth: 'YOUR API KEY'
 // });
 // If modifying these scopes, delete token.json.
-// const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
+const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
 // const TOKEN_PATH = 'token.json';
 
-// export function readValue(val){
-//     if (val=="go"){
-//         fs.readFile('cred.json', (err, content) => {
-//             if (err) return console.log('Error loading client secret file:', err);
-//             // Authorize a client with credentials, then call the Google Sheets API.
-//             authorize(JSON.parse(content), listMajors);
-//           });
-//     }
-// }
+export function readValue(val){
+    if (val=="go"){
+        fs.readFile('cred.json', (err, content) => {
+            if (err) return console.log('Error loading client secret file:', err);
+            // Authorize a client with credentials, then call the Google Sheets API.
+            authorize(JSON.parse(content), listMajors);
+          });
+    }
+}
 
 // // Load client secrets from a local file.
 
@@ -39,8 +39,8 @@ window.addEventListener('load', function(){
 //       callback(oAuth2Client);
 //     });
 //   }
-// export function listMajors(auth) {
-//     const sheets = google.sheets({version: 'v4', auth});
+export function listMajors(auth) {
+    const sheets = google.sheets({version: 'v4', auth});
 //     // sheets.spreadsheets.values.get({
 //     //     spreadsheetId: '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms',
 //     //     range: 'Class Data!A2:E',
@@ -57,20 +57,20 @@ window.addEventListener('load', function(){
 //     //     console.log('No data found.');
 //     //     }
 //     // });
-//     const resource = {
-//         properties: {
-//           title,
-//         },
-//       };
-//     sheets.spreadsheets.create({
-//         resource,
-//         fields: 'spreadsheetId',
-//         }, (err, spreadsheet) =>{
-//         if (err) {
-//             // Handle error.
-//             console.log(err);
-//         } else {
-//             console.log(`Spreadsheet ID: ${spreadsheet.spreadsheetId}`);
-//         }
-//     });
-// }
+    const resource = {
+        properties: {
+          title,
+        },
+      };
+    sheets.spreadsheets.create({
+        resource,
+        fields: 'spreadsheetId',
+        }, (err, spreadsheet) =>{
+        if (err) {
+            // Handle error.
+            console.log(err);
+        } else {
+            console.log(`Spreadsheet ID: ${spreadsheet.spreadsheetId}`);
+        }
+    });
+}
