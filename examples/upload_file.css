@@ -2,11 +2,17 @@
   margin:0 auto;
   width: 50%;
   margin-top: 100px;
-  height: 600px;
+  height: 700px;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
+}
+.graph{
+  height: 700px;
+}
+.table_container{
+  height: 700px;
 }
 
 .btn-file {
@@ -178,6 +184,7 @@ margin-left: 20px;
 margin-left: 70px;
 }
 .body_container{
-  margin-left: 100px;
-  margin-right: 100px;
+  /* margin-left: 100px;
+  margin-right: 100px; */
+  width: 100vw;
 }
