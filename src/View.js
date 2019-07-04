@@ -271,7 +271,9 @@ class View{
     // view manipulation resumes after the CsvParser object is created and returned
     continueViewManipulation(x){
         console.log(" i am back in view manipulation",this);
-        this.csvParser=x;
+        if (x!="prevfile"){
+            this.csvParser=x;
+        }
         this.showSampleDataXandY();
         // this.showSampleDataXandY(this.csvParser.csvSampleData, this.csvParser.csvHeaders, this.csvParser.csvValidForYAxis, this.csvParser.csvSampleData);
         // sampleDataXandY(this.csvSampleData,this.csvHeaders,this.csvValidForYAxis,this.completeCsvMatrix);
