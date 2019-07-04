@@ -44,7 +44,12 @@ function () {
 
     this.elementId = elementId;
     this.csvFile = file;
-    this.allFunctionHandler(functionParameter);
+
+    if (functionParameter == "prevfile") {
+      return this;
+    } else {
+      this.allFunctionHandler(functionParameter);
+    }
   } //since parsing a local file works asynchronously, a callback function is required to call the remaining functions after the parsing is complete
 
 

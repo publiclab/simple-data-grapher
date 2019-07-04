@@ -58,6 +58,14 @@ function () {
         console.log("i am uploading");
         self.csvParser = new CsvParser(self.csvFile, self.elementId, "csvstring");
       };
+    }
+  }, {
+    key: "usingPreviouslyUploadedFile",
+    value: function usingPreviouslyUploadedFile() {
+      var self = this;
+      console.log("prev file in use", self.elementId);
+      self.csvParser = new CsvParser("dummy", self.elementId, "prevfile");
+      console.log(self.csvParser, "checking");
     } //receives the JSON file value and creates an object of CsvParser class with the file as one of the parameters
 
   }, {
@@ -425,10 +433,8 @@ function () {
     this.saveAsImageId = elementId + "save-as-image";
     this.upload_button_container = elementId + "upload_button_container";
     this.drawHTMLView();
-    this.addListeners(); // $('.' + this.carousalClass).carousel({
-    //     interval: false
-    // });
-
+    this.addListeners();
+    this.usingPreviouslyUploadedFile();
     $('.xytoggle').bootstrapToggle({
       on: 'X-Axis',
       off: 'Y-Axis'

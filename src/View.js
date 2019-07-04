@@ -64,6 +64,12 @@ class View{
         };
 
     }
+    usingPreviouslyUploadedFile(){
+        let self=this;
+        console.log("prev file in use",self.elementId);
+        self.csvParser = new CsvParser("dummy",self.elementId,"prevfile");
+        console.log(self.csvParser,"checking");
+    }
     //receives the JSON file value and creates an object of CsvParser class with the file as one of the parameters
     handleFileSelectGoogleSheet(googleSheetData){
         this.csvFile=googleSheetData;
@@ -305,9 +311,7 @@ class View{
         this.upload_button_container = elementId + "upload_button_container";
         this.drawHTMLView();
         this.addListeners();
-        // $('.' + this.carousalClass).carousel({
-        //     interval: false
-        // });
+        this.usingPreviouslyUploadedFile();
         $('.xytoggle').bootstrapToggle({
             on: 'X-Axis',
             off: 'Y-Axis'
