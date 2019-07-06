@@ -130,7 +130,7 @@ function () {
   }, {
     key: "createPopover",
     value: function createPopover(buttonId) {
-      var html = '<div id="myForm" class="hide"><label for="title">File Title:</label><input type="text" name="title" id="title" class="form-control input-md"><label for="desc">File Description:</label><textarea rows="3" name="desc" id="desc" class="form-control input-md"></textarea><button type="button" class="btn btn-primary" id="save"> Save</button></div>';
+      var html = '<div id="myForm" class="hide"><label for="title">File Title:</label><input type="text" name="title" id=' + "title" + buttonId + ' class="form-control input-md"><label for="desc">File Description:</label><textarea rows="3" name="desc" id=' + "desc" + buttonId + ' class="form-control input-md"></textarea><button type="button" class="btn btn-primary" id="save"> Save</button></div>';
       $('#' + buttonId).popover({
         placement: 'bottom',
         title: 'Add Description',
@@ -140,8 +140,8 @@ function () {
         console.log("created popover");
         $('#save').click(function (e) {
           e.preventDefault();
-          this.fileTitle = $('#title').val();
-          this.fileDescription = $('#desc').val();
+          this.fileTitle = $('#' + "title" + buttonId).val();
+          this.fileDescription = $('#' + "desc" + buttonId).val();
           console.log(this.fileTitle, this.fileDescription);
         });
       });
