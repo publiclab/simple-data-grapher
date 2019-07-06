@@ -1,6 +1,6 @@
 {
   "name": "simple-data-grapher",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Turns CSVs into graphs in a few simple steps; various import and export options",
   "main": "src/PublicLab.Grapher.js",
   "scripts": {
