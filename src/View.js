@@ -36,6 +36,8 @@ class View{
     tableXParentId = null;
     tableYParentId = null;
     upload_button_container = null;
+    fileTitle="";
+    fileDescription="";
     //extracts the uploaded file from input field and creates an object of CsvParser class with the file as one of the parameters
     handleFileSelectlocal(event) {
         this.csvFile = event.target.files[0];
@@ -113,6 +115,25 @@ class View{
             this.plotlyjsPlotter= new PlotlyjsPlotter(hash,length,type,flag,this.canvasContinerId,this.elementId,this.graphCounting);
         }
         $('.'+this.carousalClass).carousel(2);
+    }
+    createPopover(buttonId){
+        var html='<div id="myForm" class="hide"><label for="title">File Title:</label><input type="text" name="title" id="title" class="form-control input-md"><label for="desc">File Description:</label><textarea rows="3" name="desc" id="desc" class="form-control input-md"></textarea><button type="button" class="btn btn-primary" id="save"> Save</button></div>'
+        $('#'+buttonId).popover({
+       
+            placement: 'bottom',
+            title: 'Add Description',
+            html:true,
+            content:  html
+        }).on('click',function(){
+            console.log("created popover");
+            $('#save').click(function(e){
+                e.preventDefault();
+                this.fileTitle=$('#title').val();
+                this.fileDescription=$('#desc').val();
+                console.log(this.fileTitle,this.fileDescription);
+
+            });
+        });
     }
     createButtons(userLoginCheck){
         if (userLoginCheck=="yes"){
@@ -334,20 +355,40 @@ class View{
         console.log("#"+this.fileUploadId);
         $("#"+this.fileUploadId).change((e)=>{
             console.log("i am here23");
+            document.getElementById("popover" + this.fileUploadId).style.display="inline";
+            document.getElementById("popover" + this.csvStringUploadId).style.display="none";
+            document.getElementById("popover" + this.googleSheetUploadId).style.display="none";
+            document.getElementById("popover" + this.remoteFileUploadId).style.display="none";
+            this.createPopover("popover" + this.fileUploadId);
             this.handleFileSelectlocal(e);
         });
         $("#"+this.csvStringUploadId).change(()=>{
             console.log(document.getElementById(this.csvStringUploadId).value);
+            document.getElementById("popover" + this.csvStringUploadId).style.display="inline";
+            document.getElementById("popover" + this.googleSheetUploadId).style.display="none";
+            document.getElementById("popover" + this.remoteFileUploadId).style.display="none";
+            document.getElementById("popover" + this.fileUploadId).style.display="none";
+            this.createPopover("popover" + this.csvStringUploadId);
             this.handleFileSelectstring(document.getElementById(this.csvStringUploadId).value);
           });
         $("#"+this.googleSheetUploadId).change(()=>{
             console.log(document.getElementById(this.googleSheetUploadId).value,"sheetlink");
+            document.getElementById("popover" + this.googleSheetUploadId).style.display="inline";
+            document.getElementById("popover" + this.csvStringUploadId).style.display="none";
+            document.getElementById("popover" + this.remoteFileUploadId).style.display="none";
+            document.getElementById("popover" + this.fileUploadId).style.display="none";
+            this.createPopover("popover" + this.googleSheetUploadId);
             var sheetLink=document.getElementById(this.googleSheetUploadId).value;
             var sheetURL="https://spreadsheets.google.com/feeds/list/"+sheetLink.split("/")[5]+"/od6/public/values?alt=json";
             this.getValueGoogleSheet(sheetURL);
         });
         $("#"+this.remoteFileUploadId).change(()=>{
             console.log(document.getElementById(this.remoteFileUploadId).value);
+            document.getElementById("popover" + this.remoteFileUploadId).style.display="inline";
+            document.getElementById("popover" + this.csvStringUploadId).style.display="none";
+            document.getElementById("popover" + this.googleSheetUploadId).style.display="none";
+            document.getElementById("popover" + this.fileUploadId).style.display="none";
+            this.createPopover("popover" + this.remoteFileUploadId);
             this.sendRemoteFileToHandler(document.getElementById(this.remoteFileUploadId).value);
         });
         $("#"+this.createSpreadsheetButtonId).click(()=>{
@@ -359,7 +400,7 @@ class View{
 
     //renders the entire HTML view
     drawHTMLView(){
-        this.element.innerHTML = '<div class="body_container"><div class="main_heading_container"><h2 class="main_heading"> Simple Data Grapher</h2><p class="sub_heading">Plot and Export Graphs with CSV data</p></div><div class="heading_container"><ul class="headings"><li class="item-1">Upload CSV Data</li><li class="item-2">Select Columns & Graph Type</li><li class="item-3">Plotted Graph & Export Options</li></ul></div><div id=' + this.carousalId + ' class="carousel ' + this.carousalClass + ' slide" data-ride="carousel" data-interval="false"><div class="indicators"><ol class="carousel-indicators"> <li data-target="#' + this.carousalId + '" data-slide-to="0" class="active" id="up"></li> <li data-target="#' + this.carousalId + '" data-slide-to="1"></li> <li data-target="#' + this.carousalId + '" data-slide-to="2"></li></ol></div><div class="carousel-inner"><div class="carousel-item active"><div class="main_container"><div class="container_drag_drop"><span class="btn btn-outline-primary btn-file input_box"><p class="drag_drop_heading" id=' + this.dragDropHeadingId + '> <u> Choose a csv file </u> or drag & drop it here </p><input type="file" class="csv_file" id=' + this.elementId + "_csv_file" + ' accept=".csv"></span></div><h6 class="or"><span>OR</span></h6><div class="container_remote_link"><input type="text" class="remote_file text_field" placeholder="url of remote file" id=' + this.elementId + "_remote_file" + ' ></div><h6 class="or"><span>OR</span></h6><div class="container_csv_string"><textarea class="csv_string text_field" id=' + this.elementId + "_csv_string" + ' placeholder="Paste a CSV string here" ></textarea></div><h6 class="or"><span>OR</span></h6><div class="container_google_sheet"><input type="text" class="google_sheet text_field" id=' + this.elementId + "_google_sheet" + ' placeholder="Link of published Google Sheet" ></div><div id=' + this.upload_button_container + ' class="upload_button"><button type="button" class="btn btn-primary" id=' + this.uploadButtonId + ' >Upload CSV</button></div></div></div><div class="carousel-item tables"><div class="button_container"><div><input type="checkbox" name=' + this.xyToggleName + ' checked data-toggle="toggle" class="xytoggle" data-width="150" data-onstyle="success" data-offstyle="warning" data-height="40"></div><div class="plot_button"><button type="button" class="btn btn-primary" id=' + this.plotGraphId + ' >Plot Graph</button></div></div><div class="table_container"><div id=' + this.tableXParentId + ' ><table id=' + this.tableXId + ' class="table"></table></div><div id=' + this.tableYParentId + ' class="hidden"><table id=' + this.tableYId + ' class="table"></table></div><div><table id=' + this.graphMenuId + ' class="table table-dark"></table></div></div></div><div class="carousel-item graph"><div class="feature_buttons"><button type="button" class="btn btn-primary" id=' + this.addGraphButtonId + '> Add Graph</button><button type="button" class="btn btn-success" id=' + this.createSpreadsheetButtonId + '> Create Spreadsheet<i class="fa fa-plus" aria-hidden="true"></i></button></div><div id=' + this.canvasContinerId + ' ></div></div></div></div></div>';
+        this.element.innerHTML = '<div class="body_container"><div class="main_heading_container"><h2 class="main_heading"> Simple Data Grapher</h2><p class="sub_heading">Plot and Export Graphs with CSV data</p></div><div class="heading_container"><ul class="headings"><li class="item-1">Upload CSV Data</li><li class="item-2">Select Columns & Graph Type</li><li class="item-3">Plotted Graph & Export Options</li></ul></div><div id=' + this.carousalId + ' class="carousel ' + this.carousalClass + ' slide" data-ride="carousel" data-interval="false"><div class="indicators"><ol class="carousel-indicators"> <li data-target="#' + this.carousalId + '" data-slide-to="0" class="active" id="up"></li> <li data-target="#' + this.carousalId + '" data-slide-to="1"></li> <li data-target="#' + this.carousalId + '" data-slide-to="2"></li></ol></div><div class="carousel-inner"><div class="carousel-item active"><div class="main_container"><div class="container_drag_drop"><span class="btn btn-outline-primary btn-file input_box"><p class="drag_drop_heading" id=' + this.dragDropHeadingId + '> <u> Choose a csv file </u> or drag & drop it here </p><input type="file" class="csv_file" id=' + this.fileUploadId + ' accept=".csv"></span><button type="button" class="btn btn-dark des" id=' + "popover" + this.fileUploadId +'><i class="fa fa-list"></i></button></div><h6 class="or"><span>OR</span></h6><div class="container_remote_link"><input type="text" class="remote_file text_field" placeholder="url of remote file" id=' + this.remoteFileUploadId + ' ><button type="button" class="btn btn-dark des" id=' + "popover" + this.remoteFileUploadId +'><i class="fa fa-list"></i></button></div><h6 class="or"><span>OR</span></h6><div class="container_csv_string"><textarea class="csv_string text_field" id=' + this.csvStringUploadId + ' placeholder="Paste a CSV string here" ></textarea><button type="button" class="btn btn-dark des" id=' + "popover" + this.csvStringUploadId +'><i class="fa fa-list"></i></button></div><h6 class="or"><span>OR</span></h6><div class="container_google_sheet"><div class="google_sheet_container"><input type="text" class="google_sheet text_field" id=' + this.googleSheetUploadId + ' placeholder="Link of published Google Sheet" ><button type="button" class="btn btn-dark des" id=' + "popover" + this.googleSheetUploadId +'><i class="fa fa-list"></i></button></div></div><div id=' + this.upload_button_container + ' class="upload_button"><button type="button" class="btn btn-primary" id=' + this.uploadButtonId + ' >Upload CSV</button></div></div></div><div class="carousel-item tables"><div class="button_container"><div><input type="checkbox" name=' + this.xyToggleName + ' checked data-toggle="toggle" class="xytoggle" data-width="150" data-onstyle="success" data-offstyle="warning" data-height="40"></div><div class="plot_button"><button type="button" class="btn btn-primary" id=' + this.plotGraphId + ' >Plot Graph</button></div></div><div class="table_container"><div id=' + this.tableXParentId + ' ><table id=' + this.tableXId + ' class="table"></table></div><div id=' + this.tableYParentId + ' class="hidden"><table id=' + this.tableYId + ' class="table"></table></div><div><table id=' + this.graphMenuId + ' class="table table-dark"></table></div></div></div><div class="carousel-item graph"><div class="feature_buttons"><button type="button" class="btn btn-primary" id=' + this.addGraphButtonId + '> Add Graph</button><button type="button" class="btn btn-success" id=' + this.createSpreadsheetButtonId + '> Create Spreadsheet<i class="fa fa-plus" aria-hidden="true"></i></button></div><div id=' + this.canvasContinerId + ' ></div></div></div></div></div>';
     
     }
 }
