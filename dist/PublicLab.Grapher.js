@@ -257,6 +257,10 @@ function () {
 
     _defineProperty(this, "elementId", null);
 
+    _defineProperty(this, "codapHeaders", []);
+
+    _defineProperty(this, "codapMatrix", []);
+
     this.elementId = elementId;
     this.csvFile = file;
 
@@ -278,6 +282,8 @@ function () {
       this.csvSampleData = totalData[0];
       this.csvValidForYAxis = totalData[1];
       this.completeCsvMatrixTranspose = this.createTranspose();
+      this.codapHeaders = this.headersForCodap();
+      this.codapMatrix = this.completeMatrixForCodap();
       this.startFileProcessing();
     } //a function handler that calls one function after the other after assigning the correct values to different class variables.
 
@@ -301,6 +307,8 @@ function () {
         this.csvSampleData = totalData[0];
         this.csvValidForYAxis = totalData[1];
         this.completeCsvMatrixTranspose = this.createTranspose();
+        this.codapHeaders = this.headersForCodap();
+        this.codapMatrix = this.completeMatrixForCodap();
         this.startFileProcessing();
       }
     } //parsing a local file, works asynchronously
@@ -443,6 +451,25 @@ function () {
       }
 
       return matrixComplete;
+    } // matrix in JSON form for CODAP export
+
+  }, {
+    key: "completeMatrixForCodap",
+    value: function completeMatrixForCodap() {
+      var codapMatrix = [];
+
+      for (var i = 1; i < this.completeCsvMatrixTranspose.length; i++) {
+        var element = {};
+
+        for (var j = 0; j < this.csvHeaders.length; j++) {
+          element[this.csvHeaders[j]] = this.completeCsvMatrixTranspose[i][j];
+        }
+
+        codapMatrix.push(element);
+      }
+
+      console.log("matrix codap", codapMatrix);
+      return codapMatrix;
     } //checks if the first row has most of the potential header names, if not, assign dummy headers to the file.
 
   }, {
@@ -502,6 +529,20 @@ function () {
       }
 
       return headers_sheet;
+    } //determine a JSON for headers for CODAP
+
+  }, {
+    key: "headersForCodap",
+    value: function headersForCodap() {
+      var codapHeaders = [];
+
+      for (var i = 0; i < this.csvHeaders.length; i++) {
+        var element = {};
+        element["name"] = this.csvHeaders[i];
+        codapHeaders.push(element);
+      }
+
+      return codapHeaders;
     } // creating the transpose of the entire data ie complete data + headers, for createSpreadsheet in View.js
 
   }, {
@@ -523,6 +564,7 @@ function () {
         }
       }
 
+      console.log("transpose", completeCsvMatrixTransposeLocal);
       return completeCsvMatrixTransposeLocal;
     }
   }]);
@@ -726,7 +768,8 @@ var SimpleDataGrapher = require('./SimpleDataGrapher');
 
 var ChartjsPlotter = require('./ChartjsPlotter');
 
-var PlotlyjsPlotter = require('./PlotlyjsPlotter');
+var PlotlyjsPlotter = require('./PlotlyjsPlotter'); // const CODAPiFrame = require('./iframe-phone');
+
 
 var View =
 /*#__PURE__*/
@@ -848,7 +891,7 @@ function () {
           e.preventDefault();
           self.fileTitle = $('#' + "title" + buttonId).val();
           self.fileDescription = $('#' + "desc" + buttonId).val();
-          console.log(self.fileTitle, self.fileDescription, self);
+          console.log(self.fileTitle, self.fileDescription, self, "got it");
         });
       });
     }
@@ -866,12 +909,33 @@ function () {
         upload_prev_file.classList.add("btn-primary");
         upload_prev_file.innerHTML = "Choose a previously uploaded file";
         upload_prev_file.id = this.elementId + "_prev_file";
+        var publish_research_button = document.createElement('button');
+        publish_research_button.classList.add("btn");
+        publish_research_button.classList.add("btn-primary");
+        publish_research_button.innerHTML = "Publish as a Research Note";
+        publish_research_button.id = this.elementId + "_publish";
         var container = document.getElementById(this.upload_button_container);
         var div_container = document.createElement('div');
         div_container.appendChild(save_file_button);
         div_container.appendChild(upload_prev_file);
+        var container2 = document.getElementById(this.feature_button_container);
+        container2.appendChild(publish_research_button);
         container.prepend(div_container);
       }
+    }
+  }, {
+    key: "codapExport",
+    value: function codapExport() {
+      console.log("clicked in codap");
+      var iframeBody = '<article><iframe id="codap-iframe" src="https://codap.concord.org/releases/latest?embeddedServer=yes#shared=109578" ></iframe></article>';
+      var modal_body = document.getElementById("body_for_CODAP");
+      modal_body.innerHTML = iframeBody;
+      var iframe = document.getElementById("codap-iframe");
+      modal_body.style.height = "50vh";
+      iframe.style.width = "750px";
+      iframe.style.height = "50hv";
+      var codapIframe = document.getElementById('codap-iframe');
+      var rpcHandler = new iframePhone.IframePhoneRpcEndpoint(iframePhoneHandler, "data-interactive", codapIframe);
     } // creates a downloadable spreadsheet for the imported data using SheetJS
 
   }, {
@@ -1133,6 +1197,8 @@ function () {
 
     _defineProperty(this, "fileDescription", "");
 
+    _defineProperty(this, "codapExportButton", null);
+
     console.log("i am in view");
     this.elementId = elementId;
     this.element = document.getElementById(elementId);
@@ -1165,9 +1231,12 @@ function () {
     this.xyToggleName = elementId + "_xytoggle";
     this.saveAsImageId = elementId + "save-as-image";
     this.upload_button_container = elementId + "upload_button_container";
+    this.feature_button_container = elementId + "feature_button_container";
+    this.codapExportButton = elementId + "codap_export_button";
     this.drawHTMLView();
     this.addListeners();
     this.usingPreviouslyUploadedFile();
+    this.createButtons("yes");
     $('.xytoggle').bootstrapToggle({
       on: 'X-Axis',
       off: 'Y-Axis'
@@ -1243,12 +1312,15 @@ function () {
       $("#" + this.createSpreadsheetButtonId).click(function () {
         _this5.createSheet();
       });
+      $("#" + this.codapExportButton).click(function () {
+        _this5.codapExport();
+      });
     } //renders the entire HTML view
 
   }, {
     key: "drawHTMLView",
     value: function drawHTMLView() {
-      this.element.innerHTML = '<div class="body_container"><div class="main_heading_container"><h2 class="main_heading"> Simple Data Grapher</h2><p class="sub_heading">Plot and Export Graphs with CSV data</p></div><div class="heading_container"><ul class="headings"><li class="item-1">Upload CSV Data</li><li class="item-2">Select Columns & Graph Type</li><li class="item-3">Plotted Graph & Export Options</li></ul></div><div id=' + this.carousalId + ' class="carousel ' + this.carousalClass + ' slide" data-ride="carousel" data-interval="false"><div class="indicators"><ol class="carousel-indicators"> <li data-target="#' + this.carousalId + '" data-slide-to="0" class="active" id="up"></li> <li data-target="#' + this.carousalId + '" data-slide-to="1"></li> <li data-target="#' + this.carousalId + '" data-slide-to="2"></li></ol></div><div class="carousel-inner"><div class="carousel-item active"><div class="main_container"><div class="container_drag_drop"><span class="btn btn-outline-primary btn-file input_box"><p class="drag_drop_heading" id=' + this.dragDropHeadingId + '> <u> Choose a csv file </u> or drag & drop it here </p><input type="file" class="csv_file" id=' + this.fileUploadId + ' accept=".csv"></span><button type="button" class="btn btn-dark des" id=' + "popover" + this.fileUploadId + '><i class="fa fa-list"></i></button></div><h6 class="or"><span>OR</span></h6><div class="container_remote_link"><input type="text" class="remote_file text_field" placeholder="url of remote file" id=' + this.remoteFileUploadId + ' ><button type="button" class="btn btn-dark des" id=' + "popover" + this.remoteFileUploadId + '><i class="fa fa-list"></i></button></div><h6 class="or"><span>OR</span></h6><div class="container_csv_string"><textarea class="csv_string text_field" id=' + this.csvStringUploadId + ' placeholder="Paste a CSV string here" ></textarea><button type="button" class="btn btn-dark des" id=' + "popover" + this.csvStringUploadId + '><i class="fa fa-list"></i></button></div><h6 class="or"><span>OR</span></h6><div class="container_google_sheet"><div class="google_sheet_container"><input type="text" class="google_sheet text_field" id=' + this.googleSheetUploadId + ' placeholder="Link of published Google Sheet" ><button type="button" class="btn btn-dark des" id=' + "popover" + this.googleSheetUploadId + '><i class="fa fa-list"></i></button></div></div><div id=' + this.upload_button_container + ' class="upload_button"><button type="button" class="btn btn-primary" id=' + this.uploadButtonId + ' >Upload CSV</button></div></div></div><div class="carousel-item tables"><div class="button_container"><div><input type="checkbox" name=' + this.xyToggleName + ' checked data-toggle="toggle" class="xytoggle" data-width="150" data-onstyle="success" data-offstyle="warning" data-height="40"></div><div class="plot_button"><button type="button" class="btn btn-primary" id=' + this.plotGraphId + ' >Plot Graph</button></div></div><div class="table_container"><div id=' + this.tableXParentId + ' ><table id=' + this.tableXId + ' class="table"></table></div><div id=' + this.tableYParentId + ' class="hidden"><table id=' + this.tableYId + ' class="table"></table></div><div><table id=' + this.graphMenuId + ' class="table table-dark"></table></div></div></div><div class="carousel-item graph"><div class="feature_buttons"><button type="button" class="btn btn-primary" id=' + this.addGraphButtonId + '> Add Graph</button><button type="button" class="btn btn-success" id=' + this.createSpreadsheetButtonId + '> Create Spreadsheet<i class="fa fa-plus" aria-hidden="true"></i></button></div><div id=' + this.canvasContinerId + ' ></div></div></div></div></div>';
+      this.element.innerHTML = '<div class="body_container"><div class="main_heading_container"><h2 class="main_heading"> Simple Data Grapher</h2><p class="sub_heading">Plot and Export Graphs with CSV data</p></div><div class="heading_container"><ul class="headings"><li class="item-1">Upload CSV Data</li><li class="item-2">Select Columns & Graph Type</li><li class="item-3">Plotted Graph & Export Options</li></ul></div><div id=' + this.carousalId + ' class="carousel ' + this.carousalClass + ' slide" data-ride="carousel" data-interval="false"><div class="indicators"><ol class="carousel-indicators"> <li data-target="#' + this.carousalId + '" data-slide-to="0" class="active" id="up"></li> <li data-target="#' + this.carousalId + '" data-slide-to="1"></li> <li data-target="#' + this.carousalId + '" data-slide-to="2"></li></ol></div><div class="carousel-inner"><div class="carousel-item active"><div class="main_container"><div class="container_drag_drop"><span class="btn btn-outline-primary btn-file input_box"><p class="drag_drop_heading" id=' + this.dragDropHeadingId + '> <u> Choose a csv file </u> or drag & drop it here </p><input type="file" class="csv_file" id=' + this.fileUploadId + ' accept=".csv"></span><button type="button" class="btn btn-dark des" id=' + "popover" + this.fileUploadId + '><i class="fa fa-list"></i></button></div><h6 class="or"><span>OR</span></h6><div class="container_remote_link"><input type="text" class="remote_file text_field" placeholder="url of remote file" id=' + this.remoteFileUploadId + ' ><button type="button" class="btn btn-dark des" id=' + "popover" + this.remoteFileUploadId + '><i class="fa fa-list"></i></button></div><h6 class="or"><span>OR</span></h6><div class="container_csv_string"><textarea class="csv_string text_field" id=' + this.csvStringUploadId + ' placeholder="Paste a CSV string here" ></textarea><button type="button" class="btn btn-dark des" id=' + "popover" + this.csvStringUploadId + '><i class="fa fa-list"></i></button></div><h6 class="or"><span>OR</span></h6><div class="container_google_sheet"><div class="google_sheet_container"><input type="text" class="google_sheet text_field" id=' + this.googleSheetUploadId + ' placeholder="Link of published Google Sheet" ><button type="button" class="btn btn-dark des" id=' + "popover" + this.googleSheetUploadId + '><i class="fa fa-list"></i></button></div></div><div id=' + this.upload_button_container + ' class="upload_button"><button type="button" class="btn btn-primary" id=' + this.uploadButtonId + ' >Upload CSV</button></div></div></div><div class="carousel-item tables"><div class="button_container"><div><input type="checkbox" name=' + this.xyToggleName + ' checked data-toggle="toggle" class="xytoggle" data-width="150" data-onstyle="success" data-offstyle="warning" data-height="40"></div><div class="plot_button"><button type="button" class="btn btn-primary" id=' + this.plotGraphId + ' >Plot Graph</button></div></div><div class="table_container"><div id=' + this.tableXParentId + ' ><table id=' + this.tableXId + ' class="table"></table></div><div id=' + this.tableYParentId + ' class="hidden"><table id=' + this.tableYId + ' class="table"></table></div><div><table id=' + this.graphMenuId + ' class="table table-dark"></table></div></div></div><div class="carousel-item graph"><div id=' + this.feature_button_container + ' class="feature_buttons"><button type="button" class="btn btn-primary" id=' + this.addGraphButtonId + '> Add Graph</button><button type="button" class="btn btn-success" id=' + this.createSpreadsheetButtonId + '> Create Spreadsheet<i class="fa fa-plus" aria-hidden="true"></i></button><button type="button" class="btn btn-info" id=' + this.codapExportButton + ' data-toggle="modal" data-target="#exampleModalCenter">View and Export to CODAP</button></div><div id=' + this.canvasContinerId + ' ></div></div></div></div></div><div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true"><div class="modal-dialog modal-lg modal-dialog-centered" id="modal-style" role="document"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exampleModalLongTitle">CODAP</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body" id="body_for_CODAP"></div></div></div></div>';
     }
   }]);
 

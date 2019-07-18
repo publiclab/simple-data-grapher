@@ -14,6 +14,8 @@ class CsvParser{
     csvSampleData = [];
     csvValidForYAxis = [];
     elementId = null;
+    codapHeaders=[];
+    codapMatrix=[];
 
     constructor(file, elementId, functionParameter){
         this.elementId = elementId;
@@ -35,6 +37,8 @@ class CsvParser{
         this.csvSampleData=totalData[0];
         this.csvValidForYAxis=totalData[1];
         this.completeCsvMatrixTranspose=this.createTranspose();
+        this.codapHeaders=this.headersForCodap();
+        this.codapMatrix=this.completeMatrixForCodap();
         this.startFileProcessing();
     }
     //a function handler that calls one function after the other after assigning the correct values to different class variables.
@@ -57,6 +61,8 @@ class CsvParser{
                 this.csvSampleData=totalData[0];
                 this.csvValidForYAxis=totalData[1];
                 this.completeCsvMatrixTranspose=this.createTranspose();
+                this.codapHeaders=this.headersForCodap();
+                this.codapMatrix=this.completeMatrixForCodap();
                 this.startFileProcessing();
             }
 
@@ -173,6 +179,19 @@ class CsvParser{
         }
        return matrixComplete;
     }
+    // matrix in JSON form for CODAP export
+    completeMatrixForCodap(){
+        var codapMatrix=[];
+        for (var i=1;i<this.completeCsvMatrixTranspose.length;i++){
+            var element={};
+            for (var j=0;j<this.csvHeaders.length;j++){
+                element[this.csvHeaders[j]]=this.completeCsvMatrixTranspose[i][j];
+            }
+            codapMatrix.push(element);
+        }
+        console.log("matrix codap",codapMatrix);
+        return codapMatrix;
+    }
     //checks if the first row has most of the potential header names, if not, assign dummy headers to the file.
     determineHeaders(){
         var csvHeadersLocal=[];
@@ -225,6 +244,16 @@ class CsvParser{
         }
         return headers_sheet;
     }
+    //determine a JSON for headers for CODAP
+    headersForCodap(){
+        var codapHeaders=[];
+        for (var i=0;i<this.csvHeaders.length;i++){
+            var element={};
+            element["name"]=this.csvHeaders[i];
+            codapHeaders.push(element);
+        }
+        return codapHeaders;
+    }
     // creating the transpose of the entire data ie complete data + headers, for createSpreadsheet in View.js
     createTranspose(){
         var completeCsvMatrixTransposeLocal=[];
@@ -239,6 +268,7 @@ class CsvParser{
                 completeCsvMatrixTransposeLocal[j+1][i]=this.completeCsvMatrix[i][j];
             }
         }
+        console.log("transpose",completeCsvMatrixTransposeLocal);
         return completeCsvMatrixTransposeLocal;
     }
 };
