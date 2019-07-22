@@ -21,9 +21,10 @@ var SimpleDataGrapher = require('./SimpleDataGrapher');
 
 var ChartjsPlotter = require('./ChartjsPlotter');
 
-var PlotlyjsPlotter = require('./PlotlyjsPlotter');
+var PlotlyjsPlotter = require('./PlotlyjsPlotter'); // const CODAPiFrame = require('./iframe-phone');
 
-var CODAPiFrame = require('./iframe-phone');
+
+var iframe_phone = require('iframe-phone');
 
 var View =
 /*#__PURE__*/
@@ -178,18 +179,68 @@ function () {
       }
     }
   }, {
+    key: "createDataset",
+    value: function createDataset() {
+      var dataset = {};
+      dataset["action"] = "create";
+      dataset["resource"] = "dataContext";
+      var values = {};
+      values["name"] = "my dataset";
+      values["title"] = "Case Table";
+      var collections = [];
+      var hashCollections = {};
+      hashCollections["name"] = "cases";
+      hashCollections["attrs"] = this.csvParser.codapHeaders;
+      collections.push(hashCollections);
+      values["collections"] = collections;
+      dataset["values"] = values;
+      var dataset2 = {};
+      dataset2["action"] = "create";
+      dataset2["resource"] = "dataContext[my dataset].item";
+      dataset2["values"] = this.csvParser.codapMatrix;
+      var dataset3 = {};
+      dataset3["action"] = "create";
+      dataset3["resource"] = "component";
+      var values3 = {};
+      values3["type"] = "caseTable";
+      values3["dataContext"] = "my dataset";
+      dataset3["values"] = values3;
+      return [dataset, dataset2, dataset3];
+    }
+  }, {
+    key: "iframePhoneHandler",
+    value: function iframePhoneHandler() {//callbackforCODAP
+    }
+  }, {
     key: "codapExport",
     value: function codapExport() {
-      console.log("clicked in codap");
-      var iframeBody = '<article><iframe id="codap-iframe" src="https://codap.concord.org/releases/latest?embeddedServer=yes#shared=109578" ></iframe></article>';
+      var self = this;
+      console.log("clicked in codap now");
+      var iframeBody = '<iframe id="codap-iframe" src="https://codap.concord.org/releases/latest?embeddedServer=yes#shared=109578" ></iframe>';
       var modal_body = document.getElementById("body_for_CODAP");
       modal_body.innerHTML = iframeBody;
       var iframe = document.getElementById("codap-iframe");
-      modal_body.style.height = "50vh";
+      modal_body.style.height = "500px";
       iframe.style.width = "750px";
-      iframe.style.height = "50hv";
+      iframe.style.height = "90%"; // console.log(CODAPiFrame,"CODAP-IFRAME");
+
       var codapIframe = document.getElementById('codap-iframe');
-      var rpcHandler = new CODAPiFrame.iframePhone.IframePhoneRpcEndpoint(iframePhoneHandler, "data-interactive", codapIframe);
+      var rpcHandler = new iframe_phone.IframePhoneRpcEndpoint(self.iframePhoneHandler, "data-interactive", codapIframe);
+      var createCodapButton = document.createElement("button");
+      createCodapButton.classList.add("btn");
+      createCodapButton.classList.add("btn-primary");
+      createCodapButton.innerHTML = "Go!";
+      createCodapButton.id = this.elementId + "_create_codap";
+      modal_body.prepend(createCodapButton);
+      var apiCall = this.createDataset();
+      console.log(apiCall);
+      console.log(this.csvParser.codapHeaders, this.csvParser.codapMatrix);
+      $("#" + this.elementId + "_create_codap").click(function () {
+        console.log("go go go");
+        rpcHandler.call(apiCall, function (resp) {
+          console.log('Response:' + JSON.stringify(resp));
+        });
+      });
     } // creates a downloadable spreadsheet for the imported data using SheetJS
 
   }, {

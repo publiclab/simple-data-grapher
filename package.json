@@ -34,6 +34,7 @@
     "file-system": "^2.2.2",
     "googleapis": "^39.2.0",
     "http-server": "^0.11.1",
+    "iframe-phone": "^1.2.0",
     "jquery": "^3.4.1",
     "mocha": "^6.1.4",
     "papaparse": "^4.6.3",
