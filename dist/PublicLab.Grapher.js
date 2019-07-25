@@ -257,9 +257,18 @@ function () {
 
     _defineProperty(this, "elementId", null);
 
+    _defineProperty(this, "codapHeaders", []);
+
+    _defineProperty(this, "codapMatrix", []);
+
     this.elementId = elementId;
     this.csvFile = file;
-    this.allFunctionHandler(functionParameter);
+
+    if (functionParameter == "prevfile") {
+      return this;
+    } else {
+      this.allFunctionHandler(functionParameter);
+    }
   } //since parsing a local file works asynchronously, a callback function is required to call the remaining functions after the parsing is complete
 
 
@@ -273,6 +282,8 @@ function () {
       this.csvSampleData = totalData[0];
       this.csvValidForYAxis = totalData[1];
       this.completeCsvMatrixTranspose = this.createTranspose();
+      this.codapHeaders = this.headersForCodap();
+      this.codapMatrix = this.completeMatrixForCodap();
       this.startFileProcessing();
     } //a function handler that calls one function after the other after assigning the correct values to different class variables.
 
@@ -296,6 +307,8 @@ function () {
         this.csvSampleData = totalData[0];
         this.csvValidForYAxis = totalData[1];
         this.completeCsvMatrixTranspose = this.createTranspose();
+        this.codapHeaders = this.headersForCodap();
+        this.codapMatrix = this.completeMatrixForCodap();
         this.startFileProcessing();
       }
     } //parsing a local file, works asynchronously
@@ -317,6 +330,8 @@ function () {
           count += 1;
         },
         complete: function complete() {
+          console.log("is it?", csvMatrixLocal);
+
           _this.callbackForLocalFile(csvMatrixLocal);
         }
       });
@@ -438,6 +453,25 @@ function () {
       }
 
       return matrixComplete;
+    } // matrix in JSON form for CODAP export
+
+  }, {
+    key: "completeMatrixForCodap",
+    value: function completeMatrixForCodap() {
+      var codapMatrix = [];
+
+      for (var i = 1; i < this.completeCsvMatrixTranspose.length; i++) {
+        var element = {};
+
+        for (var j = 0; j < this.csvHeaders.length; j++) {
+          element[this.csvHeaders[j]] = this.completeCsvMatrixTranspose[i][j];
+        }
+
+        codapMatrix.push(element);
+      }
+
+      console.log("matrix codap", codapMatrix);
+      return codapMatrix;
     } //checks if the first row has most of the potential header names, if not, assign dummy headers to the file.
 
   }, {
@@ -497,6 +531,20 @@ function () {
       }
 
       return headers_sheet;
+    } //determine a JSON for headers for CODAP
+
+  }, {
+    key: "headersForCodap",
+    value: function headersForCodap() {
+      var codapHeaders = [];
+
+      for (var i = 0; i < this.csvHeaders.length; i++) {
+        var element = {};
+        element["name"] = this.csvHeaders[i];
+        codapHeaders.push(element);
+      }
+
+      return codapHeaders;
     } // creating the transpose of the entire data ie complete data + headers, for createSpreadsheet in View.js
 
   }, {
@@ -518,6 +566,7 @@ function () {
         }
       }
 
+      console.log("transpose", completeCsvMatrixTransposeLocal);
       return completeCsvMatrixTransposeLocal;
     }
   }]);
@@ -527,7 +576,7 @@ function () {
 
 ;
 module.exports = CsvParser;
-},{"./SimpleDataGrapher":4,"papaparse":6}],3:[function(require,module,exports){
+},{"./SimpleDataGrapher":4,"papaparse":11}],3:[function(require,module,exports){
 "use strict";
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -721,8 +770,10 @@ var SimpleDataGrapher = require('./SimpleDataGrapher');
 
 var ChartjsPlotter = require('./ChartjsPlotter');
 
-var PlotlyjsPlotter = require('./PlotlyjsPlotter'); // const Gsheet = require('./indexsheet');
+var PlotlyjsPlotter = require('./PlotlyjsPlotter'); // const CODAPiFrame = require('./iframe-phone');
 
+
+var iframe_phone = require('iframe-phone');
 
 var View =
 /*#__PURE__*/
@@ -759,6 +810,14 @@ function () {
         console.log("i am uploading");
         self.csvParser = new CsvParser(self.csvFile, self.elementId, "csvstring");
       };
+    }
+  }, {
+    key: "usingPreviouslyUploadedFile",
+    value: function usingPreviouslyUploadedFile() {
+      var self = this;
+      console.log("prev file in use", self.elementId);
+      self.csvParser = new CsvParser("dummy", self.elementId, "prevfile");
+      console.log(self.csvParser, "checking");
     } //receives the JSON file value and creates an object of CsvParser class with the file as one of the parameters
 
   }, {
@@ -819,13 +878,120 @@ function () {
       }
 
       $('.' + this.carousalClass).carousel(2);
+    }
+  }, {
+    key: "createPopover",
+    value: function createPopover(buttonId) {
+      var self = this;
+      var html = '<div id="myForm" class="hide"><label for="title">File Title:</label><input type="text" name="title" id=' + "title" + buttonId + ' class="form-control input-md"><label for="desc">File Description:</label><textarea rows="3" name="desc" id=' + "desc" + buttonId + ' class="form-control input-md"></textarea><button type="button" class="btn btn-primary" id="save"> Save</button></div>';
+      $('#' + buttonId).popover({
+        placement: 'bottom',
+        title: 'Add Description',
+        html: true,
+        content: html
+      }).on('click', function () {
+        console.log("created popover");
+        $('#save').click(function (e) {
+          e.preventDefault();
+          self.fileTitle = $('#' + "title" + buttonId).val();
+          self.fileDescription = $('#' + "desc" + buttonId).val();
+          console.log(self.fileTitle, self.fileDescription, self, "got it");
+        });
+      });
+    }
+  }, {
+    key: "createButtons",
+    value: function createButtons(userLoginCheck) {
+      if (userLoginCheck == "yes") {
+        var save_file_button = document.createElement('button');
+        save_file_button.classList.add("btn");
+        save_file_button.classList.add("btn-primary");
+        save_file_button.innerHTML = "Save CSV";
+        save_file_button.id = this.elementId + "_save_CSV";
+        var upload_prev_file = document.createElement('button');
+        upload_prev_file.classList.add("btn");
+        upload_prev_file.classList.add("btn-primary");
+        upload_prev_file.innerHTML = "Choose a previously uploaded file";
+        upload_prev_file.id = this.elementId + "_prev_file";
+        var publish_research_button = document.createElement('button');
+        publish_research_button.classList.add("btn");
+        publish_research_button.classList.add("btn-primary");
+        publish_research_button.innerHTML = "Publish as a Research Note";
+        publish_research_button.id = this.elementId + "_publish";
+        var container = document.getElementById(this.upload_button_container);
+        var div_container = document.createElement('div');
+        div_container.appendChild(save_file_button);
+        div_container.appendChild(upload_prev_file);
+        var container2 = document.getElementById(this.feature_button_container);
+        container2.appendChild(publish_research_button);
+        container.prepend(div_container);
+      }
+    }
+  }, {
+    key: "createDataset",
+    value: function createDataset() {
+      var dataset = {};
+      dataset["action"] = "create";
+      dataset["resource"] = "dataContext";
+      var values = {};
+      values["name"] = "my dataset";
+      values["title"] = "Case Table";
+      var collections = [];
+      var hashCollections = {};
+      hashCollections["name"] = "cases";
+      hashCollections["attrs"] = this.csvParser.codapHeaders;
+      collections.push(hashCollections);
+      values["collections"] = collections;
+      dataset["values"] = values;
+      var dataset2 = {};
+      dataset2["action"] = "create";
+      dataset2["resource"] = "dataContext[my dataset].item";
+      dataset2["values"] = this.csvParser.codapMatrix;
+      var dataset3 = {};
+      dataset3["action"] = "create";
+      dataset3["resource"] = "component";
+      var values3 = {};
+      values3["type"] = "caseTable";
+      values3["dataContext"] = "my dataset";
+      dataset3["values"] = values3;
+      return [dataset, dataset2, dataset3];
+    }
+  }, {
+    key: "iframePhoneHandler",
+    value: function iframePhoneHandler() {//callbackforCODAP
+    }
+  }, {
+    key: "codapExport",
+    value: function codapExport() {
+      var self = this;
+      console.log("clicked in codap now");
+      var iframeBody = '<iframe id="codap-iframe" src="https://codap.concord.org/releases/latest?embeddedServer=yes#shared=109578" ></iframe>';
+      var modal_body = document.getElementById("body_for_CODAP");
+      modal_body.innerHTML = iframeBody;
+      var iframe = document.getElementById("codap-iframe");
+      modal_body.style.height = "500px";
+      iframe.style.width = "750px";
+      iframe.style.height = "90%"; // console.log(CODAPiFrame,"CODAP-IFRAME");
+
+      var codapIframe = document.getElementById('codap-iframe');
+      var rpcHandler = new iframe_phone.IframePhoneRpcEndpoint(self.iframePhoneHandler, "data-interactive", codapIframe);
+      var createCodapButton = document.createElement("button");
+      createCodapButton.classList.add("btn");
+      createCodapButton.classList.add("btn-primary");
+      createCodapButton.innerHTML = "Go!";
+      createCodapButton.id = this.elementId + "_create_codap";
+      modal_body.prepend(createCodapButton);
+      var apiCall = this.createDataset();
+      console.log(apiCall);
+      console.log(this.csvParser.codapHeaders, this.csvParser.codapMatrix);
+      $("#" + this.elementId + "_create_codap").click(function () {
+        console.log("go go go");
+        rpcHandler.call(apiCall, function (resp) {
+          console.log('Response:' + JSON.stringify(resp));
+        });
+      });
     } // creates a downloadable spreadsheet for the imported data using SheetJS
 
-  }, {
-    key: "exportSheet",
-    value: function exportSheet() {
-      console.log("clicked");
-    }
   }, {
     key: "createSheet",
     value: function createSheet() {
@@ -1005,15 +1171,14 @@ function () {
     key: "continueViewManipulation",
     value: function continueViewManipulation(x) {
       console.log(" i am back in view manipulation", this);
-      this.csvParser = x;
+
+      if (x != "prevfile") {
+        this.csvParser = x;
+      }
+
       this.showSampleDataXandY(); // this.showSampleDataXandY(this.csvParser.csvSampleData, this.csvParser.csvHeaders, this.csvParser.csvValidForYAxis, this.csvParser.csvSampleData);
       // sampleDataXandY(this.csvSampleData,this.csvHeaders,this.csvValidForYAxis,this.completeCsvMatrix);
       // matrixForCompleteData(headers,this.csvMatrix,start);
-    }
-  }, {
-    key: "onSignIn",
-    value: function onSignIn() {
-      console.log(u, "yayy");
     }
   }]);
 
@@ -1080,7 +1245,13 @@ function () {
 
     _defineProperty(this, "tableYParentId", null);
 
-    _defineProperty(this, "gsheetId", null);
+    _defineProperty(this, "upload_button_container", null);
+
+    _defineProperty(this, "fileTitle", "");
+
+    _defineProperty(this, "fileDescription", "");
+
+    _defineProperty(this, "codapExportButton", null);
 
     console.log("i am in view");
     this.elementId = elementId;
@@ -1113,12 +1284,12 @@ function () {
     this.canvasContinerId = elementId + "_canvas_container";
     this.xyToggleName = elementId + "_xytoggle";
     this.saveAsImageId = elementId + "save-as-image";
-    this.gsheetId = elementId + "export_as_gsheet";
+    this.upload_button_container = elementId + "upload_button_container";
+    this.feature_button_container = elementId + "feature_button_container";
+    this.codapExportButton = elementId + "codap_export_button";
     this.drawHTMLView();
     this.addListeners();
-    $('.' + this.carousalClass).carousel({
-      interval: false
-    });
+    this.usingPreviouslyUploadedFile();
     $('.xytoggle').bootstrapToggle({
       on: 'X-Axis',
       off: 'Y-Axis'
@@ -1146,16 +1317,35 @@ function () {
       console.log("#" + this.fileUploadId);
       $("#" + this.fileUploadId).change(function (e) {
         console.log("i am here23");
+        document.getElementById("popover" + _this5.fileUploadId).style.display = "inline";
+        document.getElementById("popover" + _this5.csvStringUploadId).style.display = "none";
+        document.getElementById("popover" + _this5.googleSheetUploadId).style.display = "none";
+        document.getElementById("popover" + _this5.remoteFileUploadId).style.display = "none";
+
+        _this5.createPopover("popover" + _this5.fileUploadId);
 
         _this5.handleFileSelectlocal(e);
       });
       $("#" + this.csvStringUploadId).change(function () {
         console.log(document.getElementById(_this5.csvStringUploadId).value);
+        document.getElementById("popover" + _this5.csvStringUploadId).style.display = "inline";
+        document.getElementById("popover" + _this5.googleSheetUploadId).style.display = "none";
+        document.getElementById("popover" + _this5.remoteFileUploadId).style.display = "none";
+        document.getElementById("popover" + _this5.fileUploadId).style.display = "none";
+
+        _this5.createPopover("popover" + _this5.csvStringUploadId);
 
         _this5.handleFileSelectstring(document.getElementById(_this5.csvStringUploadId).value);
       });
       $("#" + this.googleSheetUploadId).change(function () {
         console.log(document.getElementById(_this5.googleSheetUploadId).value, "sheetlink");
+        document.getElementById("popover" + _this5.googleSheetUploadId).style.display = "inline";
+        document.getElementById("popover" + _this5.csvStringUploadId).style.display = "none";
+        document.getElementById("popover" + _this5.remoteFileUploadId).style.display = "none";
+        document.getElementById("popover" + _this5.fileUploadId).style.display = "none";
+
+        _this5.createPopover("popover" + _this5.googleSheetUploadId);
+
         var sheetLink = document.getElementById(_this5.googleSheetUploadId).value;
         var sheetURL = "https://spreadsheets.google.com/feeds/list/" + sheetLink.split("/")[5] + "/od6/public/values?alt=json";
 
@@ -1163,21 +1353,27 @@ function () {
       });
       $("#" + this.remoteFileUploadId).change(function () {
         console.log(document.getElementById(_this5.remoteFileUploadId).value);
+        document.getElementById("popover" + _this5.remoteFileUploadId).style.display = "inline";
+        document.getElementById("popover" + _this5.csvStringUploadId).style.display = "none";
+        document.getElementById("popover" + _this5.googleSheetUploadId).style.display = "none";
+        document.getElementById("popover" + _this5.fileUploadId).style.display = "none";
+
+        _this5.createPopover("popover" + _this5.remoteFileUploadId);
 
         _this5.sendRemoteFileToHandler(document.getElementById(_this5.remoteFileUploadId).value);
       });
       $("#" + this.createSpreadsheetButtonId).click(function () {
         _this5.createSheet();
       });
-      $("#" + this.gsheetId).click(function () {
-        _this5.exportSheet();
+      $("#" + this.codapExportButton).click(function () {
+        _this5.codapExport();
       });
     } //renders the entire HTML view
 
   }, {
     key: "drawHTMLView",
     value: function drawHTMLView() {
-      this.element.innerHTML = '<div class="body_container"><div class="main_heading_container"><h2 class="main_heading"> Simple Data Grapher</h2><p class="sub_heading">Plot and Export Graphs with CSV data</p></div><div class="heading_container"><ul class="headings"><li class="item-1">Upload CSV Data</li><li class="item-2">Select Columns & Graph Type</li><li class="item-3">Plotted Graph & Export Options</li></ul></div><div id=' + this.carousalId + ' class="carousel ' + this.carousalClass + ' slide" data-ride="carousel"><div class="indicators"><ol class="carousel-indicators"> <li data-target="#' + this.carousalId + '" data-slide-to="0" class="active" id="up"></li> <li data-target="#' + this.carousalId + '" data-slide-to="1"></li> <li data-target="#' + this.carousalId + '" data-slide-to="2"></li></ol></div><div class="carousel-inner"><div class="carousel-item active"><div class="main_container"><div class="container_drag_drop"><span class="btn btn-outline-primary btn-file input_box"><p class="drag_drop_heading" id=' + this.dragDropHeadingId + '> <u> Choose a csv file </u> or drag & drop it here </p><input type="file" class="csv_file" id=' + this.elementId + "_csv_file" + ' accept=".csv"></span></div><h6 class="or"><span>OR</span></h6><div class="container_remote_link"><input type="text" class="remote_file text_field" placeholder="url of remote file" id=' + this.elementId + "_remote_file" + ' ></div><h6 class="or"><span>OR</span></h6><div class="container_csv_string"><textarea class="csv_string text_field" id=' + this.elementId + "_csv_string" + ' placeholder="Paste a CSV string here" ></textarea></div><h6 class="or"><span>OR</span></h6><div class="container_google_sheet"><input type="text" class="google_sheet text_field" id=' + this.elementId + "_google_sheet" + ' placeholder="Link of published Google Sheet" ></div><div class="upload_button"><button type="button" class="btn btn-primary" id=' + this.uploadButtonId + ' >Upload CSV</button></div></div></div><div class="carousel-item tables"><div class="button_container"><div><input type="checkbox" name=' + this.xyToggleName + ' checked data-toggle="toggle" class="xytoggle" data-width="150" data-onstyle="success" data-offstyle="warning" data-height="40"></div><div class="plot_button"><button type="button" class="btn btn-primary" id=' + this.plotGraphId + ' >Plot Graph</button></div></div><div class="table_container"><div id=' + this.tableXParentId + ' ><table id=' + this.tableXId + ' class="table"></table></div><div id=' + this.tableYParentId + ' class="hidden"><table id=' + this.tableYId + ' class="table"></table></div><div><table id=' + this.graphMenuId + ' class="table table-dark"></table></div></div></div><div class="carousel-item graph"><div class="feature_buttons"><button type="button" class="btn btn-primary" id=' + this.addGraphButtonId + '> Add Graph</button><button type="button" class="btn btn-success" id=' + this.createSpreadsheetButtonId + '> Create Spreadsheet<i class="fa fa-plus" aria-hidden="true"></i></button><button type="button" class="btn btn-success" id=' + this.gsheetId + '> Export as Google </button><div class="g-signin2" data-onsuccess=' + this.onSignIn + '></div></div><div id=' + this.canvasContinerId + ' ></div></div></div></div></div>';
+      this.element.innerHTML = '<div class="body_container"><div class="main_heading_container"><h2 class="main_heading"> Simple Data Grapher</h2><p class="sub_heading">Plot and Export Graphs with CSV data</p></div><div class="heading_container"><ul class="headings"><li class="item-1">Upload CSV Data</li><li class="item-2">Select Columns & Graph Type</li><li class="item-3">Plotted Graph & Export Options</li></ul></div><div id=' + this.carousalId + ' class="carousel ' + this.carousalClass + ' slide" data-ride="carousel" data-interval="false"><div class="indicators"><ol class="carousel-indicators"> <li data-target="#' + this.carousalId + '" data-slide-to="0" class="active" id="up" class="first_indicator"></li> <li data-target="#' + this.carousalId + '" data-slide-to="1" class="second_indicator"></li> <li data-target="#' + this.carousalId + '" data-slide-to="2" class="third_indicator"></li></ol></div><div class="carousel-inner"><div class="carousel-item active"><div class="main_container"><div class="container_drag_drop"><span class="btn btn-outline-primary btn-file input_box"><p class="drag_drop_heading" id=' + this.dragDropHeadingId + '> <u> Choose a csv file </u> or drag & drop it here </p><input type="file" class="csv_file" id=' + this.fileUploadId + ' accept=".csv"></span><button type="button" class="btn btn-dark des" id=' + "popover" + this.fileUploadId + '><i class="fa fa-list"></i></button></div><h6 class="or"><span>OR</span></h6><div class="container_remote_link"><input type="text" class="remote_file text_field" placeholder="url of remote file" id=' + this.remoteFileUploadId + ' ><button type="button" class="btn btn-dark des" id=' + "popover" + this.remoteFileUploadId + '><i class="fa fa-list"></i></button></div><h6 class="or"><span>OR</span></h6><div class="container_csv_string"><input class="csv_string text_field" id=' + this.csvStringUploadId + ' placeholder="Paste a CSV string here" ><button type="button" class="btn btn-dark des" id=' + "popover" + this.csvStringUploadId + '><i class="fa fa-list"></i></button></div><h6 class="or"><span>OR</span></h6><div class="container_google_sheet"><div class="google_sheet_container"><input type="text" class="google_sheet text_field" id=' + this.googleSheetUploadId + ' placeholder="Link of published Google Sheet" ><button type="button" class="btn btn-dark des" id=' + "popover" + this.googleSheetUploadId + '><i class="fa fa-list"></i></button></div></div><div id=' + this.upload_button_container + ' class="upload_button"><button type="button" class="btn btn-primary uploadButton" id=' + this.uploadButtonId + ' >Upload CSV</button></div></div></div><div class="carousel-item tables"><div class="button_container"><div><input type="checkbox" name=' + this.xyToggleName + ' checked data-toggle="toggle" class="xytoggle" id="xy" data-width="150" data-onstyle="success" data-offstyle="warning" data-height="40"></div><div class="plot_button"><button type="button" class="btn btn-primary plotGraph" id=' + this.plotGraphId + ' >Plot Graph</button></div></div><div class="table_container"><div id=' + this.tableXParentId + ' ><table id=' + this.tableXId + ' class="table"></table></div><div id=' + this.tableYParentId + ' class="hidden"><table id=' + this.tableYId + ' class="table"></table></div><div><table id=' + this.graphMenuId + ' class="table table-dark"></table></div></div></div><div class="carousel-item graph"><div id=' + this.feature_button_container + ' class="feature_buttons"><button type="button" class="btn btn-primary addGraph" id=' + this.addGraphButtonId + '> Add Graph</button><button type="button" class="btn btn-success createSpreadsheet" id=' + this.createSpreadsheetButtonId + '> Create Spreadsheet<i class="fa fa-plus" aria-hidden="true"></i></button><button type="button" class="btn btn-info codapExport" id=' + this.codapExportButton + ' data-toggle="modal" data-target="#exampleModalCenter">View and Export to CODAP</button></div><div id=' + this.canvasContinerId + ' ></div></div></div></div></div><div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true"><div class="modal-dialog modal-lg modal-dialog-centered" id="modal-style" role="document"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exampleModalLongTitle">CODAP</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body" id="body_for_CODAP"></div></div></div></div>';
     }
   }]);
 
@@ -1185,7 +1381,479 @@ function () {
 }();
 
 exports.View = View;
-},{"./ChartjsPlotter":1,"./CsvParser":2,"./PlotlyjsPlotter":3,"./SimpleDataGrapher":4}],6:[function(require,module,exports){
+},{"./ChartjsPlotter":1,"./CsvParser":2,"./PlotlyjsPlotter":3,"./SimpleDataGrapher":4,"iframe-phone":10}],6:[function(require,module,exports){
+var structuredClone = require('./structured-clone');
+var HELLO_INTERVAL_LENGTH = 200;
+var HELLO_TIMEOUT_LENGTH = 60000;
+
+function IFrameEndpoint() {
+  var listeners = {};
+  var isInitialized = false;
+  var connected = false;
+  var postMessageQueue = [];
+  var helloInterval;
+
+  function postToParent(message) {
+    // See http://dev.opera.com/articles/view/window-postmessage-messagechannel/#crossdoc
+    //     https://github.com/Modernizr/Modernizr/issues/388
+    //     http://jsfiddle.net/ryanseddon/uZTgD/2/
+    if (structuredClone.supported()) {
+      window.parent.postMessage(message, '*');
+    } else {
+      window.parent.postMessage(JSON.stringify(message), '*');
+    }
+  }
+
+  function post(type, content) {
+    var message;
+    // Message object can be constructed from 'type' and 'content' arguments or it can be passed
+    // as the first argument.
+    if (arguments.length === 1 && typeof type === 'object' && typeof type.type === 'string') {
+      message = type;
+    } else {
+      message = {
+        type: type,
+        content: content
+      };
+    }
+    if (connected) {
+      postToParent(message);
+    } else {
+      postMessageQueue.push(message);
+    }
+  }
+
+  function postHello() {
+    postToParent({
+      type: 'hello'
+    });
+  }
+
+  function addListener(type, fn) {
+    listeners[type] = fn;
+  }
+
+  function removeAllListeners() {
+    listeners = {};
+  }
+
+  function getListenerNames() {
+    return Object.keys(listeners);
+  }
+
+  function messageListener(message) {
+    // Anyone can send us a message. Only pay attention to messages from parent.
+    if (message.source !== window.parent) return;
+    var messageData = message.data;
+    if (typeof messageData === 'string') messageData = JSON.parse(messageData);
+
+    if (!connected && messageData.type === 'hello') {
+      connected = true;
+      stopPostingHello();
+      while (postMessageQueue.length > 0) {
+        post(postMessageQueue.shift());
+      }
+    }
+
+    if (connected && listeners[messageData.type]) {
+      listeners[messageData.type](messageData.content);
+    }
+  }
+
+  function disconnect() {
+    connected = false;
+    stopPostingHello();
+    window.removeEventListener('message', messsageListener);
+  }
+
+  /**
+    Initialize communication with the parent frame. This should not be called until the app's custom
+    listeners are registered (via our 'addListener' public method) because, once we open the
+    communication, the parent window may send any messages it may have queued. Messages for which
+    we don't have handlers will be silently ignored.
+  */
+  function initialize() {
+    if (isInitialized) {
+      return;
+    }
+    isInitialized = true;
+    if (window.parent === window) return;
+
+    // We kick off communication with the parent window by sending a "hello" message. Then we wait
+    // for a handshake (another "hello" message) from the parent window.
+    startPostingHello();
+    window.addEventListener('message', messageListener, false);
+  }
+
+  function startPostingHello() {
+    if (helloInterval) {
+      stopPostingHello();
+    }
+    helloInterval = window.setInterval(postHello, HELLO_INTERVAL_LENGTH);
+    window.setTimeout(stopPostingHello, HELLO_TIMEOUT_LENGTH);
+    // Post the first msg immediately.
+    postHello();
+  }
+
+  function stopPostingHello() {
+    window.clearInterval(helloInterval);
+    helloInterval = null;
+  }
+
+  // Public API.
+  return {
+    initialize: initialize,
+    getListenerNames: getListenerNames,
+    addListener: addListener,
+    removeAllListeners: removeAllListeners,
+    disconnect: disconnect,
+    post: post
+  };
+}
+
+var instance = null;
+
+// IFrameEndpoint is a singleton, as iframe can't have multiple parents anyway.
+module.exports = function getIFrameEndpoint() {
+  if (!instance) {
+    instance = new IFrameEndpoint();
+  }
+  return instance;
+};
+
+},{"./structured-clone":9}],7:[function(require,module,exports){
+var ParentEndpoint = require('./parent-endpoint');
+var getIFrameEndpoint = require('./iframe-endpoint');
+
+// Not a real UUID as there's an RFC for that (needed for proper distributed computing).
+// But in this fairly parochial situation, we just need to be fairly sure to avoid repeats.
+function getPseudoUUID() {
+  var chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  var len = chars.length;
+  var ret = [];
+
+  for (var i = 0; i < 10; i++) {
+    ret.push(chars[Math.floor(Math.random() * len)]);
+  }
+  return ret.join('');
+}
+
+module.exports = function IframePhoneRpcEndpoint(handler, namespace, targetWindow, targetOrigin, phone) {
+  var pendingCallbacks = Object.create({});
+
+  // if it's a non-null object, rather than a function, 'handler' is really an options object
+  if (handler && typeof handler === 'object') {
+    namespace = handler.namespace;
+    targetWindow = handler.targetWindow;
+    targetOrigin = handler.targetOrigin;
+    phone = handler.phone;
+    handler = handler.handler;
+  }
+
+  if (!phone) {
+    if (targetWindow === window.parent) {
+      phone = getIFrameEndpoint();
+      phone.initialize();
+    } else {
+      phone = new ParentEndpoint(targetWindow, targetOrigin);
+    }
+  }
+
+  phone.addListener(namespace, function (message) {
+    var callbackObj;
+
+    if (message.messageType === 'call' && typeof this.handler === 'function') {
+      this.handler.call(undefined, message.value, function (returnValue) {
+        phone.post(namespace, {
+          messageType: 'returnValue',
+          uuid: message.uuid,
+          value: returnValue
+        });
+      });
+    } else if (message.messageType === 'returnValue') {
+      callbackObj = pendingCallbacks[message.uuid];
+
+      if (callbackObj) {
+        window.clearTimeout(callbackObj.timeout);
+        if (callbackObj.callback) {
+          callbackObj.callback.call(undefined, message.value);
+        }
+        pendingCallbacks[message.uuid] = null;
+      }
+    }
+  }.bind(this));
+
+  function call(message, callback) {
+    var uuid = getPseudoUUID();
+
+    pendingCallbacks[uuid] = {
+      callback: callback,
+      timeout: window.setTimeout(function () {
+        if (callback) {
+          callback(undefined, new Error("IframePhone timed out waiting for reply"));
+        }
+      }, 2000)
+    };
+
+    phone.post(namespace, {
+      messageType: 'call',
+      uuid: uuid,
+      value: message
+    });
+  }
+
+  function disconnect() {
+    phone.disconnect();
+  }
+
+  this.handler = handler;
+  this.call = call.bind(this);
+  this.disconnect = disconnect.bind(this);
+};
+
+},{"./iframe-endpoint":6,"./parent-endpoint":8}],8:[function(require,module,exports){
+var structuredClone = require('./structured-clone');
+
+/**
+  Call as:
+    new ParentEndpoint(targetWindow, targetOrigin, afterConnectedCallback)
+      targetWindow is a WindowProxy object. (Messages will be sent to it)
+
+      targetOrigin is the origin of the targetWindow. (Messages will be restricted to this origin)
+
+      afterConnectedCallback is an optional callback function to be called when the connection is
+        established.
+
+  OR (less secure):
+    new ParentEndpoint(targetIframe, afterConnectedCallback)
+
+      targetIframe is a DOM object (HTMLIframeElement); messages will be sent to its contentWindow.
+
+      afterConnectedCallback is an optional callback function
+
+    In this latter case, targetOrigin will be inferred from the value of the src attribute of the
+    provided DOM object at the time of the constructor invocation. This is less secure because the
+    iframe might have been navigated to an unexpected domain before constructor invocation.
+
+  Note that it is important to specify the expected origin of the iframe's content to safeguard
+  against sending messages to an unexpected domain. This might happen if our iframe is navigated to
+  a third-party URL unexpectedly. Furthermore, having a reference to Window object (as in the first
+  form of the constructor) does not protect against sending a message to the wrong domain. The
+  window object is actualy a WindowProxy which transparently proxies the Window object of the
+  underlying iframe, so that when the iframe is navigated, the "same" WindowProxy now references a
+  completely differeent Window object, possibly controlled by a hostile domain.
+
+  See http://www.esdiscuss.org/topic/a-dom-use-case-that-can-t-be-emulated-with-direct-proxies for
+  more about this weird behavior of WindowProxies (the type returned by <iframe>.contentWindow).
+*/
+
+module.exports = function ParentEndpoint(targetWindowOrIframeEl, targetOrigin, afterConnectedCallback) {
+  var postMessageQueue = [];
+  var connected = false;
+  var handlers = {};
+  var targetWindowIsIframeElement;
+
+  function getIframeOrigin(iframe) {
+    return iframe.src.match(/(.*?\/\/.*?)\//)[1];
+  }
+
+  function post(type, content) {
+    var message;
+    // Message object can be constructed from 'type' and 'content' arguments or it can be passed
+    // as the first argument.
+    if (arguments.length === 1 && typeof type === 'object' && typeof type.type === 'string') {
+      message = type;
+    } else {
+      message = {
+        type: type,
+        content: content
+      };
+    }
+    if (connected) {
+      var tWindow = getTargetWindow();
+      // if we are laready connected ... send the message
+      // See http://dev.opera.com/articles/view/window-postmessage-messagechannel/#crossdoc
+      //     https://github.com/Modernizr/Modernizr/issues/388
+      //     http://jsfiddle.net/ryanseddon/uZTgD/2/
+      if (structuredClone.supported()) {
+        tWindow.postMessage(message, targetOrigin);
+      } else {
+        tWindow.postMessage(JSON.stringify(message), targetOrigin);
+      }
+    } else {
+      // else queue up the messages to send after connection complete.
+      postMessageQueue.push(message);
+    }
+  }
+
+  function addListener(messageName, func) {
+    handlers[messageName] = func;
+  }
+
+  function removeListener(messageName) {
+    handlers[messageName] = null;
+  }
+
+  // Note that this function can't be used when IFrame element hasn't been added to DOM yet
+  // (.contentWindow would be null). At the moment risk is purely theoretical, as the parent endpoint
+  // only listens for an incoming 'hello' message and the first time we call this function
+  // is in #receiveMessage handler (so iframe had to be initialized before, as it could send 'hello').
+  // It would become important when we decide to refactor the way how communication is initialized.
+  function getTargetWindow() {
+    if (targetWindowIsIframeElement) {
+      var tWindow = targetWindowOrIframeEl.contentWindow;
+      if (!tWindow) {
+        throw "IFrame element needs to be added to DOM before communication " +
+              "can be started (.contentWindow is not available)";
+      }
+      return tWindow;
+    }
+    return targetWindowOrIframeEl;
+  }
+
+  function receiveMessage(message) {
+    var messageData;
+    if (message.source === getTargetWindow() && (targetOrigin === '*' || message.origin === targetOrigin)) {
+      messageData = message.data;
+      if (typeof messageData === 'string') {
+        messageData = JSON.parse(messageData);
+      }
+      if (handlers[messageData.type]) {
+        handlers[messageData.type](messageData.content);
+      } else {
+        console.log("cant handle type: " + messageData.type);
+      }
+    }
+  }
+
+  function disconnect() {
+    connected = false;
+    window.removeEventListener('message', receiveMessage);
+  }
+
+  // handle the case that targetWindowOrIframeEl is actually an <iframe> rather than a Window(Proxy) object
+  // Note that if it *is* a WindowProxy, this probe will throw a SecurityException, but in that case
+  // we also don't need to do anything
+  try {
+    targetWindowIsIframeElement = targetWindowOrIframeEl.constructor === HTMLIFrameElement;
+  } catch (e) {
+    targetWindowIsIframeElement = false;
+  }
+
+  if (targetWindowIsIframeElement) {
+    // Infer the origin ONLY if the user did not supply an explicit origin, i.e., if the second
+    // argument is empty or is actually a callback (meaning it is supposed to be the
+    // afterConnectionCallback)
+    if (!targetOrigin || targetOrigin.constructor === Function) {
+      afterConnectedCallback = targetOrigin;
+      targetOrigin = getIframeOrigin(targetWindowOrIframeEl);
+    }
+  }
+
+  // Handle pages served through file:// protocol. Behaviour varies in different browsers. Safari sets origin
+  // to 'file://' and everything works fine, but Chrome and Safari set message.origin to null.
+  // Also, https://developer.mozilla.org/en-US/docs/Web/API/Window/postMessage says:
+  //  > Lastly, posting a message to a page at a file: URL currently requires that the targetOrigin argument be "*".
+  //  > file:// cannot be used as a security restriction; this restriction may be modified in the future.
+  // So, using '*' seems like the only possible solution.
+  if (targetOrigin === 'file://') {
+    targetOrigin = '*';
+  }
+
+  // when we receive 'hello':
+  addListener('hello', function () {
+    connected = true;
+
+    // send hello response
+    post({
+      type: 'hello',
+      // `origin` property isn't used by IframeEndpoint anymore (>= 1.2.0), but it's being sent to be
+      // backward compatible with old IframeEndpoint versions (< v1.2.0).
+      origin: window.location.href.match(/(.*?\/\/.*?)\//)[1]
+    });
+
+    // give the user a chance to do things now that we are connected
+    // note that is will happen before any queued messages
+    if (afterConnectedCallback && typeof afterConnectedCallback === "function") {
+      afterConnectedCallback();
+    }
+
+    // Now send any messages that have been queued up ...
+    while (postMessageQueue.length > 0) {
+      post(postMessageQueue.shift());
+    }
+  });
+
+  window.addEventListener('message', receiveMessage, false);
+
+  // Public API.
+  return {
+    post: post,
+    addListener: addListener,
+    removeListener: removeListener,
+    disconnect: disconnect,
+    getTargetWindow: getTargetWindow,
+    targetOrigin: targetOrigin
+  };
+};
+
+},{"./structured-clone":9}],9:[function(require,module,exports){
+var featureSupported = false;
+
+(function () {
+  var result = 0;
+
+  if (!!window.postMessage) {
+    try {
+      // Safari 5.1 will sometimes throw an exception and sometimes won't, lolwut?
+      // When it doesn't we capture the message event and check the
+      // internal [[Class]] property of the message being passed through.
+      // Safari will pass through DOM nodes as Null iOS safari on the other hand
+      // passes it through as DOMWindow, gotcha.
+      window.onmessage = function (e) {
+        var type = Object.prototype.toString.call(e.data);
+        result = (type.indexOf("Null") != -1 || type.indexOf("DOMWindow") != -1) ? 1 : 0;
+        featureSupported = {
+          'structuredClones': result
+        };
+      };
+      // Spec states you can't transmit DOM nodes and it will throw an error
+      // postMessage implimentations that support cloned data will throw.
+      window.postMessage(document.createElement("a"), "*");
+    } catch (e) {
+      // BBOS6 throws but doesn't pass through the correct exception
+      // so check error message
+      result = (e.DATA_CLONE_ERR || e.message == "Cannot post cyclic structures.") ? 1 : 0;
+      featureSupported = {
+        'structuredClones': result
+      };
+    }
+  }
+}());
+
+exports.supported = function supported() {
+  return featureSupported && featureSupported.structuredClones > 0;
+};
+
+},{}],10:[function(require,module,exports){
+module.exports = {
+  /**
+   * Allows to communicate with an iframe.
+   */
+  ParentEndpoint:  require('./lib/parent-endpoint'),
+  /**
+   * Allows to communicate with a parent page.
+   * IFrameEndpoint is a singleton, as iframe can't have multiple parents anyway.
+   */
+  getIFrameEndpoint: require('./lib/iframe-endpoint'),
+  structuredClone: require('./lib/structured-clone'),
+
+  // TODO: May be misnamed
+  IframePhoneRpcEndpoint: require('./lib/iframe-phone-rpc-endpoint')
+
+};
+
+},{"./lib/iframe-endpoint":6,"./lib/iframe-phone-rpc-endpoint":7,"./lib/parent-endpoint":8,"./lib/structured-clone":9}],11:[function(require,module,exports){
 /* @license
 Papa Parse
 v4.6.3

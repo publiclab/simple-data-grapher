@@ -6,7 +6,7 @@
   "scripts": {
     "build": "watch 'babel src -d dist/transpiled_code & browserify dist/transpiled_code/SimpleDataGrapher.js -o dist/PublicLab.Grapher.js' src",
     "heroku-postbuild": "babel src -d dist/transpiled_code & browserify dist/transpiled_code/SimpleDataGrapher.js -o dist/PublicLab.Grapher.js",
-    "test": "./node_modules/mocha/bin/mocha --require @babel/register --require @babel/polyfill --require jsdom-global/register spec/js/",
+    "test": "./node_modules/mocha/bin/mocha --require @babel/register --require @babel/polyfill --require jsdom-global/register spec/js/ --timeout 20000",
     "lint": "eslint ./src ./dist ./spec --fix",
     "start": "http-server -c-1 -p $PORT",
     "dev_start": "http-server -c-1 -p 8000"
@@ -34,9 +34,11 @@
     "file-system": "^2.2.2",
     "googleapis": "^39.2.0",
     "http-server": "^0.11.1",
+    "iframe-phone": "^1.2.0",
     "jquery": "^3.4.1",
     "mocha": "^6.1.4",
     "papaparse": "^4.6.3",
+    "puppeteer": "^1.19.0",
     "readline": "^1.3.0"
   },
   "devDependencies": {
