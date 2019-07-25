@@ -2,11 +2,17 @@
   margin:0 auto;
   width: 50%;
   margin-top: 100px;
-  height: 600px;
+  height: 700px;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   align-items: center;
+}
+.graph{
+  height: 700px;
+}
+.table_container{
+  height: 700px;
 }
 
 .btn-file {
@@ -62,11 +68,11 @@
   width: 350px;
 }
 .carousel-indicators{
-top: 30px;
-justify-content:space-around;
-margin:0;
-display: flex;
-height: 20px;
+  top: 30px;
+  justify-content:space-around;
+  margin:0;
+  display: flex;
+  height: 20px;
 }
 .tables{
 margin-top: 100px;
@@ -177,7 +183,6 @@ margin-left: 20px;
 .item-2{
 margin-left: 70px;
 }
-.body_container{
-  margin-left: 100px;
-  margin-right: 100px;
+.des{
+  display: none;
 }
