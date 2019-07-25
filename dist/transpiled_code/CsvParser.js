@@ -115,6 +115,8 @@ function () {
           count += 1;
         },
         complete: function complete() {
+          console.log("is it?", csvMatrixLocal);
+
           _this.callbackForLocalFile(csvMatrixLocal);
         }
       });

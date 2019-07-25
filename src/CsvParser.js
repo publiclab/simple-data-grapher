@@ -81,6 +81,7 @@ class CsvParser{
                 count += 1;
             },
             complete: () => {
+                console.log("is it?",csvMatrixLocal);
                 this.callbackForLocalFile(csvMatrixLocal);
                 
             }

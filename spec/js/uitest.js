@@ -4,7 +4,7 @@ const _ = require('lodash');
 const globalVariables = _.pick(global, ['browser', 'expect']);
 const opts = {
     headless: false,
-    slowMo: 100,
+    slowMo: 200,
     timeout: 10000
   };
 before (async function () {
@@ -51,13 +51,15 @@ describe("heading tests", function(){
         assert.equal(headingValue,"Plotted Graph &amp; Export Options");
     });
 });
-describe("local file upload test", function(){
+describe("csv string file upload test", function(){
     let page;
     before (async function () {
         page = await browser.newPage();
         await page.goto('http://localhost:8000');
-        const fileInput=await page.$('.csv_file');
-        await fileInput.uploadFile("../../examples/test.csv");
+        const fileInput=await page.$('.csv_string');
+        await fileInput.type("A,2,3");
+        await fileInput.press('Enter');
+        // await fileInput.uploadFile("../../examples/test.csv");
         const uploadButton=await page.$('.uploadButton');
         await uploadButton.click();
         // const second_indicator=await page.$('.second_indicator');
@@ -71,12 +73,13 @@ describe("local file upload test", function(){
         assert.equal(xyToggleValue,"on");
     });
     it("should test toggle button: off", async function(){
-        let xyToggleValue;
-        await page.evaluate(function(){
-            document.querySelector('.xytoggle').click();
-            // xyToggleValue=document.getElementsByClassName('xytoggle').value;
-        });
-        xyToggleValue=await page.$eval('.xytoggle', el=> el.value);
+        // await page.evaluate(function(){
+        //     document.querySelector('.xytoggle').click();
+        //     // xyToggleValue=document.getElementsByClassName('xytoggle').value;
+        // });
+        const xyToggle=await page.$('.toggle');
+        await xyToggle.click();
+        let xyToggleValue=await page.$eval('.xytoggle', el=> el.value);
         console.log(xyToggleValue);
     });
     
