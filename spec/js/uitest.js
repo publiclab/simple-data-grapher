@@ -5,7 +5,7 @@ const globalVariables = _.pick(global, ['browser', 'expect']);
 const opts = {
     headless: false,
     // slowMo: 100,
-    timeout: 10000
+    // timeout: 10000
   };
 before (async function () {
     global.browser = await puppeteer.launch(opts);
@@ -101,8 +101,16 @@ describe("csv string file upload test", function(){
         const graph_val=await (await graph_type.getProperty('checked')).jsonValue();
         assert.equal(graph_val,true);
     });
+    it("should check plotting the graph", async function(){
+        const plot_graphButton=await page.$(".plotGraph");
+        await plot_graphButton.click();
+        assert.notEqual(plot_graphButton,undefined);
+    });
+    it("should check if graph exists", async function(){
+        const graph_container=await page.$("#first_chart_container_0");
+        assert.notEqual(graph_container,undefined);
+    });
 
     
 
 });
-//first_y_axis_input_columns0
