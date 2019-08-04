@@ -3,9 +3,8 @@ const puppeteer = require('puppeteer');
 const _ = require('lodash');
 const globalVariables = _.pick(global, ['browser', 'expect']);
 const opts = {
-    headless: false,
     // slowMo: 100,
-    // timeout: 10000
+    headless: false,
   };
 before (async function () {
     global.browser = await puppeteer.launch(opts);
@@ -57,7 +56,7 @@ describe("csv string file upload test", function(){
         page = await browser.newPage();
         await page.goto('http://localhost:8000');
         const fileInput=await page.$('.csv_string');
-        await fileInput.type("A,2,3\nB,5,6\nC,8,9\nD,11,12\nE,14,15\nF,17,18");
+        await fileInput.type("A,2,3\nB,5,6\nC,8,9");
         await page.mouse.click(10,10);
         const uploadButton=await page.$('.uploadButton');
         await uploadButton.click();
@@ -110,7 +109,5 @@ describe("csv string file upload test", function(){
         const graph_container=await page.$("#first_chart_container_0");
         assert.notEqual(graph_container,undefined);
     });
-
-    
 
 });
