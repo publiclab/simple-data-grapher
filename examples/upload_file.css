@@ -8,6 +8,13 @@
   justify-content: space-around;
   align-items: center;
 }
+.main_grid_container{
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content:space-around;
+  align-items: center;
+  height: 600px;
+}
 .graph{
   height: 700px;
 }
