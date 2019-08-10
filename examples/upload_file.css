@@ -1,0 +1,188 @@
+.main_container{
+  margin:0 auto;
+  width: 50%;
+  margin-top: 100px;
+  height: 700px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+.graph{
+  height: 700px;
+}
+.table_container{
+  height: 700px;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+    border-color: #0059b3;
+    border-style: dashed;
+    border-width: 2px;
+    height: 150px;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: center;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+.drag_drop_heading{
+  margin-top: 50px;
+}
+.text_field{
+  width: 350px;
+  border-radius: 5px;
+  height: 40px;
+  padding-left: 5px;
+
+}
+::placeholder{
+  font-size: 12px;
+}
+.or { 
+  width:45%;
+  text-align:center; 
+  border-bottom: 1px solid #cccccc; 
+  line-height:0.1em; 
+  margin:10px 0 20px;
+} 
+.or span {
+  background:#fff; 
+  padding:0 10px; 
+  font-size: 12px;
+  color: #595959;
+}
+.input_box{
+  width: 350px;
+}
+.carousel-indicators{
+  top: 30px;
+  justify-content:space-around;
+  margin:0;
+  display: flex;
+  height: 20px;
+}
+.tables{
+margin-top: 100px;
+text-align: center;
+
+}
+.graph{
+margin-top: 100px;
+}
+#canvas_container{
+width: 50%;
+margin: 0 auto;
+}
+ol.carousel-indicators li.active {
+background: #004080;
+}
+ol.carousel-indicators li{
+width: 150px;
+height: 6px;
+cursor: pointer;
+background: #cccccc;
+}
+.toggle-handle{
+background: #f2f2f2;
+width: 100px;
+}
+.toggle-on{
+text-align: left;
+margin-left: 15px;
+}
+.toggle-off{
+text-align: right;
+margin-right: 15px;
+}
+.hidden {
+   display:none;
+}
+.table_container{
+display: flex;
+flex-direction: column;
+justify-content: space-around;
+align-items: center;
+}
+.button_container{
+display: flex;
+flex-direction: column;
+justify-content: space-around;
+height: 100px;
+align-items: center;
+margin-bottom: 30px;
+}
+.table{
+font-family: 'Ubuntu Condensed';
+overflow: auto;
+width: 500px;
+}
+.feature_buttons{
+display: flex;
+flex-direction: row;
+justify-content: space-around;
+align-items: center;
+}
+.headings{
+display: flex;
+flex-direction: row;
+justify-content: space-around;
+align-items: center;
+list-style: none;
+/* margin-bottom: -160px; */
+}
+.check-inputs{
+margin-left: 10px;
+
+}
+.badge{
+padding: 10px;
+}
+.csv_string{
+height: 100px;
+width: 350px;
+}
+.main_heading{
+font-family: 'Ubuntu Condensed';
+text-align: center;
+color: #001a66;
+font-size: 40px;
+}
+.sub_heading{
+font-family: 'Ubuntu Condensed';
+text-align: center;
+color: #525357;
+font-size: 18px;
+padding-top: 5px;
+}
+.main_heading_container{
+margin-top: 40px;
+}
+.headings li{
+font-family: 'Ubuntu Condensed';
+font-size: 20px;
+}
+.heading_container{
+margin-top:80px;
+}
+.item-1{
+margin-left: 20px;
+}
+.item-2{
+margin-left: 70px;
+}
+.des{
+  display: none;
+}
