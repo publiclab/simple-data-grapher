@@ -876,7 +876,49 @@ function () {
       }
 
       $('.' + this.carousalClass).carousel(2);
-      console.log(document.getElementById(this.addGraphButtonId), "graph button");
+    } //set tool tip for impot options
+
+  }, {
+    key: "setTooltip",
+    value: function setTooltip(importType) {
+      if (importType === "container_drag_drop") {
+        return "Select a local file from your system";
+      } else if (importType === "container_csv_string") {
+        var x = "Type in or Paste a CSV string. \r\n";
+        x += "Example: \r\n";
+        x += "A,B,C \r\n";
+        x += "1,2,3";
+        return x;
+      } else if (importType === "container_remote_link") {
+        return "Type in or Paste the link of a remote CSV file. Example: \
+            http://example.com/example.csv";
+      } else if (importType === "container_google_sheet") {
+        return "Type in or Paste the link of a Published Google Sheet. To publish a Google Sheet: 1. File -> Publish to the web -> Publish 2. Share -> Get shareable link -> Anyone with the link can -> More -> On - Public on the web -> Save 3. Copy link";
+      }
+    } //set tool tip for graph tips
+
+  }, {
+    key: "setTooltipGraph",
+    value: function setTooltipGraph(graphType) {
+      if (graphType == "Horizontal") {
+        return "Data is categorical and tells how many, widths proportional to the values";
+      } else if (graphType === "Vertical") {
+        return "Data is categorical and tells how many, heights proportional to the values";
+      } else if (graphType == "Stacked") {
+        return "Ideal for comparing the total amounts across each group/segmented bar";
+      } else if (graphType == "Basic") {
+        return "Used to visualize a trend in data over intervals of time or to see the growth of a quantity";
+      } else if (graphType == "Stepped") {
+        return "Vertical parts of a step chart denote changes in the data and their magnitude";
+      } else if (graphType == "Point") {
+        return "Used to show the relationship between two data variables";
+      } else if (graphType == "Pie") {
+        return "Used to show percentage or proportional data, should be used for less number of categories";
+      } else if (graphType == "Doughnut") {
+        return "Used to show percentage or proportional data, but have better data intensity ratio and space efficiency";
+      } else if (graphType == "Radar") {
+        return "Used to display multivariate observations with an arbitrary number of variables";
+      }
     }
   }, {
     key: "createPopover",
@@ -1027,10 +1069,8 @@ function () {
 
   }, {
     key: "afterSampleData",
-    value: function afterSampleData(flag) {
+    value: function afterSampleData(flag, type) {
       var _this2 = this;
-
-      console.log("at checkbox");
 
       document.getElementById(this.plotGraphId).onclick = function (e) {
         console.log("at click on plot_graph");
@@ -1052,7 +1092,8 @@ function () {
 
         var labels = [_this2.csvParser.csvHeaders[ix], y_axis_names];
         hash["labels"] = labels;
-        var type = $('input[name=' + _this2.graphMenuTypeInputName + ']:checked').val();
+        var selectedGraph = $('.selected');
+        var type = selectedGraph.attr('data-value');
         console.log(hash);
 
         _this2.plotGraph(hash, columns.length, type, flag, "plotly");
@@ -1061,38 +1102,37 @@ function () {
 
   }, {
     key: "graphMenu",
-    value: function graphMenu() {
+    value: function graphMenu(flag) {
+      var self = this;
       $('.' + this.carousalClass).carousel(1);
-      console.log("at menu");
-      document.getElementById(this.graphMenuId).innerHTML = "";
-      var bar = ["Bar", "Horizontal", "Vertical"];
-      var line = ["Line", "Basic", "Stepped", "Point"];
-      var disc = ["Disc", "Pie", "Doughnut", "Radar"];
-      var types = [bar, line, disc];
-      var count = 0;
+      var menuDiv = document.getElementById("menu_holder");
+      menuDiv.innerHTML = '<p id="graph_description"> blahhhhh </p> <div class="grid-container radio-group"> <div class="grid-item radio" data-value="Horizontal"> <img src="https://i.ibb.co/8gfR9d9/horizontal.png" height="100px" width="100px"> <div class="hmm" id="HorizontalType"> <p> Horizontal Bar </p> </div> </div> <div class="grid-item radio" data-value="Vertical"> <img src="https://i.ibb.co/tZVgrBw/vertical.png" height="100px" width="100px"> <div class="hmm" id="VerticalType"> <p> Vertical Bar </p> </div> </div> <div class="grid-item radio" data-value="Stacked"> <img src="https://i.ibb.co/9T2df0z/stacked.png" height="100px" width="100px"> <div class="hmm" id="StackedType"> <p> Stacked Bar </p> </div></div> <div class="grid-item radio" data-value="Basic"> <img src="https://i.ibb.co/S7rDsPV/basic.png" height="100px" width="100px"> <div class="hmm" id="BasicType"> <p> Basic Line </p> </div> </div> <div class="grid-item radio" data-value="Stepped"> <img src="https://i.ibb.co/FbB7yjg/stepped.png" height="100px" width="100px"> <div class="hmm" id="SteppedType"> <p> Stepped Line </p> </div> </div> <div class="grid-item radio" data-value="Point"> <img src="https://i.ibb.co/kqdQyqx/point.png" height="100px" width="100px"> <div class="hmm" id="PointType"> <p> Point </p> </div> </div> <div class="grid-item radio" data-value="Pie"> <img src="https://i.ibb.co/JcJ0tv3/pie.png" height="100px" width="110px"> <div class="hmm" id="PieType"> <p> Pie </p> </div> </div> <div class="grid-item radio" data-value="Doughnut"> <img src="https://i.ibb.co/SnLkwTv/doughnut.png" height="100px" width="110px"> <div class="hmm" id="DoughnutType"> <p> Doughnut </p> </div> </div> <div class="grid-item radio" data-value="Radar"> <img src="https://i.ibb.co/BCmQ2Tq/radar.png" height="100px" width="100px"> <div class="hmm" id="RadarType"> <p> Radar </p> </div> </div> </div> <p class="d"> blahhh </p>';
+      $('.radio-group .radio').click(function () {
+        $(this).parent().find('.radio').removeClass('selected');
+        var l = document.getElementsByClassName('hmm');
 
-      for (var i = 0; i < 3; i++) {
-        var tr = document.createElement('tr');
-        var td_head = document.createElement('td');
-        td_head.className = types[i][0];
-        td_head.appendChild(document.createTextNode(types[i][0]));
-        tr.appendChild(td_head);
-
-        for (var j = 1; j < types[i].length; j++) {
-          var td = document.createElement('td');
-          var radio = document.createElement('input');
-          radio.type = 'radio';
-          radio.value = types[i][j];
-          radio.id = "graph_type" + count;
-          td.appendChild(document.createTextNode(types[i][j]));
-          radio.name = this.graphMenuTypeInputName;
-          td.appendChild(radio);
-          tr.appendChild(td);
-          count++;
+        for (var i = 0; i < l.length; i++) {
+          l[i].style.backgroundColor = "#cccccc";
         }
 
-        document.getElementById(this.graphMenuId).appendChild(tr);
-      }
+        $(this).addClass('selected');
+        var type = $(this).attr('data-value');
+        $('#' + type + "Type").css('backgroundColor', '#1ad1ff');
+      });
+      $('.radio').hover(function () {
+        var tooltipVal = self.setTooltipGraph($(this).attr('data-value')); // console.log(tooltipVal);
+
+        $('#graph_description').text(tooltipVal);
+        $('#graph_description').css({
+          opacity: 0.0,
+          visibility: "visible"
+        }).animate({
+          opacity: 1.0
+        }, 800);
+      }, function () {
+        $('#graph_description').css('visibility', 'hidden');
+      });
+      this.afterSampleData(flag);
     } // generates the sample table data with checkboxes for y-axis and radio buttons for x-axis
 
   }, {
@@ -1143,7 +1183,7 @@ function () {
         document.getElementById(tableId).appendChild(tr);
       }
 
-      this.afterSampleData(flag);
+      this.graphMenu(flag);
     } // renders the sample tables
 
   }, {
@@ -1292,7 +1332,7 @@ function () {
     this.codapExportButton = elementId + "codap_export_button";
     this.drawHTMLView();
     this.addListeners();
-    this.usingPreviouslyUploadedFile();
+    var self = this;
     $('.xytoggle').bootstrapToggle({
       on: 'X-Axis',
       off: 'Y-Axis'
@@ -1307,6 +1347,19 @@ function () {
 
       $('#' + _this4.tableXParentId).toggle(ixx === 0);
       $('#' + _this4.tableYParentId).toggle(ixx === 1);
+    });
+    $('.imports').hover(function () {
+      var tooltipVal = self.setTooltip(this.classList[0]);
+      console.log(tooltipVal);
+      $('#import_description').text(tooltipVal);
+      $('#import_description').css({
+        opacity: 0.0,
+        visibility: "visible"
+      }).animate({
+        opacity: 1.0
+      }, 800);
+    }, function () {
+      $('#import_description').css('visibility', 'hidden');
     });
   } //listen for different inputs for import by the user
 
@@ -1376,7 +1429,7 @@ function () {
   }, {
     key: "drawHTMLView",
     value: function drawHTMLView() {
-      this.element.innerHTML = '<div class="body_container"><div class="main_heading_container"><h2 class="main_heading"> Simple Data Grapher</h2><p class="sub_heading">Plot and Export Graphs with CSV data</p></div><div class="heading_container"><ul class="headings"><li class="item-1">Upload CSV Data</li><li class="item-2">Select Columns & Graph Type</li><li class="item-3">Plotted Graph & Export Options</li></ul></div><div id=' + this.carousalId + ' class="carousel ' + this.carousalClass + ' slide" data-ride="carousel" data-interval="false"><div class="indicators"><ol class="carousel-indicators"> <li data-target="#' + this.carousalId + '" data-slide-to="0" class="active" id="up" class="first_indicator"></li> <li data-target="#' + this.carousalId + '" data-slide-to="1" class="second_indicator"></li> <li data-target="#' + this.carousalId + '" data-slide-to="2" class="third_indicator"></li></ol></div><div class="carousel-inner"><div class="carousel-item active"><div class="main_container"><div class="container_drag_drop"><span class="btn btn-outline-primary btn-file input_box"><p class="drag_drop_heading" id=' + this.dragDropHeadingId + '> <u> Choose a csv file </u> or drag & drop it here </p><input type="file" class="csv_file" id=' + this.fileUploadId + ' accept=".csv"></span><button type="button" class="btn btn-dark des" id=' + "popover" + this.fileUploadId + '><i class="fa fa-list"></i></button></div><h6 class="or"><span>OR</span></h6><div class="container_remote_link"><input type="text" class="remote_file text_field" placeholder="url of remote file" id=' + this.remoteFileUploadId + ' ><button type="button" class="btn btn-dark des" id=' + "popover" + this.remoteFileUploadId + '><i class="fa fa-list"></i></button></div><h6 class="or"><span>OR</span></h6><div class="container_csv_string"><textarea class="csv_string text_field" id=' + this.csvStringUploadId + ' placeholder="Paste a CSV string here" ></textarea><button type="button" class="btn btn-dark des" id=' + "popover" + this.csvStringUploadId + '><i class="fa fa-list"></i></button></div><h6 class="or"><span>OR</span></h6><div class="container_google_sheet"><div class="google_sheet_container"><input type="text" class="google_sheet text_field" id=' + this.googleSheetUploadId + ' placeholder="Link of published Google Sheet" ><button type="button" class="btn btn-dark des" id=' + "popover" + this.googleSheetUploadId + '><i class="fa fa-list"></i></button></div></div><div id=' + this.upload_button_container + ' class="upload_button"><button type="button" class="btn btn-primary uploadButton" id=' + this.uploadButtonId + ' >Upload CSV</button></div></div></div><div class="carousel-item tables"><div class="button_container"><div><input type="checkbox" name=' + this.xyToggleName + ' checked data-toggle="toggle" class="xytoggle" id="xy" data-width="150" data-onstyle="success" data-offstyle="warning" data-height="40"></div><div class="plot_button"><button type="button" class="btn btn-primary plotGraph" id=' + this.plotGraphId + ' >Plot Graph</button></div></div><div class="table_container"><div id=' + this.tableXParentId + ' ><table id=' + this.tableXId + ' class="table"></table></div><div id=' + this.tableYParentId + ' class="hidden"><table id=' + this.tableYId + ' class="table"></table></div><div><table id=' + this.graphMenuId + ' class="table table-dark"></table></div></div></div><div class="carousel-item graph"><div id=' + this.feature_button_container + ' class="feature_buttons"><button type="button" class="btn btn-primary addGraph" id=' + this.addGraphButtonId + '> Add Graph</button><button type="button" class="btn btn-success createSpreadsheet" id=' + this.createSpreadsheetButtonId + '> Create Spreadsheet<i class="fa fa-plus" aria-hidden="true"></i></button><button type="button" class="btn btn-info codapExport" id=' + this.codapExportButton + ' data-toggle="modal" data-target="#exampleModalCenter">View and Export to CODAP</button></div><div id=' + this.canvasContinerId + ' ></div></div></div></div></div><div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true"><div class="modal-dialog modal-lg modal-dialog-centered" id="modal-style" role="document"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exampleModalLongTitle">CODAP</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body" id="body_for_CODAP"></div></div></div></div>';
+      this.element.innerHTML = '<div class="body_container"> <div class="main_heading_container"> <h2 class="main_heading"> Simple Data Grapher</h2> <p class="sub_heading">Plot and Export Graphs with CSV data</p> </div><div class="heading_container"> <ul class="headings"> <li class="item-1">Upload CSV Data</li> <li class="item-2">Select Columns & Graph Type</li> <li class="item-3">Plotted Graph & Export Options</li> </ul> </div> <div id=' + this.carousalId + ' class="carousel ' + this.carousalClass + ' slide" data-ride="carousel" data-interval="false"> <div class="indicators"> <ol class="carousel-indicators"> <li data-target="#' + this.carousalId + '" data-slide-to="0" class="active" id="up" class="first_indicator"></li> <li data-target="#' + this.carousalId + '" data-slide-to="1" class="second_indicator"></li> <li data-target="#' + this.carousalId + '" data-slide-to="2" class="third_indicator"></li> </ol> </div> <div class="carousel-inner"> <div class="carousel-item active"> <div class="parent_main_container"> <div><p id="import_description"> heyyyyy</p></div> <div class="main_container"> <div class="main_grid_container"> <div class="container_drag_drop grid-item imports"> <p class="sub_heading_import"> Local File </p> <span class="btn btn-outline-primary btn-file input_box shadow"> <p class="drag_drop_heading" id=' + this.dragDropHeadingId + '><u> Choose a csv file </u> or drag & drop it here </p> <input type="file" class="csv_file" id=' + this.fileUploadId + ' accept=".csv"> </span> <button type="button" class="btn btn-dark des" id=' + "popover" + this.fileUploadId + '> <i class="fa fa-list"></i> </button> </div> <div class="container_remote_link grid-item imports"> <p class="sub_heading_import"> Remote File </p> <input type="text" class="remote_file text_field shadow" placeholder="url of remote file" id=' + this.remoteFileUploadId + ' > <button type="button" class="btn btn-dark des" id=' + "popover" + this.remoteFileUploadId + '><i class="fa fa-list"></i></button> </div> <div class="container_csv_string grid-item imports"> <p class="sub_heading_import"> String File </p> <textarea class="csv_string text_field shadow" id=' + this.csvStringUploadId + ' placeholder="Paste a CSV string here" ></textarea> <button type="button" class="btn btn-dark des" id=' + "popover" + this.csvStringUploadId + '><i class="fa fa-list"></i></button> </div> <div class="container_google_sheet grid-item imports"> <p class="sub_heading_import"> Google Sheet </p> <div class="google_sheet_container"> <input type="text" class="google_sheet text_field shadow" id=' + this.googleSheetUploadId + ' placeholder="Link of published Google Sheet" > <button type="button" class="btn btn-dark des" id=' + "popover" + this.googleSheetUploadId + '><i class="fa fa-list"></i></button> </div> </div> </div> <div id=' + this.upload_button_container + ' class="upload_button"> <button type="button" class="btn btn-primary uploadButton" id=' + this.uploadButtonId + ' >Upload CSV</button> </div> </div> <div style="visibility: hidden;"><p> heyyyyy</p></div> </div> </div> <div class="carousel-item tables"> <div class="button_container"> <div> <input type="checkbox" name=' + this.xyToggleName + ' checked data-toggle="toggle" class="xytoggle" id="xy" data-width="150" data-onstyle="success" data-offstyle="warning" data-height="40"> </div> <div class="plot_button"> <button type="button" class="btn btn-primary plotGraph" id=' + this.plotGraphId + ' >Plot Graph</button> </div> </div> <div class="table_container"> <div id=' + this.tableXParentId + ' > <table id=' + this.tableXId + ' class="table"></table> </div> <div id=' + this.tableYParentId + ' class="hidden"> <table id=' + this.tableYId + ' class="table"></table> </div><div id="menu_holder"></div></div> </div> <div class="carousel-item graph"> <div id=' + this.feature_button_container + ' class="feature_buttons"> <button type="button" class="btn btn-primary addGraph" id=' + this.addGraphButtonId + '> Add Graph</button> <button type="button" class="btn btn-success createSpreadsheet" id=' + this.createSpreadsheetButtonId + '> Create Spreadsheet<i class="fa fa-plus" aria-hidden="true"></i></button> <button type="button" class="btn btn-info codapExport" id=' + this.codapExportButton + ' data-toggle="modal" data-target="#exampleModalCenter">View and Export to CODAP</button> </div> <div class="parent_canvas_container"><div id=' + this.canvasContinerId + ' ></div></div> </div> </div> </div></div><div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true"> <div class="modal-dialog modal-lg modal-dialog-centered" id="modal-style" role="document"> <div class="modal-content"> <div class="modal-header"> <h5 class="modal-title" id="exampleModalLongTitle">CODAP</h5> <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button> </div> <div class="modal-body" id="body_for_CODAP"></div> </div> </div></div>';
     }
   }]);
 
