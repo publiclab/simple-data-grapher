@@ -18,7 +18,6 @@ Turns CSVs into graphs in a few simple steps; embeds onto other websites!
 
 We are using `babel` to transpile code into es5 and `browserify` to `require` different files and `watch` to watch the changes and build the changes.
 For testing we are using `mocha`.
-
 ### Flow: Basic Flow of the Library
 
 ![](https://lh3.googleusercontent.com/EBhm7ICy8xLrZ0LQfYiRNXlc9nt7QHWdUN1rBk8GQVz-9KkZwcEDqjrH_BY62NCs78hGUDpH3MyFknaafds8QCgLR2PW7Li6EPmX_bkhIxnQOeeKdiqEGD6T7H5yKlpKhyqihF6I)
@@ -81,3 +80,4 @@ The user can publish their plotted charts as a Research Note on Public Lab and d
 #### Flow 
 
 ![](https://lh5.googleusercontent.com/4LJ1qzCD1WFMSmvLTR4FBaB0pF5bKRLo2MQUiP6e_1iipt7gWoxZMfjiNzc2ZRMydebksz4E4w1PUmhR90f3b0zJSHLNbnfXF5X-ScZZL-q50CLITgBEi9HUqu7aqxTXR0e38be8)
+
