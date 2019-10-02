@@ -186,7 +186,7 @@ class View{
                 self.fileTitle=$('#'+"title" + buttonId).val();
                 self.fileDescription=$('#'+"desc" + buttonId).val();
                 console.log(self.fileTitle,self.fileDescription,self,"got it");
-
+                document.querySelector(`#${buttonId}`).remove();
             });
         });
     }
