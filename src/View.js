@@ -191,6 +191,7 @@ class View{
     }
     // renders the required buttons for saving the files if the use is logged in
     createButtons(userLoginCheck){
+        this.listenersForIntegration();
         if (userLoginCheck=="yes"){
             var save_file_button=document.createElement('button');
             save_file_button.classList.add("btn");
@@ -435,6 +436,47 @@ class View{
         // matrixForCompleteData(headers,this.csvMatrix,start);
     }
 
+    listenersForIntegration(){
+        $("#"+this.fileUploadId).change((e)=>{
+            console.log("i am here23");
+            document.getElementById("popover" + this.fileUploadId).style.display="inline";
+            document.getElementById("popover" + this.csvStringUploadId).style.display="none";
+            document.getElementById("popover" + this.googleSheetUploadId).style.display="none";
+            document.getElementById("popover" + this.remoteFileUploadId).style.display="none";
+            this.createPopover("popover" + this.fileUploadId);
+            this.handleFileSelectlocal(e);
+        });
+        $("#"+this.csvStringUploadId).change(()=>{
+            console.log(document.getElementById(this.csvStringUploadId).value);
+            document.getElementById("popover" + this.csvStringUploadId).style.display="inline";
+            document.getElementById("popover" + this.googleSheetUploadId).style.display="none";
+            document.getElementById("popover" + this.remoteFileUploadId).style.display="none";
+            document.getElementById("popover" + this.fileUploadId).style.display="none";
+            this.createPopover("popover" + this.csvStringUploadId);
+            this.handleFileSelectstring(document.getElementById(this.csvStringUploadId).value);
+          });
+        $("#"+this.googleSheetUploadId).change(()=>{
+            console.log(document.getElementById(this.googleSheetUploadId).value,"sheetlink");
+            document.getElementById("popover" + this.googleSheetUploadId).style.display="inline";
+            document.getElementById("popover" + this.csvStringUploadId).style.display="none";
+            document.getElementById("popover" + this.remoteFileUploadId).style.display="none";
+            document.getElementById("popover" + this.fileUploadId).style.display="none";
+            this.createPopover("popover" + this.googleSheetUploadId);
+            var sheetLink=document.getElementById(this.googleSheetUploadId).value;
+            var sheetURL="https://spreadsheets.google.com/feeds/list/"+sheetLink.split("/")[5]+"/od6/public/values?alt=json";
+            this.getValueGoogleSheet(sheetURL);
+        });
+        $("#"+this.remoteFileUploadId).change(()=>{
+            console.log(document.getElementById(this.remoteFileUploadId).value);
+            document.getElementById("popover" + this.remoteFileUploadId).style.display="inline";
+            document.getElementById("popover" + this.csvStringUploadId).style.display="none";
+            document.getElementById("popover" + this.googleSheetUploadId).style.display="none";
+            document.getElementById("popover" + this.fileUploadId).style.display="none";
+            this.createPopover("popover" + this.remoteFileUploadId);
+            this.sendRemoteFileToHandler(document.getElementById(this.remoteFileUploadId).value);
+        });
+    }
+
     constructor(elementId){
         console.log("i am in view");
         this.elementId = elementId;
@@ -501,44 +543,44 @@ class View{
     addListeners(){
         console.log("as");
         console.log("#"+this.fileUploadId);
-        $("#"+this.fileUploadId).change((e)=>{
-            console.log("i am here23");
-            document.getElementById("popover" + this.fileUploadId).style.display="inline";
-            document.getElementById("popover" + this.csvStringUploadId).style.display="none";
-            document.getElementById("popover" + this.googleSheetUploadId).style.display="none";
-            document.getElementById("popover" + this.remoteFileUploadId).style.display="none";
-            this.createPopover("popover" + this.fileUploadId);
-            this.handleFileSelectlocal(e);
-        });
-        $("#"+this.csvStringUploadId).change(()=>{
-            console.log(document.getElementById(this.csvStringUploadId).value);
-            document.getElementById("popover" + this.csvStringUploadId).style.display="inline";
-            document.getElementById("popover" + this.googleSheetUploadId).style.display="none";
-            document.getElementById("popover" + this.remoteFileUploadId).style.display="none";
-            document.getElementById("popover" + this.fileUploadId).style.display="none";
-            this.createPopover("popover" + this.csvStringUploadId);
-            this.handleFileSelectstring(document.getElementById(this.csvStringUploadId).value);
-          });
-        $("#"+this.googleSheetUploadId).change(()=>{
-            console.log(document.getElementById(this.googleSheetUploadId).value,"sheetlink");
-            document.getElementById("popover" + this.googleSheetUploadId).style.display="inline";
-            document.getElementById("popover" + this.csvStringUploadId).style.display="none";
-            document.getElementById("popover" + this.remoteFileUploadId).style.display="none";
-            document.getElementById("popover" + this.fileUploadId).style.display="none";
-            this.createPopover("popover" + this.googleSheetUploadId);
-            var sheetLink=document.getElementById(this.googleSheetUploadId).value;
-            var sheetURL="https://spreadsheets.google.com/feeds/list/"+sheetLink.split("/")[5]+"/od6/public/values?alt=json";
-            this.getValueGoogleSheet(sheetURL);
-        });
-        $("#"+this.remoteFileUploadId).change(()=>{
-            console.log(document.getElementById(this.remoteFileUploadId).value);
-            document.getElementById("popover" + this.remoteFileUploadId).style.display="inline";
-            document.getElementById("popover" + this.csvStringUploadId).style.display="none";
-            document.getElementById("popover" + this.googleSheetUploadId).style.display="none";
-            document.getElementById("popover" + this.fileUploadId).style.display="none";
-            this.createPopover("popover" + this.remoteFileUploadId);
-            this.sendRemoteFileToHandler(document.getElementById(this.remoteFileUploadId).value);
-        });
+        // $("#"+this.fileUploadId).change((e)=>{
+        //     console.log("i am here23");
+        //     document.getElementById("popover" + this.fileUploadId).style.display="inline";
+        //     document.getElementById("popover" + this.csvStringUploadId).style.display="none";
+        //     document.getElementById("popover" + this.googleSheetUploadId).style.display="none";
+        //     document.getElementById("popover" + this.remoteFileUploadId).style.display="none";
+        //     this.createPopover("popover" + this.fileUploadId);
+        //     this.handleFileSelectlocal(e);
+        // });
+        // $("#"+this.csvStringUploadId).change(()=>{
+        //     console.log(document.getElementById(this.csvStringUploadId).value);
+        //     document.getElementById("popover" + this.csvStringUploadId).style.display="inline";
+        //     document.getElementById("popover" + this.googleSheetUploadId).style.display="none";
+        //     document.getElementById("popover" + this.remoteFileUploadId).style.display="none";
+        //     document.getElementById("popover" + this.fileUploadId).style.display="none";
+        //     this.createPopover("popover" + this.csvStringUploadId);
+        //     this.handleFileSelectstring(document.getElementById(this.csvStringUploadId).value);
+        //   });
+        // $("#"+this.googleSheetUploadId).change(()=>{
+        //     console.log(document.getElementById(this.googleSheetUploadId).value,"sheetlink");
+        //     document.getElementById("popover" + this.googleSheetUploadId).style.display="inline";
+        //     document.getElementById("popover" + this.csvStringUploadId).style.display="none";
+        //     document.getElementById("popover" + this.remoteFileUploadId).style.display="none";
+        //     document.getElementById("popover" + this.fileUploadId).style.display="none";
+        //     this.createPopover("popover" + this.googleSheetUploadId);
+        //     var sheetLink=document.getElementById(this.googleSheetUploadId).value;
+        //     var sheetURL="https://spreadsheets.google.com/feeds/list/"+sheetLink.split("/")[5]+"/od6/public/values?alt=json";
+        //     this.getValueGoogleSheet(sheetURL);
+        // });
+        // $("#"+this.remoteFileUploadId).change(()=>{
+        //     console.log(document.getElementById(this.remoteFileUploadId).value);
+        //     document.getElementById("popover" + this.remoteFileUploadId).style.display="inline";
+        //     document.getElementById("popover" + this.csvStringUploadId).style.display="none";
+        //     document.getElementById("popover" + this.googleSheetUploadId).style.display="none";
+        //     document.getElementById("popover" + this.fileUploadId).style.display="none";
+        //     this.createPopover("popover" + this.remoteFileUploadId);
+        //     this.sendRemoteFileToHandler(document.getElementById(this.remoteFileUploadId).value);
+        // });
         $("#"+this.createSpreadsheetButtonId).click(()=>{
             this.createSheet();
         });
