@@ -1,10 +1,7 @@
-// import {CsvParser} from "./CsvParser";
-// import {SimpleDataGrapher} from "./SimpleDataGrapher";
 const CsvParser=require('./CsvParser');
 const SimpleDataGrapher = require('./SimpleDataGrapher');
 const ChartjsPlotter = require('./ChartjsPlotter');
 const PlotlyjsPlotter = require('./PlotlyjsPlotter');
-// const CODAPiFrame = require('./iframe-phone');
 const iframe_phone=require('iframe-phone')
 
 class View{
@@ -69,6 +66,7 @@ class View{
         };
 
     }
+    // function for using a previously uploaded and saved file from the data base
     usingPreviouslyUploadedFile(){
         let self=this;
         console.log("prev file in use",self.elementId);
@@ -170,6 +168,7 @@ class View{
         }
 
     }
+    // create a popover against each import method for adding a file title and description
     createPopover(buttonId){
         let self=this;
         var html='<div id="myForm" class="hide"><label for="title">File Title:</label><input type="text" name="title" id='+"title" + buttonId +' class="form-control input-md"><label for="desc">File Description:</label><textarea rows="3" name="desc" id='+"desc" + buttonId +' class="form-control input-md"></textarea><button type="button" class="btn btn-primary" id="save"> Save</button></div>'
@@ -190,6 +189,7 @@ class View{
             });
         });
     }
+    // renders the required buttons for saving the files if the use is logged in
     createButtons(userLoginCheck){
         if (userLoginCheck=="yes"){
             var save_file_button=document.createElement('button');
@@ -216,6 +216,7 @@ class View{
             container.prepend(div_container);
         }
     }
+    // create dataset for CODAP table
     createDataset(){
         let dataset={};
         dataset["action"]="create";
@@ -248,6 +249,7 @@ class View{
     iframePhoneHandler(){
         //callbackforCODAP
     }
+    // renders the iframe for CODAP export
     codapExport(){
         let self=this;
         console.log("clicked in codap now");
