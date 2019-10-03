@@ -1388,8 +1388,7 @@ function () {
     this.feature_button_container = elementId + "feature_button_container";
     this.codapExportButton = elementId + "codap_export_button";
     this.drawHTMLView();
-    this.addListeners(); // this.createButtons("yes");
-
+    this.addListeners();
     var self = this;
     $('.xytoggle').bootstrapToggle({
       on: 'X-Axis',
@@ -1428,45 +1427,28 @@ function () {
       var _this6 = this;
 
       console.log("as");
-      console.log("#" + this.fileUploadId); // $("#"+this.fileUploadId).change((e)=>{
-      //     console.log("i am here23");
-      //     document.getElementById("popover" + this.fileUploadId).style.display="inline";
-      //     document.getElementById("popover" + this.csvStringUploadId).style.display="none";
-      //     document.getElementById("popover" + this.googleSheetUploadId).style.display="none";
-      //     document.getElementById("popover" + this.remoteFileUploadId).style.display="none";
-      //     this.createPopover("popover" + this.fileUploadId);
-      //     this.handleFileSelectlocal(e);
-      // });
-      // $("#"+this.csvStringUploadId).change(()=>{
-      //     console.log(document.getElementById(this.csvStringUploadId).value);
-      //     document.getElementById("popover" + this.csvStringUploadId).style.display="inline";
-      //     document.getElementById("popover" + this.googleSheetUploadId).style.display="none";
-      //     document.getElementById("popover" + this.remoteFileUploadId).style.display="none";
-      //     document.getElementById("popover" + this.fileUploadId).style.display="none";
-      //     this.createPopover("popover" + this.csvStringUploadId);
-      //     this.handleFileSelectstring(document.getElementById(this.csvStringUploadId).value);
-      //   });
-      // $("#"+this.googleSheetUploadId).change(()=>{
-      //     console.log(document.getElementById(this.googleSheetUploadId).value,"sheetlink");
-      //     document.getElementById("popover" + this.googleSheetUploadId).style.display="inline";
-      //     document.getElementById("popover" + this.csvStringUploadId).style.display="none";
-      //     document.getElementById("popover" + this.remoteFileUploadId).style.display="none";
-      //     document.getElementById("popover" + this.fileUploadId).style.display="none";
-      //     this.createPopover("popover" + this.googleSheetUploadId);
-      //     var sheetLink=document.getElementById(this.googleSheetUploadId).value;
-      //     var sheetURL="https://spreadsheets.google.com/feeds/list/"+sheetLink.split("/")[5]+"/od6/public/values?alt=json";
-      //     this.getValueGoogleSheet(sheetURL);
-      // });
-      // $("#"+this.remoteFileUploadId).change(()=>{
-      //     console.log(document.getElementById(this.remoteFileUploadId).value);
-      //     document.getElementById("popover" + this.remoteFileUploadId).style.display="inline";
-      //     document.getElementById("popover" + this.csvStringUploadId).style.display="none";
-      //     document.getElementById("popover" + this.googleSheetUploadId).style.display="none";
-      //     document.getElementById("popover" + this.fileUploadId).style.display="none";
-      //     this.createPopover("popover" + this.remoteFileUploadId);
-      //     this.sendRemoteFileToHandler(document.getElementById(this.remoteFileUploadId).value);
-      // });
+      console.log("#" + this.fileUploadId);
+      $("#" + this.fileUploadId).change(function (e) {
+        console.log("i am here23");
 
+        _this6.handleFileSelectlocal(e);
+      });
+      $("#" + this.csvStringUploadId).change(function () {
+        console.log(document.getElementById(_this6.csvStringUploadId).value);
+
+        _this6.handleFileSelectstring(document.getElementById(_this6.csvStringUploadId).value);
+      });
+      $("#" + this.googleSheetUploadId).change(function () {
+        console.log(document.getElementById(_this6.googleSheetUploadId).value, "sheetlink");
+        var sheetURL = "https://spreadsheets.google.com/feeds/list/" + sheetLink.split("/")[5] + "/od6/public/values?alt=json";
+
+        _this6.getValueGoogleSheet(sheetURL);
+      });
+      $("#" + this.remoteFileUploadId).change(function () {
+        console.log(document.getElementById(_this6.remoteFileUploadId).value);
+
+        _this6.sendRemoteFileToHandler(document.getElementById(_this6.remoteFileUploadId).value);
+      });
       $("#" + this.createSpreadsheetButtonId).click(function () {
         _this6.createSheet();
       });
