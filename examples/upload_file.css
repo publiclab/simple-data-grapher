@@ -293,3 +293,6 @@ margin-left: 70px;
   flex-direction: column;
 
 }
+.popover_headings{
+  font-family: 'Ubuntu Condensed';
+}

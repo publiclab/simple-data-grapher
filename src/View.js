@@ -171,7 +171,7 @@ class View{
     // create a popover against each import method for adding a file title and description
     createPopover(buttonId){
         let self=this;
-        var html='<div id="myForm" class="hide"><label for="title">File Title:</label><input type="text" name="title" id='+"title" + buttonId +' class="form-control input-md"><label for="desc">File Description:</label><textarea rows="3" name="desc" id='+"desc" + buttonId +' class="form-control input-md"></textarea><button type="button" class="btn btn-primary" id="save"> Save</button></div>'
+        var html='<div id="myForm" class="hide"><label for="title" class="popover_headings">File Title:</label><input type="text" name="title" id='+"title" + buttonId +' class="form-control input-md"><label for="desc" class="popover_headings">File Description:</label><textarea rows="3" name="desc" id='+"desc" + buttonId +' class="form-control input-md"></textarea><button type="button" class="btn btn-primary popover_headings" id="save"> Save</button></div>'
         $('#'+buttonId).popover({
        
             placement: 'bottom',
