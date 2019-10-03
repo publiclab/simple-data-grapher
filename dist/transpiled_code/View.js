@@ -13,16 +13,13 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-// import {CsvParser} from "./CsvParser";
-// import {SimpleDataGrapher} from "./SimpleDataGrapher";
 var CsvParser = require('./CsvParser');
 
 var SimpleDataGrapher = require('./SimpleDataGrapher');
 
 var ChartjsPlotter = require('./ChartjsPlotter');
 
-var PlotlyjsPlotter = require('./PlotlyjsPlotter'); // const CODAPiFrame = require('./iframe-phone');
-
+var PlotlyjsPlotter = require('./PlotlyjsPlotter');
 
 var iframe_phone = require('iframe-phone');
 
@@ -61,7 +58,8 @@ function () {
         console.log("i am uploading");
         self.csvParser = new CsvParser(self.csvFile, self.elementId, "csvstring");
       };
-    }
+    } // function for using a previously uploaded and saved file from the data base
+
   }, {
     key: "usingPreviouslyUploadedFile",
     value: function usingPreviouslyUploadedFile() {
@@ -172,7 +170,8 @@ function () {
       } else if (graphType == "Radar") {
         return "Used to display multivariate observations with an arbitrary number of variables";
       }
-    }
+    } // create a popover against each import method for adding a file title and description
+
   }, {
     key: "createPopover",
     value: function createPopover(buttonId) {
@@ -192,7 +191,8 @@ function () {
           console.log(self.fileTitle, self.fileDescription, self, "got it");
         });
       });
-    }
+    } // renders the required buttons for saving the files if the use is logged in
+
   }, {
     key: "createButtons",
     value: function createButtons(userLoginCheck) {
@@ -220,7 +220,8 @@ function () {
         container2.appendChild(publish_research_button);
         container.prepend(div_container);
       }
-    }
+    } // create dataset for CODAP table
+
   }, {
     key: "createDataset",
     value: function createDataset() {
@@ -252,8 +253,9 @@ function () {
     }
   }, {
     key: "iframePhoneHandler",
-    value: function iframePhoneHandler() {//callbackforCODAP
-    }
+    value: function iframePhoneHandler() {} //callbackforCODAP
+    // renders the iframe for CODAP export
+
   }, {
     key: "codapExport",
     value: function codapExport() {
