@@ -296,3 +296,44 @@ margin-left: 70px;
 .popover_headings{
   font-family: 'Ubuntu Condensed';
 }
+
+.addGraph {
+  width: 220px;
+  height: 50px;
+  cursor: pointer;
+  background-color: white;
+  color: #0079ff;
+  border: 1px solid #0079ff;
+  border-radius: 10px;
+  transition: .3s ease-in;
+}
+
+.createSpreadsheet i {
+  margin-left: 5px;
+}
+
+.createSpreadsheet {
+  width: 220px;
+  height: 50px;
+  cursor: pointer;
+  background-color: white;
+  color: #00ab34;
+  border: 1px solid #00ab34;
+  border-radius: 10px;
+  transition: .3s ease-in;
+}
+
+.codapExport {
+  width: 220px;
+  height: 50px;
+  cursor: pointer;
+  background-color: white;
+  color: #00a5bb;
+  border: 1px solid #00a5bb;
+  border-radius: 10px;
+  transition: .3s ease-in;
+}
+
+.addGraph:hover, .createSpreadsheet:hover, .codapExport:hover {
+  transform: scale(1.1, 1.1);
+}
