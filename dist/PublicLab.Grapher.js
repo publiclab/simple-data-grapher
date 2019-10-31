@@ -1,6 +1,12 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 
+var _fileSaver = require("file-saver");
+
+var _chartjs = _interopRequireDefault(require("chartjs"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -15,14 +21,13 @@ function () {
   _createClass(ChartjsPlotter, [{
     key: "determineType",
     value: function determineType() {
-      console.log("at type");
-
+      // console.log("at type");
       if (this.graphType == "Basic" || this.graphType == "Stepped" || this.graphType == "Point") {
-        return 'line';
+        return "line";
       } else if (this.graphType == "Horizontal") {
-        return 'horizontalBar';
+        return "horizontalBar";
       } else if (this.graphType == "Vertical") {
-        return 'bar';
+        return "bar";
       } else {
         return this.graphType.toLowerCase();
       }
@@ -30,9 +35,9 @@ function () {
   }, {
     key: "colorGenerator",
     value: function colorGenerator(i, tb, count) {
-      console.log("at color");
-      var colors = ['rgba(255, 77, 210, 0.5)', 'rgba(0, 204, 255, 0.5)', 'rgba(128, 0, 255, 0.5)', 'rgba(255, 77, 77, 0.5)', 'rgba(0, 179, 0, 0.5)', 'rgba(255, 255, 0, 0.5)', 'rgba(255, 0, 102, 0.5)', 'rgba(0, 115, 230, 0.5)'];
-      var bordercolors = ['rgb(255, 0, 191)', 'rgb(0, 184, 230)', 'rgb(115, 0, 230)', 'rgb(255, 51, 51)', 'rgb(0, 153, 0)', 'rgb(230, 230, 0)', 'rgb(230, 0, 92)', 'rgb(0, 102, 204)'];
+      // console.log("at color");
+      var colors = ["rgba(255, 77, 210, 0.5)", "rgba(0, 204, 255, 0.5)", "rgba(128, 0, 255, 0.5)", "rgba(255, 77, 77, 0.5)", "rgba(0, 179, 0, 0.5)", "rgba(255, 255, 0, 0.5)", "rgba(255, 0, 102, 0.5)", "rgba(0, 115, 230, 0.5)"];
+      var bordercolors = ["rgb(255, 0, 191)", "rgb(0, 184, 230)", "rgb(115, 0, 230)", "rgb(255, 51, 51)", "rgb(0, 153, 0)", "rgb(230, 230, 0)", "rgb(230, 0, 92)", "rgb(0, 102, 204)"];
       var length = 8;
 
       if (this.graphType == "Pie" || this.graphType == "Doughnut") {
@@ -60,34 +65,34 @@ function () {
   }, {
     key: "determineData",
     value: function determineData(i) {
-      console.log("at data");
+      // console.log("at data");
       var h = {};
 
       if (this.graphType == "Basic") {
-        h['fill'] = false;
+        h["fill"] = false;
       } else if (this.graphType == "Stepped") {
-        h['steppedLine'] = true;
-        h['fill'] = false;
+        h["steppedLine"] = true;
+        h["fill"] = false;
       } else if (this.graphType == "Point") {
-        h['showLine'] = false;
-        h['pointRadius'] = 10;
+        h["showLine"] = false;
+        h["pointRadius"] = 10;
       }
 
-      h['backgroundColor'] = this.colorGenerator(i, "bg", this.dataHash['y_axis_values' + i].length);
-      h['borderColor'] = this.colorGenerator(i, "bo", this.dataHash['y_axis_values' + i].length);
-      h['borderWidth'] = 1;
-      h['label'] = this.dataHash['labels'][1][i];
-      h['data'] = this.dataHash['y_axis_values' + i];
+      h["backgroundColor"] = this.colorGenerator(i, "bg", this.dataHash["y_axis_values" + i].length);
+      h["borderColor"] = this.colorGenerator(i, "bo", this.dataHash["y_axis_values" + i].length);
+      h["borderWidth"] = 1;
+      h["label"] = this.dataHash["labels"][1][i];
+      h["data"] = this.dataHash["y_axis_values" + i];
       return h;
     }
   }, {
     key: "determineConfig",
     value: function determineConfig() {
-      console.log("at config");
+      // console.log("at config");
       var config = {};
-      config['type'] = this.determineType();
+      config["type"] = this.determineType();
       var data = {};
-      data['labels'] = this.dataHash['x_axis_labels'];
+      data["labels"] = this.dataHash["x_axis_labels"];
       var datasets = [];
 
       for (var i = 0; i < this.length; i++) {
@@ -96,35 +101,35 @@ function () {
       }
 
       var options = {
-        'responsive': true,
-        'maintainAspectRatio': true,
-        'chartArea': {
-          backgroundColor: 'rgb(204, 102, 255)'
+        responsive: true,
+        maintainAspectRatio: true,
+        chartArea: {
+          backgroundColor: "rgb(204, 102, 255)"
         }
       };
-      options['scales'] = this.scales();
-      config['options'] = options;
-      data['datasets'] = datasets;
-      config['data'] = data;
+      options["scales"] = this.scales();
+      config["options"] = options;
+      data["datasets"] = datasets;
+      config["data"] = data;
       return config;
     }
   }, {
     key: "scales",
     value: function scales() {
-      console.log("at scales");
+      // console.log("at scales");
       var scales = {
         xAxes: [{
           display: true,
           scaleLabel: {
             display: true,
-            labelString: this.dataHash['labels'][0]
+            labelString: this.dataHash["labels"][0]
           }
         }],
         yAxes: [{
           display: true,
           scaleLabel: {
             display: true,
-            labelString: 'Value'
+            labelString: "Value"
           }
         }]
       };
@@ -133,13 +138,13 @@ function () {
   }, {
     key: "saveAsImageFunction",
     value: function saveAsImageFunction(canvId) {
-      console.log("entered image");
+      // console.log("entered image");
       var newDate = new Date();
       var timestamp = newDate.getTime();
       var temp = canvId;
       temp = "#" + temp;
       $(temp).get(0).toBlob(function (blob) {
-        saveAs(blob, "chart" + timestamp);
+        (0, _fileSaver.saveAs)(blob, "chart" + timestamp);
       });
     }
   }, {
@@ -150,11 +155,11 @@ function () {
       saveImageButton.classList.add("btn-primary");
       saveImageButton.innerHTML = "Save as Image";
       saveImageButton.id = canvasId + "image";
-      canvasDiv.appendChild(saveImageButton);
-      console.log(this, "this");
+      canvasDiv.appendChild(saveImageButton); // console.log(this, "this");
+
       var self = this;
 
-      document.getElementById(saveImageButton.id).onclick = function (e) {
+      document.getElementById(saveImageButton.id).onclick = function () {
         self.saveAsImageFunction(canvasId);
       };
     }
@@ -162,27 +167,25 @@ function () {
     key: "plotGraph",
     value: function plotGraph() {
       if (this.flag) {
-        console.log("at plotGraph");
+        //   console.log("at plotGraph");
         document.getElementById(this.canvasContainerId).innerHTML = "";
       }
 
-      var div = document.createElement('div');
-      div.classList.add(this.elementId + '_chart_container_' + this.graphCounting);
-      var canv = document.createElement('canvas');
-      canv.id = this.elementId + '_canvas_' + this.graphCounting;
+      var div = document.createElement("div");
+      div.classList.add(this.elementId + "_chart_container_" + this.graphCounting);
+      var canv = document.createElement("canvas");
+      canv.id = this.elementId + "_canvas_" + this.graphCounting;
       div.appendChild(canv);
       document.getElementById(this.canvasContainerId).appendChild(div);
-      var ctx = canv.getContext('2d');
+      var ctx = canv.getContext("2d");
       var configuration = this.determineConfig();
-      new Chart(ctx, configuration);
+      new _chartjs["default"](ctx, configuration);
       this.createSaveAsImageButton(div, canv.id); // $('.'+this.carousalClass).carousel(2);
     }
   }]);
 
   function ChartjsPlotter(hash, length, type, flag, canvasContainerId, elementId, graphCounting) {
     _classCallCheck(this, ChartjsPlotter);
-
-    _defineProperty(this, 'use strict', void 0);
 
     _defineProperty(this, "dataHash", {});
 
@@ -212,8 +215,8 @@ function () {
 }();
 
 module.exports = ChartjsPlotter;
-},{}],2:[function(require,module,exports){
-"use strict";
+},{"chartjs":6,"file-saver":7}],2:[function(require,module,exports){
+"use strict"; // import {SimpleDataGrapher} from "./SimpleDataGrapher";
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -225,8 +228,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-// import {SimpleDataGrapher} from "./SimpleDataGrapher";
-var SimpleDataGrapher = require('./SimpleDataGrapher');
+var SimpleDataGrapher = require("./SimpleDataGrapher");
 
 var Papa = require("papaparse");
 
@@ -236,8 +238,6 @@ function () {
   //start is variable that will be passed to the function to sort out the columns. start will tell if the existing CSV file has headers or not, therefore, to start the iteration from 0 or 1 Used in header determination
   function CsvParser(file, elementId, functionParameter) {
     _classCallCheck(this, CsvParser);
-
-    _defineProperty(this, 'use strict', void 0);
 
     _defineProperty(this, "csvFile", null);
 
@@ -319,8 +319,8 @@ function () {
       var _this = this;
 
       var csvMatrixLocal = [];
-      var count = 0;
-      var f = this.parseReturn;
+      var count = 0; // var f = this.parseReturn;
+
       Papa.parse(this.csvFile, {
         download: true,
         dynamicTyping: true,
@@ -349,7 +349,7 @@ function () {
           dynamicTyping: true,
           comments: true
         });
-        mat[i] = dataHash['data'][0];
+        mat[i] = dataHash["data"][0];
       }
 
       return mat;
@@ -381,25 +381,26 @@ function () {
         maxval = this.completeCsvMatrix[0].length;
       }
 
-      for (var i = 0; i < this.csvHeaders.length; i++) {
+      for (var _i = 0; _i < this.csvHeaders.length; _i++) {
         var counter = 0;
         var bool = false;
 
-        for (var j = 0; j < this.completeCsvMatrix[i].length; j++) {
+        for (var j = 0; j < this.completeCsvMatrix[_i].length; j++) {
           if (counter >= maxval) {
             break;
-          } else if (this.completeCsvMatrix[i][j] !== null || this.completeCsvMatrix[i][j] !== undefined) {
-            if (typeof this.completeCsvMatrix[i][j] === 'number') {
+          } else if (this.completeCsvMatrix[_i][j] !== null || this.completeCsvMatrix[_i][j] !== undefined) {
+            if (typeof this.completeCsvMatrix[_i][j] === "number") {
               bool = true;
             }
 
             counter += 1;
-            csvSampleDataLocal[i].push(this.completeCsvMatrix[i][j]);
+
+            csvSampleDataLocal[_i].push(this.completeCsvMatrix[_i][j]);
           }
         }
 
         if (bool) {
-          csvValidForYAxisLocal.push(this.csvHeaders[i]);
+          csvValidForYAxisLocal.push(this.csvHeaders[_i]);
         }
       }
 
@@ -416,9 +417,9 @@ function () {
         completeCsvMatrixLocal[i] = [];
       }
 
-      for (var i = this.csvFileStart; i < this.csvMatrix.length; i++) {
+      for (var _i2 = this.csvFileStart; _i2 < this.csvMatrix.length; _i2++) {
         for (var j = 0; j < this.csvHeaders.length; j++) {
-          completeCsvMatrixLocal[j].push(this.csvMatrix[i][j]);
+          completeCsvMatrixLocal[j].push(this.csvMatrix[_i2][j]);
         }
       }
 
@@ -434,20 +435,20 @@ function () {
         matrixComplete[i] = [];
       }
 
-      for (var i = 0; i < this.csvHeaders.length; i++) {
+      for (var _i3 = 0; _i3 < this.csvHeaders.length; _i3++) {
         for (var key in this.csvFile) {
-          var valueCell = this.csvFile[key][this.csvHeaders[i]]["$t"];
+          var valueCell = this.csvFile[key][this.csvHeaders[_i3]]["$t"];
 
           if (!isNaN(valueCell)) {
-            matrixComplete[i].push(+valueCell);
+            matrixComplete[_i3].push(+valueCell);
           } else {
-            matrixComplete[i].push(valueCell);
+            matrixComplete[_i3].push(valueCell);
           }
         }
       }
 
-      for (var i = 0; i < this.csvHeaders.length; i++) {
-        this.csvHeaders[i] = this.csvHeaders[i].slice(4, this.csvHeaders[i].length);
+      for (var _i4 = 0; _i4 < this.csvHeaders.length; _i4++) {
+        this.csvHeaders[_i4] = this.csvHeaders[_i4].slice(4, this.csvHeaders[_i4].length);
       }
 
       return matrixComplete;
@@ -466,9 +467,9 @@ function () {
         }
 
         codapMatrix.push(element);
-      }
+      } // console.log("matrix codap", codapMatrix);
 
-      console.log("matrix codap", codapMatrix);
+
       return codapMatrix;
     } //checks if the first row has most of the potential header names, if not, assign dummy headers to the file.
 
@@ -487,10 +488,10 @@ function () {
             break;
           }
         } else {
-          if (_typeof(this.csvMatrix[0][i]) == _typeof(this.csvMatrix[0][i - 1]) && _typeof(this.csvMatrix[0][i]) != 'object' || _typeof(this.csvMatrix[0][i]) != _typeof(this.csvMatrix[0][i - 1]) && csvHeadersLocal[i - 1].substring(0, 6) == "Column") {
+          if (_typeof(this.csvMatrix[0][i]) == _typeof(this.csvMatrix[0][i - 1]) && _typeof(this.csvMatrix[0][i]) != "object" || _typeof(this.csvMatrix[0][i]) != _typeof(this.csvMatrix[0][i - 1]) && csvHeadersLocal[i - 1].substring(0, 6) == "Column") {
             csvHeadersLocal[i] = this.csvMatrix[0][i];
           } //in case of an unnamed column
-          else if (_typeof(this.csvMatrix[0][i]) == 'object') {
+          else if (_typeof(this.csvMatrix[0][i]) == "object") {
               csvHeadersLocal[i] = "Column" + (i + 1);
             } else {
               flag = true;
@@ -503,8 +504,8 @@ function () {
       if (flag && csvHeadersLocal.length != this.csvMatrix[0].length) {
         this.csvFileStart = 0;
 
-        for (var i = 0; i < this.csvMatrix[0].length; i++) {
-          csvHeadersLocal[i] = "Column" + (i + 1);
+        for (var _i5 = 0; _i5 < this.csvMatrix[0].length; _i5++) {
+          csvHeadersLocal[_i5] = "Column" + (_i5 + 1);
         }
       }
 
@@ -554,17 +555,17 @@ function () {
         completeCsvMatrixTransposeLocal[i] = [];
       }
 
-      for (var i = 0; i < this.completeCsvMatrix.length; i++) {
-        completeCsvMatrixTransposeLocal[0][i] = this.csvHeaders[i];
+      for (var _i6 = 0; _i6 < this.completeCsvMatrix.length; _i6++) {
+        completeCsvMatrixTransposeLocal[0][_i6] = this.csvHeaders[_i6];
       }
 
-      for (var i = 0; i < this.completeCsvMatrix.length; i++) {
+      for (var _i7 = 0; _i7 < this.completeCsvMatrix.length; _i7++) {
         for (var j = 0; j < this.completeCsvMatrix[0].length; j++) {
-          completeCsvMatrixTransposeLocal[j + 1][i] = this.completeCsvMatrix[i][j];
+          completeCsvMatrixTransposeLocal[j + 1][_i7] = this.completeCsvMatrix[_i7][j];
         }
-      }
+      } // console.log("transpose", completeCsvMatrixTransposeLocal);
 
-      console.log("transpose", completeCsvMatrixTransposeLocal);
+
       return completeCsvMatrixTransposeLocal;
     }
   }]);
@@ -572,9 +573,8 @@ function () {
   return CsvParser;
 }();
 
-;
 module.exports = CsvParser;
-},{"./SimpleDataGrapher":4,"papaparse":11}],3:[function(require,module,exports){
+},{"./SimpleDataGrapher":4,"papaparse":13}],3:[function(require,module,exports){
 "use strict";
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -627,7 +627,7 @@ function () {
       } else if (this.graphType == "Stepped") {
         trace["mode"] = "lines+markers";
         trace["line"] = {
-          "shape": 'hv'
+          shape: "hv"
         };
       }
 
@@ -652,7 +652,7 @@ function () {
     key: "plotGraph2",
     value: function plotGraph2() {
       if (this.flag) {
-        console.log("at plotGraph");
+        //   console.log("at plotGraph");
         document.getElementById(this.canvasContainerId).innerHTML = "";
       }
 
@@ -662,15 +662,15 @@ function () {
 
       for (var i = 0; i < this.length; i++) {
         var new_trace = this.traceMaker();
-        new_trace[keySet[0]] = this.dataHash['x_axis_labels'];
-        new_trace[keySet[1]] = this.dataHash['y_axis_values' + i];
-        new_trace["name"] = this.dataHash['labels'][1][i];
+        new_trace[keySet[0]] = this.dataHash["x_axis_labels"];
+        new_trace[keySet[1]] = this.dataHash["y_axis_values" + i];
+        new_trace["name"] = this.dataHash["labels"][1][i];
         data.push(new_trace);
-      }
+      } // console.log(data);
 
-      console.log(data);
-      var div = document.createElement('div');
-      div.id = this.elementId + '_chart_container_' + this.graphCounting;
+
+      var div = document.createElement("div");
+      div.id = this.elementId + "_chart_container_" + this.graphCounting;
       document.getElementById(this.canvasContainerId).appendChild(div);
       Plotly.newPlot(div.id, data, layout);
     }
@@ -678,8 +678,6 @@ function () {
 
   function PlotlyjsPlotter(hash, length, type, flag, canvasContainerId, elementId, graphCounting) {
     _classCallCheck(this, PlotlyjsPlotter);
-
-    _defineProperty(this, 'use strict', void 0);
 
     _defineProperty(this, "dataHash", {});
 
@@ -726,15 +724,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var SimpleDataGrapher = function SimpleDataGrapher(elementId) {
   _classCallCheck(this, SimpleDataGrapher);
 
-  _defineProperty(this, 'use strict', void 0);
-
   _defineProperty(this, "elementId", null);
 
   _defineProperty(this, "view", null);
 
   this.elementId = elementId;
-  SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId] = this;
-  console.log(SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId]);
+  SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId] = this; // console.log(
+  //   SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId]
+  // );
+
   this.view = new _View.View(elementId);
 };
 
@@ -742,10 +740,11 @@ exports.SimpleDataGrapher = SimpleDataGrapher;
 
 _defineProperty(SimpleDataGrapher, "elementIdSimpleDataGraphInstanceMap", {});
 
-;
 window.SimpleDataGrapher = SimpleDataGrapher;
 },{"./View":5}],5:[function(require,module,exports){
-"use strict";
+/* moved to the top of file to fix linter error.
+ ref: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Strict_Non_Simple_Params*/
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -760,9 +759,8 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var CsvParser = require('./CsvParser');
+var CsvParser = require('./CsvParser'); // const SimpleDataGrapher = require('./SimpleDataGrapher');
 
-var SimpleDataGrapher = require('./SimpleDataGrapher');
 
 var ChartjsPlotter = require('./ChartjsPlotter');
 
@@ -777,9 +775,8 @@ function () {
     key: "handleFileSelectlocal",
     //extracts the uploaded file from input field and creates an object of CsvParser class with the file as one of the parameters
     value: function handleFileSelectlocal(event) {
-      this.csvFile = event.target.files[0];
-      console.log(event.target.files[0]);
-      console.log("iam here in handle");
+      this.csvFile = event.target.files[0]; // console.log(event.target.files[0]);
+      // console.log("iam here in handle");
 
       if (this.csvFile['name'].split(".")[1] != "csv") {
         alert("Invalid file type");
@@ -796,13 +793,13 @@ function () {
   }, {
     key: "handleFileSelectstring",
     value: function handleFileSelectstring(val) {
-      console.log("i am at csv string handler", val); // var csv_string = val.split("\n");
-
+      // console.log("i am at csv string handler",val);
+      // var csv_string = val.split("\n");
       this.csvFile = val;
       var self = this;
 
       document.getElementById(this.uploadButtonId).onclick = function (e) {
-        console.log("i am uploading");
+        // console.log("i am uploading");
         self.csvParser = new CsvParser(self.csvFile, self.elementId, "csvstring");
       };
     } // function for using a previously uploaded and saved file from the data base
@@ -810,10 +807,9 @@ function () {
   }, {
     key: "usingPreviouslyUploadedFile",
     value: function usingPreviouslyUploadedFile() {
-      var self = this;
-      console.log("prev file in use", self.elementId);
-      self.csvParser = new CsvParser("dummy", self.elementId, "prevfile");
-      console.log(self.csvParser, "checking");
+      var self = this; // console.log("prev file in use",self.elementId);
+
+      self.csvParser = new CsvParser("dummy", self.elementId, "prevfile"); // console.log(self.csvParser,"checking");
     } //receives the JSON file value and creates an object of CsvParser class with the file as one of the parameters
 
   }, {
@@ -847,9 +843,7 @@ function () {
         return response.text();
       }).then(function (contents) {
         return _this.handleFileSelectremote(contents);
-      })["catch"](function (e) {
-        return console.log(e);
-      });
+      }); // .catch((e) => console.log(e)) ;
     } // callback function which receives the remote file's value and creates an object of CsvParser class with the file as one of the parameters
 
   }, {
@@ -859,7 +853,7 @@ function () {
       var self = this;
 
       document.getElementById(this.uploadButtonId).onclick = function (e) {
-        console.log("i am uploading");
+        // console.log("i am uploading");
         self.csvParser = new CsvParser(self.csvFile, self.elementId, "remote");
       };
     } // adapter function which switches between Plotly.js and Chart.js as a graph plotting library and creates theri respective objects which take over the graph plotting
@@ -930,12 +924,11 @@ function () {
         html: true,
         content: html
       }).on('click', function () {
-        console.log("created popover");
+        // console.log("created popover");
         $('#save').click(function (e) {
           e.preventDefault();
           self.fileTitle = $('#' + "title" + buttonId).val();
-          self.fileDescription = $('#' + "desc" + buttonId).val();
-          console.log(self.fileTitle, self.fileDescription, self, "got it");
+          self.fileDescription = $('#' + "desc" + buttonId).val(); // console.log(self.fileTitle,self.fileDescription,self,"got it");
         });
       });
     } // renders the required buttons for saving the files if the use is logged in
@@ -1008,8 +1001,8 @@ function () {
   }, {
     key: "codapExport",
     value: function codapExport() {
-      var self = this;
-      console.log("clicked in codap now");
+      var self = this; // console.log("clicked in codap now");
+
       var iframeBody = '<iframe id="codap-iframe" src="https://codap.concord.org/releases/latest?embeddedServer=yes#shared=109578" ></iframe>';
       var modal_body = document.getElementById("body_for_CODAP");
       modal_body.innerHTML = iframeBody;
@@ -1026,13 +1019,12 @@ function () {
       createCodapButton.innerHTML = "Go!";
       createCodapButton.id = this.elementId + "_create_codap";
       modal_body.prepend(createCodapButton);
-      var apiCall = this.createDataset();
-      console.log(apiCall);
-      console.log(this.csvParser.codapHeaders, this.csvParser.codapMatrix);
+      var apiCall = this.createDataset(); // console.log(apiCall);
+      // console.log(this.csvParser.codapHeaders,this.csvParser.codapMatrix);
+
       $("#" + this.elementId + "_create_codap").click(function () {
-        console.log("go go go");
-        rpcHandler.call(apiCall, function (resp) {
-          console.log('Response:' + JSON.stringify(resp));
+        // console.log("go go go");
+        rpcHandler.call(apiCall, function (resp) {// console.log('Response:' + JSON.stringify(resp));
         });
       });
     } // creates a downloadable spreadsheet for the imported data using SheetJS
@@ -1077,11 +1069,11 @@ function () {
       var _this2 = this;
 
       document.getElementById(this.plotGraphId).onclick = function (e) {
-        console.log("at click on plot_graph");
+        // console.log("at click on plot_graph");
         e.preventDefault();
         var hash = {};
-        var ix = $('input[name=' + _this2.tableXInputName + ']:checked').val();
-        console.log(ix);
+        var ix = $('input[name=' + _this2.tableXInputName + ']:checked').val(); // console.log(ix);
+
         hash["x_axis_labels"] = _this2.csvParser.completeCsvMatrix[ix];
         var columns = new Array();
         var y_axis_names = new Array();
@@ -1097,8 +1089,7 @@ function () {
         var labels = [_this2.csvParser.csvHeaders[ix], y_axis_names];
         hash["labels"] = labels;
         var selectedGraph = $('.selected');
-        var type = selectedGraph.attr('data-value');
-        console.log(hash);
+        var type = selectedGraph.attr('data-value'); // console.log(hash);
 
         _this2.plotGraph(hash, columns.length, type, flag, "plotly");
       };
@@ -1142,8 +1133,8 @@ function () {
   }, {
     key: "tableGenerator",
     value: function tableGenerator(name, tableId, typeOfInput, validValues, flag, tableType, badgeType) {
-      console.log("i am in tablegenerator");
-      console.log("at tableGenerator");
+      // console.log("i am in tablegenerator");
+      // console.log("at tableGenerator");
       document.getElementById(tableId).innerHTML = "";
       var trhead = document.createElement('tr');
 
@@ -1195,10 +1186,9 @@ function () {
     value: function showSampleDataXandY() {
       var _this3 = this;
 
-      console.log("at sampleDataXandY", this);
-
+      // console.log("at sampleDataXandY",this);
       document.getElementById(this.addGraphButtonId).onclick = function (e) {
-        console.log("at " + _this3.addGraphButtonId);
+        // console.log("at " + this.addGraphButtonId);
         _this3.graphCounting++;
         $('.' + _this3.carousalClass).carousel(1); /// ---------------> after
 
@@ -1217,8 +1207,7 @@ function () {
   }, {
     key: "continueViewManipulation",
     value: function continueViewManipulation(x) {
-      console.log(" i am back in view manipulation", this);
-
+      // console.log(" i am back in view manipulation",this);
       if (x != "prevfile") {
         this.csvParser = x;
       }
@@ -1233,7 +1222,7 @@ function () {
       var _this4 = this;
 
       $("#" + this.fileUploadId).change(function (e) {
-        console.log("i am here23");
+        // console.log("i am here23");
         document.getElementById("popover" + _this4.fileUploadId).style.display = "inline";
         document.getElementById("popover" + _this4.csvStringUploadId).style.display = "none";
         document.getElementById("popover" + _this4.googleSheetUploadId).style.display = "none";
@@ -1244,7 +1233,7 @@ function () {
         _this4.handleFileSelectlocal(e);
       });
       $("#" + this.csvStringUploadId).change(function () {
-        console.log(document.getElementById(_this4.csvStringUploadId).value);
+        // console.log(document.getElementById(this.csvStringUploadId).value);
         document.getElementById("popover" + _this4.csvStringUploadId).style.display = "inline";
         document.getElementById("popover" + _this4.googleSheetUploadId).style.display = "none";
         document.getElementById("popover" + _this4.remoteFileUploadId).style.display = "none";
@@ -1255,7 +1244,7 @@ function () {
         _this4.handleFileSelectstring(document.getElementById(_this4.csvStringUploadId).value);
       });
       $("#" + this.googleSheetUploadId).change(function () {
-        console.log(document.getElementById(_this4.googleSheetUploadId).value, "sheetlink");
+        // console.log(document.getElementById(this.googleSheetUploadId).value,"sheetlink");
         document.getElementById("popover" + _this4.googleSheetUploadId).style.display = "inline";
         document.getElementById("popover" + _this4.csvStringUploadId).style.display = "none";
         document.getElementById("popover" + _this4.remoteFileUploadId).style.display = "none";
@@ -1269,7 +1258,7 @@ function () {
         _this4.getValueGoogleSheet(sheetURL);
       });
       $("#" + this.remoteFileUploadId).change(function () {
-        console.log(document.getElementById(_this4.remoteFileUploadId).value);
+        // console.log(document.getElementById(this.remoteFileUploadId).value);
         document.getElementById("popover" + _this4.remoteFileUploadId).style.display = "inline";
         document.getElementById("popover" + _this4.csvStringUploadId).style.display = "none";
         document.getElementById("popover" + _this4.googleSheetUploadId).style.display = "none";
@@ -1286,8 +1275,6 @@ function () {
     var _this5 = this;
 
     _classCallCheck(this, View);
-
-    _defineProperty(this, 'use strict', void 0);
 
     _defineProperty(this, "elementId", null);
 
@@ -1353,15 +1340,15 @@ function () {
 
     _defineProperty(this, "codapExportButton", null);
 
-    console.log("i am in view");
+    // console.log("i am in view");
     this.elementId = elementId;
     this.element = document.getElementById(elementId);
 
     if (this.element == null) {
       throw "No element exist with this id";
-    }
+    } // console.log("i am in view");
 
-    console.log("i am in view");
+
     this.fileUploadId = elementId + "_csv_file";
     this.remoteFileUploadId = elementId + "_remote_file";
     this.csvStringUploadId = elementId + "_csv_string";
@@ -1406,8 +1393,8 @@ function () {
       $('#' + _this5.tableYParentId).toggle(ixx === 1);
     });
     $('.imports').hover(function () {
-      var tooltipVal = self.setTooltip(this.classList[0]);
-      console.log(tooltipVal);
+      var tooltipVal = self.setTooltip(this.classList[0]); // console.log(tooltipVal);
+
       $('#import_description').text(tooltipVal);
       $('#import_description').css({
         opacity: 0.0,
@@ -1426,27 +1413,24 @@ function () {
     value: function addListeners() {
       var _this6 = this;
 
-      console.log("as");
-      console.log("#" + this.fileUploadId);
+      // console.log("as");
+      // console.log("#"+this.fileUploadId);
       $("#" + this.fileUploadId).change(function (e) {
-        console.log("i am here23");
-
+        // console.log("i am here23");
         _this6.handleFileSelectlocal(e);
       });
       $("#" + this.csvStringUploadId).change(function () {
-        console.log(document.getElementById(_this6.csvStringUploadId).value);
-
+        // console.log(document.getElementById(this.csvStringUploadId).value);
         _this6.handleFileSelectstring(document.getElementById(_this6.csvStringUploadId).value);
       });
       $("#" + this.googleSheetUploadId).change(function () {
-        console.log(document.getElementById(_this6.googleSheetUploadId).value, "sheetlink");
+        // console.log(document.getElementById(this.googleSheetUploadId).value,"sheetlink");
         var sheetURL = "https://spreadsheets.google.com/feeds/list/" + sheetLink.split("/")[5] + "/od6/public/values?alt=json";
 
         _this6.getValueGoogleSheet(sheetURL);
       });
       $("#" + this.remoteFileUploadId).change(function () {
-        console.log(document.getElementById(_this6.remoteFileUploadId).value);
-
+        // console.log(document.getElementById(this.remoteFileUploadId).value);
         _this6.sendRemoteFileToHandler(document.getElementById(_this6.remoteFileUploadId).value);
       });
       $("#" + this.createSpreadsheetButtonId).click(function () {
@@ -1468,7 +1452,887 @@ function () {
 }();
 
 exports.View = View;
-},{"./ChartjsPlotter":1,"./CsvParser":2,"./PlotlyjsPlotter":3,"./SimpleDataGrapher":4,"iframe-phone":10}],6:[function(require,module,exports){
+},{"./ChartjsPlotter":1,"./CsvParser":2,"./PlotlyjsPlotter":3,"iframe-phone":12}],6:[function(require,module,exports){
+/*global module:true*/
+'use strict';
+
+Math.log2 = Math.log2 || function(x) {
+  return Math.log(x) / Math.LN2;
+};
+
+Math.log10 = Math.log10 || function(x) {
+  return Math.log(x) / Math.LN10;
+};
+
+(function() {
+  var Helpers = {
+    avg: function(arr) {
+      var v = 0;
+      for (var index = 0; index < arr.length; ++index) {
+        v += arr[index];
+      }
+      return v / arr.length;
+    },
+    min: function(arr) {
+      if (arr.length === 0) return 0;
+      var v = arr[0];
+      for (var index = 1; index < arr.length; ++index) {
+        var v2 = arr[index];
+        if (Array.isArray(v2)) v2 = Helpers.avg(v2);
+        if (v2 < v) v = v2;
+      }
+      return Math.max(0, v);
+    },
+    max: function(arr) {
+      var v = 0;
+      for (var index = 0; index < arr.length; ++index) {
+        var v2 = arr[index];
+        if (Array.isArray(v2)) v2 = Helpers.avg(v2);
+        if (v2 > v) v = v2;
+      }
+      return Math.max(0, v);
+    },
+    upperMax: function(arr) {
+      var v = 0;
+      for (var index = 0; index < arr.length; ++index) {
+        var v2 = arr[index];
+        if (Array.isArray(v2)) v2 = Helpers.max(v2);
+        if (v2 > v) v = v2;
+      }
+      return Math.max(0, v);
+    },
+    lowerMin: function(arr) {
+      if (arr.length === 0) return 0;
+      var v = arr[0] || Infinity;
+      if (Array.isArray(v)) v = Helpers.lowerMin(v);
+      for (var index = 1; index < arr.length; ++index) {
+        var v2 = arr[index];
+        if (v2 == null) continue;
+        if (Array.isArray(v2)) v2 = Helpers.lowerMin(v2);
+        if (v2 < v) v = v2;
+      }
+      if (isNaN(v) || !isFinite(v)) v = 0;
+      return Math.max(0, v);
+    },
+    niceNumbers: function(range, round) {
+      var exponent = Math.floor(Math.log10(range));
+      var fraction = range / Math.pow(10, exponent);
+      var niceFraction;
+      if (round) {
+        if (fraction < 1.5) niceFraction = 1;
+        else if (fraction < 3) niceFraction = 2;
+        else if (fraction < 7) niceFraction = 5;
+        else niceFraction = 10;
+      } else {
+        if (fraction <= 1.0) niceFraction = 1;
+        else if (fraction <= 2) niceFraction = 2;
+        else if (fraction <= 5) niceFraction = 5;
+        else niceFraction = 10;
+      }
+      return niceFraction * Math.pow(10, exponent);
+    },
+    getLinearTicks: function(min, max, maxTicks) {
+      var range = Helpers.niceNumbers(max - min, false);
+      var tickSpacing = Helpers.niceNumbers(range / (maxTicks - 1), true);
+      return [
+        Math.floor(min / tickSpacing) * tickSpacing,
+        Math.ceil(max / tickSpacing) * tickSpacing,
+        tickSpacing
+      ];
+    },
+    getFont: function(options) {
+      options.style = options.style || 'normal';
+      options.variant = options.variant || 'normal';
+      options.weight = options.weight || 'lighter';
+      options.size = options.size || '12';
+      options.family = options.family || 'Arial';
+      return [options.style, options.variant, options.weight, options.size + 'px', options.family].join(' ');
+    },
+    getAxisRatio: function(min, max, value) {
+      return (value - min) / (max - min);
+    }
+  };
+
+  var BarChart = (function() {
+    function BarChart(ctx, options) {
+      this.mouseListeners = [];
+      this.currentHint = null;
+      this.fillRegions = []
+      this.options = {
+        font: 'Helvetica',
+        fontWeight: 'normal',
+        fontSizeTitle: 24,
+        fontSizeAxes: 20,
+        fontSizeTicks: 18,
+        fontSizeLabels: 18,
+        fontDataTags: 18,
+        fontSizeLegend: 18,
+        fontSizeHint: 18,
+        paddingPercentBars: 0.10,
+        paddingPercentTicks: 0.15,
+        paddingPixelsVertical: 10,
+        paddingPixelsHorizontal: 10,
+        paddingPixelsTicks: 10,
+        maxWidthBars: 0,
+        fillColorBackground: 'rgb(255, 255, 255)',
+        strokeColorBars: 'rgb(0, 0, 0)',
+        fillColorBars: 'rgba(180, 180, 180, 0.25)',
+        scaleStyle: 'linear',
+        barStyle: 'none',
+        stackedBarPadding: 3,
+        defaultMaxTick: 0,
+        pixelsLegendSquare: 10,
+        radiusDot: 5,
+        fillColorLegend: 'rgb(230, 230, 230)',
+        tickFormatter: null,
+        tickFormatterMeasure: null,
+        fillRegion: 'normal'
+      };
+      options = options || { };
+      for (var key in this.options) {
+        if (options.hasOwnProperty(key)) this.options[key] = options[key];
+      }
+      this.ctx = ctx;
+      this.content = { };
+      this.labelPositions = { }
+    }
+
+    BarChart.prototype.update = function(content) {
+      if (typeof content !== 'object') {
+        throw new Error('Collections must be objects.');
+      } else if (!(content.hasOwnProperty('labels') && content.hasOwnProperty('data'))) {
+        throw new Error('Collection must specify labels and data.');
+      } else if (!(Array.isArray(content.labels) && Array.isArray(content.data))) {
+        throw new Error('Labels and data must be arrays.');
+      } else if (content.labels.length !== content.data.length) {
+        throw new Error('Labels and data length must match.');
+      }
+      content._data_standard_deviation = [];
+      content._data_standard_error = [];
+      for (var i = 0; i < content.data.length; ++i) {
+        var isArr = Array.isArray(content.data[i]);
+        if (this.options.scaleStyle === 'log2') {
+          if (isArr) {
+            for (var i3 = 0; i3 < content.data[i].length; ++i3) content.data[i][i3] = Math.log2(content.data[i][i3]);
+          } else content.data[i] = Math.log2(content.data[i]);
+        }
+        if (isArr) {
+          var mean = Helpers.avg(content.data[i]);
+          var acc = 0;
+          for (var i2 = 0; i2 < content.data[i].length; ++i2) acc += Math.pow(mean - content.data[i][i2], 2);
+          acc = Math.sqrt(acc / (content.data[i].length - 1));
+          content._data_standard_deviation.push(acc);
+          content._data_standard_error.push(acc / Math.sqrt(content.data[i].length));
+        } else {
+          content._data_standard_deviation.push(0);
+          content._data_standard_error.push(0);
+        }
+      }
+      this.content = content;
+      this.redraw();
+    };
+
+    BarChart.prototype.redraw = function() {
+      setTimeout(function() {
+        this._draw();
+      }.bind(this), 0);
+    };
+
+    BarChart.prototype.mousemove = function(x, y) {
+      var res = null;
+      for (var index = 0; index < this.mouseListeners.length; ++index) {
+        if ((res = this.mouseListeners[index](x, y))) break;
+      }
+      if (!res || (typeof res) !== 'object' || !res.hasOwnProperty('index') || !res.hasOwnProperty('drawIndex')) {
+        if (this.currentHint !== null) {
+          this.currentHint = null;
+          this.redraw();
+        }
+        return;
+      }
+      var ch = this.currentHint;
+      if (ch == null || ch.index != res.index || ch.drawIndex != res.drawIndex) {
+        this.currentHint = res;
+        this.redraw();
+      }
+    };
+
+    BarChart.prototype._draw = function() {
+      var labelPositions = { }
+      this.mouseListeners = [];
+      this.fillRegions = [];
+
+      var options = this.options;
+      var ctx = this.ctx, content = this.content;
+      var width = ctx.canvas.width, height = ctx.canvas.height;
+      ctx.clearRect(0, 0, width, height);
+      ctx.translate(-0.5, -0.5);
+      var remainingWidth = width, remainingHeight = height;
+      var index;
+
+      if (options.fillColorBackground != null) {
+        ctx.save();
+        ctx.fillStyle = options.fillColorBackground;
+        ctx.fillRect(0, 0, width, height);
+        ctx.restore();
+      }
+
+      var topYPadding = options.paddingPixelsHorizontal;
+      remainingHeight -= options.paddingPixelsHorizontal;
+      ctx.fillStyle = 'rgb(0, 0, 0)';
+      /* Draw title of bar chart */
+      if (content.title != null) {
+        ctx.save();
+        ctx.font = Helpers.getFont({ weight: options.fontWeight, size: options.fontSizeTitle, family: options.font });
+        ctx.textAlign = 'center';
+        ctx.fillText(content.title, width / 2, topYPadding + options.fontSizeTitle);
+        ctx.restore();
+        remainingHeight -= options.fontSizeTitle * 1.25;
+        topYPadding += options.fontSizeTitle * 1.25;
+      }
+
+      /* Compute required left padding */
+      var leftXPadding = options.paddingPixelsVertical;
+      remainingWidth  -= options.paddingPixelsVertical;
+
+      var leftXDrawYLabel = null;
+      if (content.yAxis != null) {
+        leftXDrawYLabel = leftXPadding + options.fontSizeAxes * 0.5;
+        remainingWidth -= options.fontSizeAxes * 1.25;
+        leftXPadding += options.fontSizeAxes * 1.25;
+      }
+
+      ctx.save();
+      ctx.font = Helpers.getFont({ weight: options.fontWeight, size: options.fontSizeTicks, family: options.font });
+      var maxChartValue, minChartValue;
+      if (options.barStyle === 'stacked') {
+        maxChartValue = 0;
+        minChartValue = Infinity;
+        for (var cmIndex = 0; cmIndex < content.data.length; ++cmIndex) {
+          var doB;
+          if (Array.isArray(doB = content.data[cmIndex])) {
+            var tempSum = 0;
+            for (var ii2 = 0; ii2 < doB.length; ++ii2) tempSum += doB[ii2];
+            maxChartValue = Math.max(maxChartValue, tempSum);
+            minChartValue = Math.min(minChartValue, tempSum);
+          } else {
+            maxChartValue = Math.max(maxChartValue, content.data[cmIndex]);
+            minChartValue = Math.min(minChartValue, content.data[cmIndex]);
+          }
+        }
+      } else {
+        maxChartValue = Helpers.upperMax(content.data);
+        minChartValue = Helpers.lowerMin(content.data);
+      }
+      if (options.scaleStyle.indexOf('adaptive') === 0) {
+        if (options.scaleStyle.indexOf(':') !== -1) {
+          var floater = parseFloat(options.scaleStyle.split(/[:]/)[1]);
+          minChartValue *= floater;
+          maxChartValue *= 1 + (1 - floater) / 2.0;
+        }
+      } else minChartValue = 0;
+      if (options.defaultMaxTick > maxChartValue) maxChartValue = options.defaultMaxTick;
+      if (content.bars != null && Array.isArray(content.bars)) {
+        for (index = 0; index < content.bars.length; ++index) {
+          var cbv = content.bars[index].value;
+          if (isNaN(cbv)) continue;
+          maxChartValue = Math.max(maxChartValue, cbv);
+          minChartValue = Math.min(minChartValue, cbv);
+        }
+      }
+      var maxYAxisTickWidth = options.scaleStyle == 'log2' ? Math.ceil(Math.pow(2, maxChartValue)) : (Math.ceil(maxChartValue) + '.00');
+      if (options.tickFormatterMeasure != null) maxYAxisTickWidth = options.tickFormatterMeasure;
+      maxYAxisTickWidth = ctx.measureText(maxYAxisTickWidth).width;
+      maxYAxisTickWidth = Math.ceil(maxYAxisTickWidth) + options.paddingPixelsTicks;
+      remainingWidth -= maxYAxisTickWidth;
+      leftXPadding += maxYAxisTickWidth;
+      ctx.restore();
+
+      var rightXPadding = options.paddingPixelsVertical;
+      remainingWidth -= options.paddingPixelsVertical;
+
+      /* Draw legend */
+      if (content.legend != null && Array.isArray(content.legend)) {
+        ctx.save();
+        ctx.font = Helpers.getFont({ weight: options.fontWeight, size: options.fontSizeLegend, family: options.font });
+        var maxLWidth = 0;
+        for (var lIndex = 0; lIndex < content.legend.length; ++lIndex) {
+          maxLWidth = Math.max(maxLWidth, ctx.measureText(content.legend[lIndex].label).width);
+        }
+        maxLWidth = Math.ceil(maxLWidth);
+        maxLWidth += options.pixelsLegendSquare + 8;
+        var legendEntriesPerLine = Math.floor((remainingWidth - options.paddingPixelsHorizontal * 2) / maxLWidth);
+        var lLReqHeight = Math.ceil(content.legend.length / legendEntriesPerLine) * options.fontSizeLegend * 1.5;
+        remainingHeight -= lLReqHeight;
+        bottomYPadding += lLReqHeight;
+
+        ctx.strokeStyle = 'rgb(0, 0, 0)';
+        ctx.fillStyle = options.fillColorLegend;
+        var bSX, bSY;
+        ctx.beginPath();
+        ctx.moveTo(bSX = leftXPadding, bSY = topYPadding + remainingHeight);
+        ctx.lineTo(bSX + remainingWidth, bSY);
+        ctx.lineTo(bSX + remainingWidth, bSY + lLReqHeight);
+        ctx.lineTo(bSX, bSY + lLReqHeight);
+        ctx.lineTo(bSX, bSY);
+        ctx.stroke();
+        ctx.fill();
+
+        for (lIndex = 0; lIndex < content.legend.length; ++lIndex) {
+          var legLine = Math.floor(lIndex / legendEntriesPerLine);
+          var legCol = lIndex % legendEntriesPerLine;
+          ctx.fillStyle = content.legend[lIndex].color;
+          var boxX = bSX + legCol * maxLWidth + 3, boxY = bSY + legLine * options.fontSizeLegend * 1.5 + options.fontSizeLegend * 0.5;
+          ctx.beginPath();
+          ctx.moveTo(boxX, boxY);
+          ctx.lineTo(boxX + options.pixelsLegendSquare, boxY);
+          ctx.lineTo(boxX + options.pixelsLegendSquare, boxY + options.pixelsLegendSquare);
+          ctx.lineTo(boxX, boxY + options.pixelsLegendSquare);
+          ctx.lineTo(boxX, boxY);
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.textAlign = 'left';
+          ctx.fillStyle = 'rgb(0, 0, 0)';
+          ctx.fillText(content.legend[lIndex].label, boxX + 3 + options.pixelsLegendSquare, boxY + options.fontSizeLegend * 0.5);
+        }
+
+        ctx.restore();
+      }
+
+      /* Draw x-axis label of bar chart */
+      var bottomYPadding = options.paddingPixelsHorizontal;
+      remainingHeight -= options.paddingPixelsHorizontal;
+      if (content.xAxis != null) {
+        ctx.save();
+        ctx.font = Helpers.getFont({ weight: options.fontWeight, size: options.fontSizeAxes, family: options.font });
+        ctx.fillStyle = 'rgb(0, 0, 0)';
+        ctx.textAlign = 'center';
+        ctx.fillText(content.xAxis, (width - remainingWidth) + remainingWidth / 2, topYPadding + remainingHeight - bottomYPadding);
+        remainingHeight -= options.fontSizeAxes * 1.5;
+        bottomYPadding += options.fontSizeAxes * 1.5;
+        ctx.restore();
+      }
+
+      var widthPerBar = remainingWidth / content.data.length;
+
+      /* Draw x-axis top labels */
+      if (content.topLabels != null) {
+        ctx.save();
+        ctx.textAlign = 'center';
+        ctx.font = Helpers.getFont({ weight: options.fontWeight, size: options.fontSizeLabels, family: options.font });
+        remainingHeight -= options.fontSizeLabels * 1.5;
+        topYPadding += options.fontSizeLabels * 1.5;
+        for (index = 0; index < content.topLabels.length; ++index) {
+          ctx.fillText(
+            content.topLabels[index],
+            leftXPadding + index * widthPerBar + widthPerBar / 2,
+            topYPadding - options.fontSizeLabels / 2
+          );
+        }
+        ctx.restore();
+      }
+
+      /* Draw x-axis labels */
+      ctx.save();
+      var reqWidth = 0;
+      if (content.dataTags != null) {
+        ctx.font = Helpers.getFont({ weight: options.fontWeight, size: options.fontDataTags, family: options.font });
+        var dataTags = content.dataTags;
+        for (index = 0; index < dataTags.length; ++index) {
+          if (Array.isArray(dataTags[index])) {
+            for (var index2 = 0; index2 < dataTags[index].length; ++index2) {
+              reqWidth = Math.max(reqWidth, Math.ceil(ctx.measureText(dataTags[index][index2]).width + 5));
+            }
+          } else {
+            reqWidth = Math.max(reqWidth, Math.ceil(ctx.measureText(dataTags[index]).width + 5));
+          }
+        }
+      }
+
+      ctx.font = Helpers.getFont({ weight: options.fontWeight, size: options.fontSizeLabels, family: options.font });
+      var computedBarPadding = Math.floor((widthPerBar * options.paddingPercentBars) / 2);
+      var wwh = widthPerBar - computedBarPadding * 2;
+      if (wwh < reqWidth) {
+        computedBarPadding -= Math.ceil((reqWidth - wwh) / 2);
+        computedBarPadding = Math.max(0, computedBarPadding);
+      } else if (options.maxWidthBars > 0 && wwh > options.maxWidthBars) {
+        computedBarPadding = Math.floor((widthPerBar - options.maxWidthBars) / 2);
+      }
+      var maxTextWidth = 0, maxTextStackSize = 1;
+      for (index = 0; index < content.labels.length; ++index) {
+        var tLabel = content.labels[index];
+        if (Array.isArray(tLabel)) {
+          maxTextStackSize = Math.max(maxTextStackSize, tLabel.length);
+          for (index2 = 0; index2 < tLabel.length; ++index2) {
+            maxTextWidth = Math.max(maxTextWidth, ctx.measureText(tLabel[index2]).width);
+          }
+        } else maxTextWidth = Math.max(maxTextWidth, ctx.measureText(tLabel).width);
+      }
+      var xLabelsRotated = false;
+      if (maxTextWidth > widthPerBar - computedBarPadding) {
+        ctx.textAlign = 'right';
+        ctx.rotate(Math.PI * 1.5);
+        xLabelsRotated = true;
+      } else {
+        ctx.textAlign = 'center';
+      }
+      var lastLabelY = -options.fontSizeLabels;
+      for (index = 0; index < content.labels.length; ++index) {
+        var cLabel = content.labels[index];
+        var x = leftXPadding + index * widthPerBar + widthPerBar / 2, y = topYPadding + remainingHeight - options.fontSizeLabels / 2;
+        if (xLabelsRotated) {
+          y = topYPadding + remainingHeight - maxTextWidth + 5;
+          y = [x, x = -y][0];
+
+          if (y < lastLabelY + options.fontSizeLabels) continue;
+          lastLabelY = y;
+        }
+        var yUp = options.fontSizeLabels * (maxTextStackSize - 1);
+        if (Array.isArray(cLabel)) {
+          if (xLabelsRotated) {
+            yUp = options.fontSizeLabels * (cLabel.length - 1.5);
+            yUp /= 2;
+          }
+          for (index2 = 0; index2 < cLabel.length; ++index2) {
+            ctx.fillText(cLabel[index2], x, y - yUp);
+            yUp -= options.fontSizeLabels;
+          }
+        } else {
+          if (xLabelsRotated) yUp = -options.fontSizeLabels * 0.25;
+          ctx.fillText(cLabel, x, y - yUp);
+        }
+      }
+      if (xLabelsRotated) {
+        remainingHeight -= maxTextWidth + 5;
+        bottomYPadding += maxTextWidth + 5;
+      } else {
+        var remVal = options.fontSizeLabels * maxTextStackSize;
+        remVal += options.fontSizeLabels * 0.5;
+        remainingHeight -= remVal;
+        bottomYPadding += remVal;
+      }
+      ctx.restore();
+
+      /* Draw boundaries */
+      var boundX1 = leftXPadding, boundX2 = leftXPadding + remainingWidth;
+      var boundY1 = topYPadding, boundY2 = topYPadding + remainingHeight;
+
+      for (index = 0; index < content.labels.length; ++index) labelPositions[index] = {
+        xStart: leftXPadding + index * widthPerBar,
+        xEnd: leftXPadding + (1 + index) * widthPerBar,
+        yStart: boundY1, yEnd: boundY2
+      }
+
+      ctx.save();
+      ctx.strokeStyle = 'rgb(0, 0, 0)';
+      ctx.beginPath();
+      if (content.topLabels != null) {
+        ctx.moveTo(boundX2, boundY1);
+        ctx.lineTo(boundX1, boundY1);
+      } else {
+        ctx.moveTo(boundX1, boundY1);
+      }
+      ctx.lineTo(boundX1, boundY2);
+      ctx.lineTo(boundX2, boundY2);
+      if (content.topLabels != null) ctx.lineTo(leftXPadding + remainingWidth, topYPadding);
+      ctx.stroke();
+      ctx.restore();
+
+      /* Draw top label */
+      if (content.topLabel != null) {
+        ctx.save();
+        ctx.textAlign = 'right';
+        ctx.font = Helpers.getFont({ weight: options.fontWeight, size: options.fontSizeLabels, family: options.font });
+        ctx.fillText(content.topLabel, leftXPadding - 3, topYPadding - options.fontSizeLabels / 2);
+        ctx.restore();
+      }
+
+      /* Draw y-axis label of bar chart */
+      if (content.yAxis != null) {
+        ctx.save();
+        ctx.rotate(Math.PI * 1.5);
+        ctx.font = Helpers.getFont({ weight: options.fontWeight, size: options.fontSizeAxes, family: options.font });
+        ctx.fillStyle = 'rgb(0, 0, 0)';
+        ctx.textAlign = 'center';
+        ctx.fillText(content.yAxis, -(topYPadding + remainingHeight / 2), leftXDrawYLabel);
+        ctx.restore();
+      }
+
+      /* Draw y-axis labels */
+      ctx.save();
+      ctx.fillStyle = 'rgb(0, 0, 0)';
+      ctx.strokeStyle = 'rgba(0, 0, 0, 0.20)';
+      ctx.font = Helpers.getFont({ weight: options.fontWeight, size: options.fontSizeTicks, family: options.font });
+      ctx.textAlign = 'right';
+      var tickMeta = Helpers.getLinearTicks(0, maxChartValue, Math.max(2, remainingHeight / (options.fontSizeTicks * (1 + options.paddingPercentTicks))));
+      var alpha = maxChartValue / options.fontSizeTicks;
+      maxChartValue = tickMeta[1];
+      if (maxChartValue > 1) maxChartValue += Math.ceil(alpha);
+      else maxChartValue += alpha;
+      var ticks = [];
+      while (tickMeta[0] <= tickMeta[1]) {
+        ticks.push(tickMeta[0]);
+        tickMeta[0] += tickMeta[2];
+      }
+      for (index = 0; index < ticks.length; ++index) {
+        var tickHeight = Math.round(remainingHeight * Helpers.getAxisRatio(minChartValue, maxChartValue, ticks[index]));
+        if (tickHeight < 0) continue;
+        if (options.scaleStyle == 'log2' && ticks[index] !== 0) ticks[index] = Math.round(Math.pow(2, ticks[index]));
+        else ticks[index] = Math.floor(ticks[index] * 100) / 100;
+        if (options.tickFormatter != null && typeof options.tickFormatter === 'function') {
+          ctx.fillText(options.tickFormatter(ticks[index]).toString(), leftXPadding - options.paddingPixelsTicks, topYPadding + remainingHeight - tickHeight);
+        } else {
+          ctx.fillText(ticks[index].toString(), leftXPadding - options.paddingPixelsTicks, topYPadding + remainingHeight - tickHeight);
+        }
+        if (index == 0) continue;
+        ctx.beginPath();
+        ctx.moveTo(leftXPadding, topYPadding + remainingHeight - tickHeight);
+        ctx.lineTo(leftXPadding + remainingWidth, topYPadding + remainingHeight - tickHeight);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      if (content.bars != null && Array.isArray(content.bars)) {
+        ctx.save();
+        for (index = 0; index < content.bars.length; ++index) {
+          var cBar = content.bars[index];
+          if (cBar.value > maxChartValue) continue;
+          var renderBarY = topYPadding + remainingHeight - Math.round(remainingHeight * Helpers.getAxisRatio(minChartValue, maxChartValue, cBar.value));
+          ctx.strokeStyle = cBar.style;
+          ctx.fillStyle = cBar.style;
+          ctx.beginPath();
+          ctx.moveTo(boundX1, renderBarY);
+          ctx.lineTo(boundX2, renderBarY);
+          ctx.stroke();
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+
+      /* Draw bars */
+      ctx.save();
+      var lastData = null;
+      for (index = 0; index < content.data.length; ++index) {
+        var fillColorForIndex = null;
+        var strokeColorForIndex = null;
+        if (content.fillColor != null) {
+          if (Array.isArray(content.fillColor)) fillColorForIndex = ctx.fillStyle = content.fillColor[index];
+          else ctx.fillStyle = content.fillColor;
+        } else ctx.fillStyle = options.fillColorBars;
+        if (content.strokeColor != null) {
+          if (Array.isArray(content.strokeColor)) strokeColorForIndex = ctx.strokeStyle = content.strokeColor[index];
+          else ctx.strokeStyle = content.strokeColor;
+        } else ctx.strokeStyle = options.strokeColorBars;
+        var v = content.data[index];
+        var vIsArr = Array.isArray(v);
+        var renderStartX = leftXPadding + widthPerBar * index;
+        if (vIsArr && options.barStyle === 'stacked') {
+          var runningValue = 0, lastHeight = 0;
+          for (var drawIndex = 0; drawIndex < v.length; ++drawIndex) {
+            if (fillColorForIndex != null && Array.isArray(fillColorForIndex)) {
+              ctx.fillStyle = fillColorForIndex[drawIndex] || options.fillColorBars;
+            }
+            if (strokeColorForIndex != null && Array.isArray(strokeColorForIndex)) {
+              ctx.strokeStyle = strokeColorForIndex[drawIndex] || options.strokeColorBars;
+            }
+
+            runningValue += v[drawIndex];
+            var renderBarHeight = Math.floor(remainingHeight * Helpers.getAxisRatio(minChartValue, maxChartValue, runningValue));
+            var renderUpToY = topYPadding + remainingHeight - renderBarHeight;
+            if (Math.abs(renderBarHeight - lastHeight) < options.stackedBarPadding + 2) {
+              lastHeight = renderBarHeight;
+              continue;
+            }
+
+            var barPadP = drawIndex > 0 ? options.stackedBarPadding : 0;
+            var tSX, tSY;
+            var tEX, tEY;
+            ctx.beginPath();
+            ctx.moveTo(tSX = renderStartX + computedBarPadding, tSY = topYPadding + remainingHeight - lastHeight - barPadP);
+            ctx.lineTo(renderStartX + computedBarPadding, renderUpToY);
+            ctx.lineTo(tEX = renderStartX + (widthPerBar - 1) - computedBarPadding, tEY = renderUpToY);
+            ctx.lineTo(renderStartX + (widthPerBar - 1) - computedBarPadding, topYPadding + remainingHeight - lastHeight - barPadP);
+            if (drawIndex > 0) ctx.lineTo(tSX, tSY);
+            ctx.stroke();
+            ctx.fill();
+            var hint;
+            if (content.hints != null && content.hints[index] != null && (hint = content.hints[index][drawIndex]) != null) {
+              this.mouseListeners.push(function(index, drawIndex, hint, sx, sy, ex, ey, x, y) {
+                var minX = Math.min(sx, ex), maxX = Math.max(sx, ex);
+                var minY = Math.min(sy, ey), maxY = Math.max(sy, ey);
+                if (x < minX || x > maxX || y < minY || y > maxY) return null;
+                return { index: index, drawIndex: drawIndex, rect: { left: minX, right: maxX, top: minY, bottom: maxY }, text: hint.split('\n') };
+              }.bind(this, index, drawIndex, hint, tSX, tSY, tEX, tEY));
+            }
+
+            var tagText;
+            if (tSY - renderUpToY > options.fontDataTags * 1.25 && content.dataTags != null && (tagText = content.dataTags[index]) != null && (tagText = tagText[drawIndex]) != null) {
+              var oFS = ctx.fillStyle;
+              ctx.fillStyle = 'rgb(0, 0, 0)';
+              ctx.font = Helpers.getFont({ weight: options.fontWeight, size: options.fontDataTags, family: options.font });
+              ctx.textAlign = 'center';
+              ctx.fillText(tagText, renderStartX + widthPerBar / 2, tSY - options.fontDataTags * 0.25);
+              ctx.fillStyle = oFS;
+            }
+
+            lastHeight = renderBarHeight;
+          }
+
+          if (content.barTooltips != null) {
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.font = Helpers.getFont({ weight: options.fontWeight, size: options.fontSizeLabels, family: options.font });
+            ctx.textAlign = 'center';
+            ctx.fillText(content.barTooltips[index] || '', renderStartX + widthPerBar / 2, renderUpToY - 3);
+          }
+        } else if (options.barStyle === 'line') {
+          if (vIsArr) {
+            var rbx = renderStartX + widthPerBar / 2;
+
+            var lDu;
+            if (options.fillRegion === 'background') {
+              lDu = lastData;
+              if (Array.isArray(lDu)) lDu = lDu[0];
+              if (lDu != null) {
+                var sFS = ctx.fillStyle
+                ctx.fillStyle = lDu.color
+                ctx.fillRect(lDu.x, boundY1, rbx - lDu.x, boundY2 - boundY1)
+                ctx.fillStyle = sFS
+              }
+            }
+
+            var nLData = [];
+            for (var drawIndex = 0; drawIndex < v.length; ++drawIndex) {
+              var renderBarHeight3 = Math.round(remainingHeight * Helpers.getAxisRatio(minChartValue, maxChartValue, v[drawIndex]));
+              var renderUpToY3 = topYPadding + remainingHeight - renderBarHeight3;
+
+              var rby = renderUpToY3;
+              if (lastData != null) {
+                var tLX, tLY;
+                if (Array.isArray(lastData)) {
+                  tLX = (lastData[drawIndex] || { }).x;
+                  tLY = (lastData[drawIndex] || { }).y;
+                } else {
+                  tLX = lastData.x;
+                  tLY = lastData.y;
+                }
+
+                if (tLX && tLY) {
+                  if (Array.isArray(strokeColorForIndex)) {
+                    ctx.strokeStyle = strokeColorForIndex[drawIndex] || options.strokeColorBars;
+                  } else ctx.strokeStyle = strokeColorForIndex || 'rgb(0, 0, 0)';
+                  ctx.beginPath();
+                  ctx.moveTo(tLX, tLY);
+                  ctx.lineTo(rbx, rby);
+                  ctx.stroke();
+                }
+              }
+
+              if (Array.isArray(fillColorForIndex)) {
+                ctx.fillStyle = fillColorForIndex[drawIndex] || options.fillColorBars;
+              }
+              if (Array.isArray(strokeColorForIndex)) {
+                ctx.strokeStyle = strokeColorForIndex[drawIndex] || options.strokeColorBars;
+              }
+
+              ctx.beginPath();
+              ctx.arc(rbx, rby, options.radiusDot, 0, 2 * Math.PI);
+              ctx.stroke();
+              ctx.fill();
+
+              nLData[drawIndex] = { x: rbx, y: rby, color: ctx.fillStyle };
+            }
+            lastData = nLData;
+            if (lDu != null && lDu.color != lastData[0].color) this.fillRegions.push({
+              x: lastData[0].x,
+              y: lastData[0].y,
+              prev: lDu.color,
+              next: lastData[0].color
+            })
+
+            if (content.balls != null && Array.isArray(content.balls) && index < content.balls.length) {
+              var ball = content.balls[index]
+              if (ball != null) {
+                ctx.beginPath();
+                ctx.fillStyle = ball.fill;
+                ctx.strokeStyle = ball.stroke;
+                ctx.arc(rbx, topYPadding + remainingHeight - (remainingHeight * Helpers.getAxisRatio(minChartValue, maxChartValue, minChartValue + ball.value)), ball.radius, 0, 2 * Math.PI);
+                ctx.stroke();
+                ctx.fill();
+              }
+            }
+          } else {
+            var renderBarHeight3 = Math.round(remainingHeight * Helpers.getAxisRatio(minChartValue, maxChartValue, v));
+            var renderUpToY3 = topYPadding + remainingHeight - renderBarHeight3;
+
+            var rbx = renderStartX + widthPerBar / 2, rby = renderUpToY3;
+            var lDu;
+            if (options.fillRegion === 'background') {
+              if (lastData != null) {
+                lDu = lastData;
+                if (Array.isArray(lDu)) lDu = lDu[0];
+                var sFS = ctx.fillStyle
+                ctx.fillStyle = lDu.color
+                ctx.fillRect(lDu.x, boundY1, rbx - lDu.x, boundY2 - boundY1)
+                ctx.fillStyle = sFS
+              }
+            }
+            ctx.beginPath();
+            ctx.arc(rbx, rby, options.radiusDot, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.fill();
+
+            if (lastData != null) {
+              if (Array.isArray(lastData)) {
+                var tLX, tLY;
+                for (var key in lastData) {
+                  if (!lastData.hasOwnProperty(key)) continue;
+                  tLX = lastData[key].x;
+                  tLY = lastData[key].y;
+                  if (tLX && tLY) {
+                    ctx.strokeStyle = strokeColorForIndex || 'rgb(0, 0, 0)';
+                    ctx.beginPath();
+                    ctx.moveTo(tLX, tLY);
+                    ctx.lineTo(rbx, rby);
+                    ctx.stroke();
+                  }
+                }
+              } else {
+                var tLX = lastData.x, tLY = lastData.y;
+                if (tLX && tLY) {
+                  ctx.strokeStyle = strokeColorForIndex || 'rgb(0, 0, 0)';
+                  ctx.beginPath();
+                  ctx.moveTo(tLX, tLY);
+                  ctx.lineTo(rbx, rby);
+                  ctx.stroke();
+                }
+              }
+            }
+
+            lastData = { x: rbx, y: rby, color: ctx.fillStyle };
+            if (lDu != null && lDu.color != lastData.color) this.fillRegions.push({
+              x: lastData.x,
+              y: lastData.y,
+              prev: lDu.color,
+              next: lastData.color
+            })
+
+            if (content.balls != null && Array.isArray(content.balls) && index < content.balls.length) {
+              var ball = content.balls[index]
+              if (ball != null) {
+                ctx.beginPath();
+                ctx.fillStyle = ball.fill;
+                ctx.strokeStyle = ball.stroke;
+                ctx.arc(rbx, topYPadding + remainingHeight - (remainingHeight * Helpers.getAxisRatio(minChartValue, maxChartValue, minChartValue + ball.value)), ball.radius, 0, 2 * Math.PI);
+                ctx.stroke();
+                ctx.fill();
+              }
+            }
+          }
+
+          var hint;
+          if (content.hints != null && (hint = content.hints[index]) != null) {
+            this.mouseListeners.push(function(index, hint, sx, sy, ex, ey, x, y) {
+              var minX = Math.min(sx, ex), maxX = Math.max(sx, ex);
+              var minY = Math.min(sy, ey), maxY = Math.max(sy, ey);
+              if (x < minX || x > maxX || y < minY || y > maxY) return null;
+              return { index: index, drawIndex: drawIndex, rect: { left: minX, right: maxX, top: minY, bottom: maxY }, text: hint.split('\n') };
+            }.bind(this, index, hint, rbx - 1, topYPadding, rbx + 1, topYPadding + remainingHeight));
+          }
+        } else {
+          if (vIsArr) v = Helpers.avg(v);
+          var renderBarHeight2 = Math.round(remainingHeight * Helpers.getAxisRatio(minChartValue, maxChartValue, v));
+          var renderUpToY2 = topYPadding + remainingHeight - renderBarHeight2;
+          ctx.beginPath();
+          ctx.moveTo(renderStartX + computedBarPadding, topYPadding + remainingHeight);
+          ctx.lineTo(renderStartX + computedBarPadding, renderUpToY2);
+          ctx.lineTo(renderStartX + (widthPerBar - 1) - computedBarPadding, renderUpToY2);
+          ctx.lineTo(renderStartX + (widthPerBar - 1) - computedBarPadding, topYPadding + remainingHeight);
+          ctx.stroke();
+          ctx.fill();
+
+          if (options.barStyle === 'error') {
+            var val;
+            if ((val = content._data_standard_error[index]) != 0) {
+              var renderBarError = Math.round(remainingHeight * Helpers.getAxisRatio(minChartValue, maxChartValue, val));
+              ctx.beginPath();
+              var wiskerWidth = Math.round((widthPerBar - computedBarPadding * 2) / 8);
+              var x_ = leftXPadding + widthPerBar * index + widthPerBar / 2;
+              ctx.moveTo(x_ - wiskerWidth, renderUpToY2 + renderBarError);
+              ctx.lineTo(x_ + wiskerWidth, renderUpToY2 + renderBarError);
+              ctx.moveTo(x_, renderUpToY2 + renderBarError);
+              ctx.lineTo(x_, renderUpToY2 - renderBarError);
+              ctx.moveTo(x_ - wiskerWidth, renderUpToY2 - renderBarError);
+              ctx.lineTo(x_ + wiskerWidth, renderUpToY2 - renderBarError);
+              ctx.stroke();
+            }
+          }
+
+          if (content.barTooltips != null) {
+            ctx.fillStyle = 'rgb(0, 0, 0)';
+            ctx.font = Helpers.getFont({ weight: options.fontWeight, size: options.fontSizeLabels, family: options.font });
+            ctx.textAlign = 'center';
+            ctx.fillText(content.barTooltips[index] || '', renderStartX + widthPerBar / 2, renderUpToY2 - 3);
+          }
+        }
+      }
+      ctx.restore();
+
+      if (this.currentHint != null) {
+        ctx.save();
+        var hRect = this.currentHint.rect, hints = this.currentHint.text;
+        ctx.fillStyle = 'rgb(0, 0, 0)';
+        ctx.font = Helpers.getFont({ weight: options.fontWeight, size: options.fontSizeHint, family: options.font });
+        ctx.textAlign = 'left';
+        var boxWidth = 0;
+        for (index = 0; index < hints.length; ++index) {
+          boxWidth = Math.max(boxWidth, Math.ceil(ctx.measureText(hints[index]).width));
+        }
+        var boxWidthPadding = 5;
+        var lineHeight = options.fontSizeHint * 1.5;
+        var boxHeight = hints.length * lineHeight;
+        var drawX = hRect.right + 10, drawY = (hRect.top + hRect.bottom) / 2;
+        boxWidth += boxWidthPadding * 2;
+        if (drawX + boxWidth > width) {
+          drawX = hRect.left - boxWidth - 10;
+        }
+        if (drawY - boxHeight / 2 < 0) {
+          drawY = Math.ceil(boxHeight / 2) + 1;
+        } else if (drawY + boxHeight / 2 > height) {
+          drawY = height - boxHeight / 2 - 1;
+        }
+        ctx.clearRect(drawX, drawY - boxHeight / 2, boxWidth, boxHeight);
+        ctx.beginPath();
+        ctx.rect(drawX, drawY - boxHeight / 2, boxWidth, boxHeight);
+        ctx.stroke();
+        for (index = 0; index < hints.length; ++index) {
+          ctx.fillText(hints[index], drawX + boxWidthPadding, drawY - boxHeight / 2 + options.fontSizeHint + index * lineHeight);
+        }
+        ctx.restore();
+      }
+
+      ctx.translate(0.5, 0.5);
+
+      this.labelPositions = labelPositions;
+    };
+
+    return BarChart;
+  })();
+
+  if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+    module.exports = BarChart;
+  } else {
+    window.BarChart = BarChart;
+  }
+})();
+
+},{}],7:[function(require,module,exports){
+(function (global){
+(function(a,b){if("function"==typeof define&&define.amd)define([],b);else if("undefined"!=typeof exports)b();else{b(),a.FileSaver={exports:{}}.exports}})(this,function(){"use strict";function b(a,b){return"undefined"==typeof b?b={autoBom:!1}:"object"!=typeof b&&(console.warn("Deprecated: Expected third argument to be a object"),b={autoBom:!b}),b.autoBom&&/^\s*(?:text\/\S*|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(a.type)?new Blob(["\uFEFF",a],{type:a.type}):a}function c(b,c,d){var e=new XMLHttpRequest;e.open("GET",b),e.responseType="blob",e.onload=function(){a(e.response,c,d)},e.onerror=function(){console.error("could not download file")},e.send()}function d(a){var b=new XMLHttpRequest;b.open("HEAD",a,!1);try{b.send()}catch(a){}return 200<=b.status&&299>=b.status}function e(a){try{a.dispatchEvent(new MouseEvent("click"))}catch(c){var b=document.createEvent("MouseEvents");b.initMouseEvent("click",!0,!0,window,0,0,0,80,20,!1,!1,!1,!1,0,null),a.dispatchEvent(b)}}var f="object"==typeof window&&window.window===window?window:"object"==typeof self&&self.self===self?self:"object"==typeof global&&global.global===global?global:void 0,a=f.saveAs||("object"!=typeof window||window!==f?function(){}:"download"in HTMLAnchorElement.prototype?function(b,g,h){var i=f.URL||f.webkitURL,j=document.createElement("a");g=g||b.name||"download",j.download=g,j.rel="noopener","string"==typeof b?(j.href=b,j.origin===location.origin?e(j):d(j.href)?c(b,g,h):e(j,j.target="_blank")):(j.href=i.createObjectURL(b),setTimeout(function(){i.revokeObjectURL(j.href)},4E4),setTimeout(function(){e(j)},0))}:"msSaveOrOpenBlob"in navigator?function(f,g,h){if(g=g||f.name||"download","string"!=typeof f)navigator.msSaveOrOpenBlob(b(f,h),g);else if(d(f))c(f,g,h);else{var i=document.createElement("a");i.href=f,i.target="_blank",setTimeout(function(){e(i)})}}:function(a,b,d,e){if(e=e||open("","_blank"),e&&(e.document.title=e.document.body.innerText="downloading..."),"string"==typeof a)return c(a,b,d);var g="application/octet-stream"===a.type,h=/constructor/i.test(f.HTMLElement)||f.safari,i=/CriOS\/[\d]+/.test(navigator.userAgent);if((i||g&&h)&&"object"==typeof FileReader){var j=new FileReader;j.onloadend=function(){var a=j.result;a=i?a:a.replace(/^data:[^;]*;/,"data:attachment/file;"),e?e.location.href=a:location=a,e=null},j.readAsDataURL(a)}else{var k=f.URL||f.webkitURL,l=k.createObjectURL(a);e?e.location=l:location.href=l,e=null,setTimeout(function(){k.revokeObjectURL(l)},4E4)}});f.saveAs=a.saveAs=a,"undefined"!=typeof module&&(module.exports=a)});
+
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],8:[function(require,module,exports){
 var structuredClone = require('./structured-clone');
 var HELLO_INTERVAL_LENGTH = 200;
 var HELLO_TIMEOUT_LENGTH = 60000;
@@ -1608,7 +2472,7 @@ module.exports = function getIFrameEndpoint() {
   return instance;
 };
 
-},{"./structured-clone":9}],7:[function(require,module,exports){
+},{"./structured-clone":11}],9:[function(require,module,exports){
 var ParentEndpoint = require('./parent-endpoint');
 var getIFrameEndpoint = require('./iframe-endpoint');
 
@@ -1698,7 +2562,7 @@ module.exports = function IframePhoneRpcEndpoint(handler, namespace, targetWindo
   this.disconnect = disconnect.bind(this);
 };
 
-},{"./iframe-endpoint":6,"./parent-endpoint":8}],8:[function(require,module,exports){
+},{"./iframe-endpoint":8,"./parent-endpoint":10}],10:[function(require,module,exports){
 var structuredClone = require('./structured-clone');
 
 /**
@@ -1884,7 +2748,7 @@ module.exports = function ParentEndpoint(targetWindowOrIframeEl, targetOrigin, a
   };
 };
 
-},{"./structured-clone":9}],9:[function(require,module,exports){
+},{"./structured-clone":11}],11:[function(require,module,exports){
 var featureSupported = false;
 
 (function () {
@@ -1922,7 +2786,7 @@ exports.supported = function supported() {
   return featureSupported && featureSupported.structuredClones > 0;
 };
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 module.exports = {
   /**
    * Allows to communicate with an iframe.
@@ -1940,7 +2804,7 @@ module.exports = {
 
 };
 
-},{"./lib/iframe-endpoint":6,"./lib/iframe-phone-rpc-endpoint":7,"./lib/parent-endpoint":8,"./lib/structured-clone":9}],11:[function(require,module,exports){
+},{"./lib/iframe-endpoint":8,"./lib/iframe-phone-rpc-endpoint":9,"./lib/parent-endpoint":10,"./lib/structured-clone":11}],13:[function(require,module,exports){
 /* @license
 Papa Parse
 v4.6.3

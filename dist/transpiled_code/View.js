@@ -1,4 +1,6 @@
-"use strict";
+/* moved to the top of file to fix linter error.
+ ref: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Strict_Non_Simple_Params*/
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -13,15 +15,16 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var CsvParser = require('./CsvParser');
+var CsvParser = require('./CsvParser'); // const SimpleDataGrapher = require('./SimpleDataGrapher');
 
-var SimpleDataGrapher = require('./SimpleDataGrapher');
 
 var ChartjsPlotter = require('./ChartjsPlotter');
 
 var PlotlyjsPlotter = require('./PlotlyjsPlotter');
 
 var iframe_phone = require('iframe-phone');
+
+var sheetLink;
 
 var View =
 /*#__PURE__*/
@@ -30,9 +33,8 @@ function () {
     key: "handleFileSelectlocal",
     //extracts the uploaded file from input field and creates an object of CsvParser class with the file as one of the parameters
     value: function handleFileSelectlocal(event) {
-      this.csvFile = event.target.files[0];
-      console.log(event.target.files[0]);
-      console.log("iam here in handle");
+      this.csvFile = event.target.files[0]; // console.log(event.target.files[0]);
+      // console.log("iam here in handle");
 
       if (this.csvFile['name'].split(".")[1] != "csv") {
         alert("Invalid file type");
@@ -40,7 +42,7 @@ function () {
         $('#' + this.dragDropHeadingId).text(this.csvFile['name']);
         var self = this;
 
-        document.getElementById(this.uploadButtonId).onclick = function (e) {
+        document.getElementById(this.uploadButtonId).onclick = function () {
           self.csvParser = new CsvParser(self.csvFile, self.elementId, "local");
         };
       }
@@ -49,13 +51,13 @@ function () {
   }, {
     key: "handleFileSelectstring",
     value: function handleFileSelectstring(val) {
-      console.log("i am at csv string handler", val); // var csv_string = val.split("\n");
-
+      // console.log("i am at csv string handler",val);
+      // var csv_string = val.split("\n");
       this.csvFile = val;
       var self = this;
 
-      document.getElementById(this.uploadButtonId).onclick = function (e) {
-        console.log("i am uploading");
+      document.getElementById(this.uploadButtonId).onclick = function () {
+        // console.log("i am uploading");
         self.csvParser = new CsvParser(self.csvFile, self.elementId, "csvstring");
       };
     } // function for using a previously uploaded and saved file from the data base
@@ -63,10 +65,9 @@ function () {
   }, {
     key: "usingPreviouslyUploadedFile",
     value: function usingPreviouslyUploadedFile() {
-      var self = this;
-      console.log("prev file in use", self.elementId);
-      self.csvParser = new CsvParser("dummy", self.elementId, "prevfile");
-      console.log(self.csvParser, "checking");
+      var self = this; // console.log("prev file in use",self.elementId);
+
+      self.csvParser = new CsvParser("dummy", self.elementId, "prevfile"); // console.log(self.csvParser,"checking");
     } //receives the JSON file value and creates an object of CsvParser class with the file as one of the parameters
 
   }, {
@@ -75,7 +76,7 @@ function () {
       this.csvFile = googleSheetData;
       var self = this;
 
-      document.getElementById(this.uploadButtonId).onclick = function (e) {
+      document.getElementById(this.uploadButtonId).onclick = function () {
         self.csvParser = new CsvParser(self.csvFile, self.elementId, "googleSheet");
       };
     } // get's the JSON form of the Google Sheet through Google Sheet's URL and passes it to the handler
@@ -100,9 +101,7 @@ function () {
         return response.text();
       }).then(function (contents) {
         return _this.handleFileSelectremote(contents);
-      })["catch"](function (e) {
-        return console.log(e);
-      });
+      }); // .catch((e) => console.log(e)) ;
     } // callback function which receives the remote file's value and creates an object of CsvParser class with the file as one of the parameters
 
   }, {
@@ -111,8 +110,8 @@ function () {
       this.csvFile = remoteVal;
       var self = this;
 
-      document.getElementById(this.uploadButtonId).onclick = function (e) {
-        console.log("i am uploading");
+      document.getElementById(this.uploadButtonId).onclick = function () {
+        // console.log("i am uploading");
         self.csvParser = new CsvParser(self.csvFile, self.elementId, "remote");
       };
     } // adapter function which switches between Plotly.js and Chart.js as a graph plotting library and creates theri respective objects which take over the graph plotting
@@ -183,12 +182,11 @@ function () {
         html: true,
         content: html
       }).on('click', function () {
-        console.log("created popover");
+        // console.log("created popover");
         $('#save').click(function (e) {
           e.preventDefault();
           self.fileTitle = $('#' + "title" + buttonId).val();
-          self.fileDescription = $('#' + "desc" + buttonId).val();
-          console.log(self.fileTitle, self.fileDescription, self, "got it");
+          self.fileDescription = $('#' + "desc" + buttonId).val(); // console.log(self.fileTitle,self.fileDescription,self,"got it");
         });
       });
     } // renders the required buttons for saving the files if the use is logged in
@@ -261,8 +259,8 @@ function () {
   }, {
     key: "codapExport",
     value: function codapExport() {
-      var self = this;
-      console.log("clicked in codap now");
+      var self = this; // console.log("clicked in codap now");
+
       var iframeBody = '<iframe id="codap-iframe" src="https://codap.concord.org/releases/latest?embeddedServer=yes#shared=109578" ></iframe>';
       var modal_body = document.getElementById("body_for_CODAP");
       modal_body.innerHTML = iframeBody;
@@ -279,13 +277,12 @@ function () {
       createCodapButton.innerHTML = "Go!";
       createCodapButton.id = this.elementId + "_create_codap";
       modal_body.prepend(createCodapButton);
-      var apiCall = this.createDataset();
-      console.log(apiCall);
-      console.log(this.csvParser.codapHeaders, this.csvParser.codapMatrix);
+      var apiCall = this.createDataset(); // console.log(apiCall);
+      // console.log(this.csvParser.codapHeaders,this.csvParser.codapMatrix);
+
       $("#" + this.elementId + "_create_codap").click(function () {
-        console.log("go go go");
-        rpcHandler.call(apiCall, function (resp) {
-          console.log('Response:' + JSON.stringify(resp));
+        // console.log("go go go");
+        rpcHandler.call(apiCall, function () {// console.log('Response:' + JSON.stringify(resp));
         });
       });
     } // creates a downloadable spreadsheet for the imported data using SheetJS
@@ -293,16 +290,16 @@ function () {
   }, {
     key: "createSheet",
     value: function createSheet() {
-      var wb = XLSX.utils.book_new();
+      var wb = window.XLSX.utils.book_new();
       wb.Props = {
         Title: "New Spreadsheet" + this.elementId,
         CreatedDate: new Date()
       };
       wb.SheetNames.push("Sheet" + this.elementId);
       var ws_data = this.csvParser.completeCsvMatrixTranspose;
-      var ws = XLSX.utils.aoa_to_sheet(ws_data);
+      var ws = window.XLSX.utils.aoa_to_sheet(ws_data);
       wb.Sheets["Sheet" + this.elementId] = ws;
-      var wbout = XLSX.write(wb, {
+      var wbout = window.XLSX.write(wb, {
         bookType: 'xlsx',
         type: 'binary'
       });
@@ -318,7 +315,7 @@ function () {
         return buf;
       }
 
-      saveAs(new Blob([s2ab(wbout)], {
+      window.saveAs(new Blob([s2ab(wbout)], {
         type: "application/octet-stream"
       }), 'newSpreadsheet' + this.elementId + '.xlsx');
     } // creates a hash of the entire data in an accesible format for the charting libraries {labels: [legendx, [legendy0, legendy1 ... lengendyn]], x_axis_values: [...], y_axis_0: [...], y_axis_1: [...], ... y_axis_n: [...]} n: selected number of columns
@@ -326,15 +323,15 @@ function () {
 
   }, {
     key: "afterSampleData",
-    value: function afterSampleData(flag, type) {
+    value: function afterSampleData(flag) {
       var _this2 = this;
 
       document.getElementById(this.plotGraphId).onclick = function (e) {
-        console.log("at click on plot_graph");
+        // console.log("at click on plot_graph");
         e.preventDefault();
         var hash = {};
-        var ix = $('input[name=' + _this2.tableXInputName + ']:checked').val();
-        console.log(ix);
+        var ix = $('input[name=' + _this2.tableXInputName + ']:checked').val(); // console.log(ix);
+
         hash["x_axis_labels"] = _this2.csvParser.completeCsvMatrix[ix];
         var columns = new Array();
         var y_axis_names = new Array();
@@ -350,8 +347,7 @@ function () {
         var labels = [_this2.csvParser.csvHeaders[ix], y_axis_names];
         hash["labels"] = labels;
         var selectedGraph = $('.selected');
-        var type = selectedGraph.attr('data-value');
-        console.log(hash);
+        var type = selectedGraph.attr('data-value'); // console.log(hash);
 
         _this2.plotGraph(hash, columns.length, type, flag, "plotly");
       };
@@ -395,8 +391,8 @@ function () {
   }, {
     key: "tableGenerator",
     value: function tableGenerator(name, tableId, typeOfInput, validValues, flag, tableType, badgeType) {
-      console.log("i am in tablegenerator");
-      console.log("at tableGenerator");
+      // console.log("i am in tablegenerator");
+      // console.log("at tableGenerator");
       document.getElementById(tableId).innerHTML = "";
       var trhead = document.createElement('tr');
 
@@ -428,13 +424,15 @@ function () {
       trhead.classList.add(tableType);
       document.getElementById(tableId).appendChild(trhead);
 
-      for (var i = 0; i < this.csvParser.csvSampleData[0].length; i++) {
+      for (var _i = 0; _i < this.csvParser.csvSampleData[0].length; _i++) {
         var tr = document.createElement('tr');
 
-        for (var j = 0; j < this.csvParser.csvHeaders.length; j++) {
-          var td = document.createElement('td');
-          td.appendChild(document.createTextNode(this.csvParser.csvSampleData[j][i]));
-          tr.appendChild(td);
+        for (var _j = 0; _j < this.csvParser.csvHeaders.length; _j++) {
+          var _td = document.createElement('td');
+
+          _td.appendChild(document.createTextNode(this.csvParser.csvSampleData[_j][_i]));
+
+          tr.appendChild(_td);
         }
 
         document.getElementById(tableId).appendChild(tr);
@@ -448,10 +446,9 @@ function () {
     value: function showSampleDataXandY() {
       var _this3 = this;
 
-      console.log("at sampleDataXandY", this);
-
-      document.getElementById(this.addGraphButtonId).onclick = function (e) {
-        console.log("at " + _this3.addGraphButtonId);
+      // console.log("at sampleDataXandY",this);
+      document.getElementById(this.addGraphButtonId).onclick = function () {
+        // console.log("at " + this.addGraphButtonId);
         _this3.graphCounting++;
         $('.' + _this3.carousalClass).carousel(1); /// ---------------> after
 
@@ -470,8 +467,7 @@ function () {
   }, {
     key: "continueViewManipulation",
     value: function continueViewManipulation(x) {
-      console.log(" i am back in view manipulation", this);
-
+      // console.log(" i am back in view manipulation",this);
       if (x != "prevfile") {
         this.csvParser = x;
       }
@@ -486,7 +482,7 @@ function () {
       var _this4 = this;
 
       $("#" + this.fileUploadId).change(function (e) {
-        console.log("i am here23");
+        // console.log("i am here23");
         document.getElementById("popover" + _this4.fileUploadId).style.display = "inline";
         document.getElementById("popover" + _this4.csvStringUploadId).style.display = "none";
         document.getElementById("popover" + _this4.googleSheetUploadId).style.display = "none";
@@ -497,7 +493,7 @@ function () {
         _this4.handleFileSelectlocal(e);
       });
       $("#" + this.csvStringUploadId).change(function () {
-        console.log(document.getElementById(_this4.csvStringUploadId).value);
+        // console.log(document.getElementById(this.csvStringUploadId).value);
         document.getElementById("popover" + _this4.csvStringUploadId).style.display = "inline";
         document.getElementById("popover" + _this4.googleSheetUploadId).style.display = "none";
         document.getElementById("popover" + _this4.remoteFileUploadId).style.display = "none";
@@ -508,7 +504,7 @@ function () {
         _this4.handleFileSelectstring(document.getElementById(_this4.csvStringUploadId).value);
       });
       $("#" + this.googleSheetUploadId).change(function () {
-        console.log(document.getElementById(_this4.googleSheetUploadId).value, "sheetlink");
+        // console.log(document.getElementById(this.googleSheetUploadId).value,"sheetlink");
         document.getElementById("popover" + _this4.googleSheetUploadId).style.display = "inline";
         document.getElementById("popover" + _this4.csvStringUploadId).style.display = "none";
         document.getElementById("popover" + _this4.remoteFileUploadId).style.display = "none";
@@ -516,13 +512,13 @@ function () {
 
         _this4.createPopover("popover" + _this4.googleSheetUploadId);
 
-        var sheetLink = document.getElementById(_this4.googleSheetUploadId).value;
+        sheetLink = document.getElementById(_this4.googleSheetUploadId).value;
         var sheetURL = "https://spreadsheets.google.com/feeds/list/" + sheetLink.split("/")[5] + "/od6/public/values?alt=json";
 
         _this4.getValueGoogleSheet(sheetURL);
       });
       $("#" + this.remoteFileUploadId).change(function () {
-        console.log(document.getElementById(_this4.remoteFileUploadId).value);
+        // console.log(document.getElementById(this.remoteFileUploadId).value);
         document.getElementById("popover" + _this4.remoteFileUploadId).style.display = "inline";
         document.getElementById("popover" + _this4.csvStringUploadId).style.display = "none";
         document.getElementById("popover" + _this4.googleSheetUploadId).style.display = "none";
@@ -539,8 +535,6 @@ function () {
     var _this5 = this;
 
     _classCallCheck(this, View);
-
-    _defineProperty(this, 'use strict', void 0);
 
     _defineProperty(this, "elementId", null);
 
@@ -606,15 +600,15 @@ function () {
 
     _defineProperty(this, "codapExportButton", null);
 
-    console.log("i am in view");
+    // console.log("i am in view");
     this.elementId = elementId;
     this.element = document.getElementById(elementId);
 
     if (this.element == null) {
       throw "No element exist with this id";
-    }
+    } // console.log("i am in view");
 
-    console.log("i am in view");
+
     this.fileUploadId = elementId + "_csv_file";
     this.remoteFileUploadId = elementId + "_remote_file";
     this.csvStringUploadId = elementId + "_csv_string";
@@ -659,8 +653,8 @@ function () {
       $('#' + _this5.tableYParentId).toggle(ixx === 1);
     });
     $('.imports').hover(function () {
-      var tooltipVal = self.setTooltip(this.classList[0]);
-      console.log(tooltipVal);
+      var tooltipVal = self.setTooltip(this.classList[0]); // console.log(tooltipVal);
+
       $('#import_description').text(tooltipVal);
       $('#import_description').css({
         opacity: 0.0,
@@ -679,27 +673,24 @@ function () {
     value: function addListeners() {
       var _this6 = this;
 
-      console.log("as");
-      console.log("#" + this.fileUploadId);
+      // console.log("as");
+      // console.log("#"+this.fileUploadId);
       $("#" + this.fileUploadId).change(function (e) {
-        console.log("i am here23");
-
+        // console.log("i am here23");
         _this6.handleFileSelectlocal(e);
       });
       $("#" + this.csvStringUploadId).change(function () {
-        console.log(document.getElementById(_this6.csvStringUploadId).value);
-
+        // console.log(document.getElementById(this.csvStringUploadId).value);
         _this6.handleFileSelectstring(document.getElementById(_this6.csvStringUploadId).value);
       });
       $("#" + this.googleSheetUploadId).change(function () {
-        console.log(document.getElementById(_this6.googleSheetUploadId).value, "sheetlink");
+        // console.log(document.getElementById(this.googleSheetUploadId).value,"sheetlink");
         var sheetURL = "https://spreadsheets.google.com/feeds/list/" + sheetLink.split("/")[5] + "/od6/public/values?alt=json";
 
         _this6.getValueGoogleSheet(sheetURL);
       });
       $("#" + this.remoteFileUploadId).change(function () {
-        console.log(document.getElementById(_this6.remoteFileUploadId).value);
-
+        // console.log(document.getElementById(this.remoteFileUploadId).value);
         _this6.sendRemoteFileToHandler(document.getElementById(_this6.remoteFileUploadId).value);
       });
       $("#" + this.createSpreadsheetButtonId).click(function () {
