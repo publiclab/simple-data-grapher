@@ -71,7 +71,6 @@ class CsvParser{
     parse(){
         var csvMatrixLocal=[];
         var count = 0;
-        var f=this.parseReturn;
         Papa.parse(this.csvFile, {
             download: true,
             dynamicTyping: true,
