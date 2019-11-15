@@ -1,7 +1,7 @@
 Contributing to SIMPLE-DATA-GRAPHER
 ==========================
 
-We welcome community contributions to SIMPLE-DATA-GRAPHER! To install PLOTS2 locally, follow the instructions in the [README.md file](https://github.com/publiclab/simple-data-grapher#installation).
+We welcome community contributions to SIMPLE-DATA-GRAPHER! To install SIMPLE-DATA-GRAPHER locally, follow the instructions in the [README.md file](https://github.com/publiclab/simple-data-grapher#installation).
 
 We especially welcome contributions from people from groups underrepresented in free and open source software!
 
