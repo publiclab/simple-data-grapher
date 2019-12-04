@@ -296,3 +296,20 @@ margin-left: 70px;
 .popover_headings{
   font-family: 'Ubuntu Condensed';
 }
+footer {
+  width: 100%;
+  padding: 80px 50px 80px 50px;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  text-align: center;
+}
+.footer-content p {
+  display: inline-block;
+  width: 70%;
+}
+.footer-content btn {
+  display: block;
+}
+.footer-buttondiv {
+  padding-top: 20px;
+}
