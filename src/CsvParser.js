@@ -189,7 +189,6 @@ class CsvParser{
             }
             codapMatrix.push(element);
         }
-        console.log("matrix codap",codapMatrix);
         return codapMatrix;
     }
     //checks if the first row has most of the potential header names, if not, assign dummy headers to the file.
@@ -268,7 +267,6 @@ class CsvParser{
                 completeCsvMatrixTransposeLocal[j+1][i]=this.completeCsvMatrix[i][j];
             }
         }
-        console.log("transpose",completeCsvMatrixTransposeLocal);
         return completeCsvMatrixTransposeLocal;
     }
 };

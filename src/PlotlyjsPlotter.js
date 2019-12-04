@@ -61,7 +61,6 @@ class PlotlyjsPlotter{
     }
     plotGraph2(){
         if (this.flag){
-            console.log("at plotGraph");
             document.getElementById(this.canvasContainerId).innerHTML="";
         }
         var layout=this.layoutMaker();
@@ -74,7 +73,6 @@ class PlotlyjsPlotter{
             new_trace["name"]=this.dataHash['labels'][1][i];
             data.push(new_trace);
         }
-        console.log(data);
         var div = document.createElement('div');
         div.id=this.elementId + '_chart_container_'+this.graphCounting;
         document.getElementById(this.canvasContainerId).appendChild(div);

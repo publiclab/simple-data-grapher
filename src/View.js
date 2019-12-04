@@ -41,8 +41,6 @@ class View{
     //extracts the uploaded file from input field and creates an object of CsvParser class with the file as one of the parameters
     handleFileSelectlocal(event) {
         this.csvFile = event.target.files[0];
-        console.log(event.target.files[0]);
-        console.log("iam here in handle");
         if 	(this.csvFile['name'].split(".")[1]!="csv"){
             alert("Invalid file type");
         }
@@ -56,12 +54,10 @@ class View{
     }
     //receives the string value and creates an object of CsvParser class with the string as one of the parameters
     handleFileSelectstring(val){
-        console.log("i am at csv string handler",val);
         // var csv_string = val.split("\n");
         this.csvFile=val;        
         let self = this;
         document.getElementById(this.uploadButtonId).onclick = (e) => {
-            console.log("i am uploading");
             self.csvParser = new CsvParser(self.csvFile, self.elementId,"csvstring");
         };
 
@@ -69,9 +65,7 @@ class View{
     // function for using a previously uploaded and saved file from the data base
     usingPreviouslyUploadedFile(){
         let self=this;
-        console.log("prev file in use",self.elementId);
         self.csvParser = new CsvParser("dummy",self.elementId,"prevfile");
-        console.log(self.csvParser,"checking");
     }
     //receives the JSON file value and creates an object of CsvParser class with the file as one of the parameters
     handleFileSelectGoogleSheet(googleSheetData){
@@ -104,7 +98,6 @@ class View{
         this.csvFile=remoteVal;
         let self = this;
         document.getElementById(this.uploadButtonId).onclick = (e) => {
-            console.log("i am uploading");
             self.csvParser = new CsvParser(self.csvFile, self.elementId,"remote");
         };
     }
@@ -179,12 +172,10 @@ class View{
             html:true,
             content:  html
         }).on('click',function(){
-            console.log("created popover");
             $('#save').click(function(e){
                 e.preventDefault();
                 self.fileTitle=$('#'+"title" + buttonId).val();
                 self.fileDescription=$('#'+"desc" + buttonId).val();
-                console.log(self.fileTitle,self.fileDescription,self,"got it");
 
             });
         });
@@ -253,7 +244,6 @@ class View{
     // renders the iframe for CODAP export
     codapExport(){
         let self=this;
-        console.log("clicked in codap now");
         var iframeBody='<iframe id="codap-iframe" src="https://codap.concord.org/releases/latest?embeddedServer=yes#shared=109578" ></iframe>'
         var modal_body=document.getElementById("body_for_CODAP");
         modal_body.innerHTML=iframeBody;
@@ -273,10 +263,7 @@ class View{
         createCodapButton.id=this.elementId+"_create_codap";
         modal_body.prepend(createCodapButton);
         var apiCall=this.createDataset();
-        console.log(apiCall);
-        console.log(this.csvParser.codapHeaders,this.csvParser.codapMatrix);
         $("#"+this.elementId+"_create_codap").click(function(){
-            console.log("go go go");
             rpcHandler.call(apiCall,function(resp){
                 console.log('Response:' + JSON.stringify(resp));
             });
@@ -312,11 +299,9 @@ class View{
     // flag is just for seeing if we're plotting the graph for the first time, if yes, we will have to clear the canvas.
     afterSampleData(flag,type){
         document.getElementById(this.plotGraphId).onclick = (e) => {
-            console.log("at click on plot_graph");
             e.preventDefault();
             var hash={};
             var ix=$('input[name=' + this.tableXInputName + ']:checked').val();
-            console.log(ix);
             hash["x_axis_labels"]=this.csvParser.completeCsvMatrix[ix];
             var columns = new Array();
             var y_axis_names = new Array();
@@ -332,7 +317,6 @@ class View{
             var selectedGraph = $('.selected');
             var type = selectedGraph.attr('data-value');
 
-            console.log(hash);
             this.plotGraph(hash,columns.length,type,flag,"plotly");
 
         };
@@ -370,8 +354,6 @@ class View{
     }
     // generates the sample table data with checkboxes for y-axis and radio buttons for x-axis
     tableGenerator(name,tableId,typeOfInput,validValues,flag,tableType,badgeType){
-        console.log("i am in tablegenerator");
-        console.log("at tableGenerator");
         document.getElementById(tableId).innerHTML="";
         var trhead=document.createElement('tr');
         for (var i=0;i<this.csvParser.csvHeaders.length;i++){
@@ -410,9 +392,7 @@ class View{
     }
     // renders the sample tables
     showSampleDataXandY(){
-        console.log("at sampleDataXandY",this);
         document.getElementById(this.addGraphButtonId).onclick = (e) => {
-            console.log("at " + this.addGraphButtonId);
             this.graphCounting++;
             $('.'+this.carousalClass).carousel(1); /// ---------------> after
             this.tableGenerator(this.tableXInputName, this.tableXId, 'radio', this.csvParser.csvHeaders, false, 'table-success','badge-success');
@@ -426,7 +406,6 @@ class View{
     }
     // view manipulation resumes after the CsvParser object is created and returned
     continueViewManipulation(x){
-        console.log(" i am back in view manipulation",this);
         if (x!="prevfile"){
             this.csvParser=x;
         }
@@ -438,7 +417,6 @@ class View{
 
     listenersForIntegration(){
         $("#"+this.fileUploadId).change((e)=>{
-            console.log("i am here23");
             document.getElementById("popover" + this.fileUploadId).style.display="inline";
             document.getElementById("popover" + this.csvStringUploadId).style.display="none";
             document.getElementById("popover" + this.googleSheetUploadId).style.display="none";
@@ -447,7 +425,6 @@ class View{
             this.handleFileSelectlocal(e);
         });
         $("#"+this.csvStringUploadId).change(()=>{
-            console.log(document.getElementById(this.csvStringUploadId).value);
             document.getElementById("popover" + this.csvStringUploadId).style.display="inline";
             document.getElementById("popover" + this.googleSheetUploadId).style.display="none";
             document.getElementById("popover" + this.remoteFileUploadId).style.display="none";
@@ -456,7 +433,6 @@ class View{
             this.handleFileSelectstring(document.getElementById(this.csvStringUploadId).value);
           });
         $("#"+this.googleSheetUploadId).change(()=>{
-            console.log(document.getElementById(this.googleSheetUploadId).value,"sheetlink");
             document.getElementById("popover" + this.googleSheetUploadId).style.display="inline";
             document.getElementById("popover" + this.csvStringUploadId).style.display="none";
             document.getElementById("popover" + this.remoteFileUploadId).style.display="none";
@@ -467,7 +443,6 @@ class View{
             this.getValueGoogleSheet(sheetURL);
         });
         $("#"+this.remoteFileUploadId).change(()=>{
-            console.log(document.getElementById(this.remoteFileUploadId).value);
             document.getElementById("popover" + this.remoteFileUploadId).style.display="inline";
             document.getElementById("popover" + this.csvStringUploadId).style.display="none";
             document.getElementById("popover" + this.googleSheetUploadId).style.display="none";
@@ -478,13 +453,11 @@ class View{
     }
 
     constructor(elementId){
-        console.log("i am in view");
         this.elementId = elementId;
         this.element = document.getElementById(elementId);
         if(this.element == null){
             throw "No element exist with this id";
         }
-        console.log("i am in view");
         this.fileUploadId = elementId + "_csv_file";
         this.remoteFileUploadId= elementId + "_remote_file";
         this.csvStringUploadId= elementId + "_csv_string";
@@ -529,7 +502,6 @@ class View{
         $('.imports').hover(
             function(){
                 let tooltipVal = self.setTooltip(this.classList[0]);
-                console.log(tooltipVal);
                 $('#import_description').text(tooltipVal);
                 $('#import_description').css({opacity: 0.0, visibility: "visible"}).animate({opacity: 1.0},800);
             },
@@ -541,23 +513,17 @@ class View{
     }
     //listen for different inputs for import by the user
     addListeners(){
-        console.log("as");
-        console.log("#"+this.fileUploadId);
         $("#"+this.fileUploadId).change((e)=>{
-            console.log("i am here23");
             this.handleFileSelectlocal(e);
         });
         $("#"+this.csvStringUploadId).change(()=>{
-            console.log(document.getElementById(this.csvStringUploadId).value);
             this.handleFileSelectstring(document.getElementById(this.csvStringUploadId).value);
           });
         $("#"+this.googleSheetUploadId).change(()=>{
-            console.log(document.getElementById(this.googleSheetUploadId).value,"sheetlink");
             var sheetURL="https://spreadsheets.google.com/feeds/list/"+sheetLink.split("/")[5]+"/od6/public/values?alt=json";
             this.getValueGoogleSheet(sheetURL);
         });
         $("#"+this.remoteFileUploadId).change(()=>{
-            console.log(document.getElementById(this.remoteFileUploadId).value);
             this.sendRemoteFileToHandler(document.getElementById(this.remoteFileUploadId).value);
         });
         $("#"+this.createSpreadsheetButtonId).click(()=>{
