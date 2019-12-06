@@ -18,4 +18,6 @@ dist: trusty
 sudo: required
 
 before_script: npm update
-script: npm test
+script: 
+  - npm test
+  - http-server -c-1 -p 8000
