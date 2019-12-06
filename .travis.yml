@@ -2,5 +2,8 @@ language: node_js
 node_js:
   - node
 
+dist: trusty
+sudo: required
+
 before_script: npm update
 script: npm test
