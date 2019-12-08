@@ -94,7 +94,7 @@ describe("csv string file upload test", function(){
         assert.equal(val1,true);
     });
     it("should select graph type", async function(){
-        const graph_type=await page.$("#graph_type2");
+        const graph_type=await page.$("*[data-value='Vertical']");
         await graph_type.click();
         const graph_val=await (await graph_type.getProperty('checked')).jsonValue();
         assert.equal(graph_val,true);
