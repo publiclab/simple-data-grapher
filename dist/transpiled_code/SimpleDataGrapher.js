@@ -22,7 +22,6 @@ var SimpleDataGrapher = function SimpleDataGrapher(elementId) {
 
   this.elementId = elementId;
   SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId] = this;
-  console.log(SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId]);
   this.view = new _View.View(elementId);
 };
 

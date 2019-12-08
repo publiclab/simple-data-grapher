@@ -14,8 +14,6 @@ function () {
   _createClass(ChartjsPlotter, [{
     key: "determineType",
     value: function determineType() {
-      console.log("at type");
-
       if (this.graphType == "Basic" || this.graphType == "Stepped" || this.graphType == "Point") {
         return 'line';
       } else if (this.graphType == "Horizontal") {
@@ -29,7 +27,6 @@ function () {
   }, {
     key: "colorGenerator",
     value: function colorGenerator(i, tb, count) {
-      console.log("at color");
       var colors = ['rgba(255, 77, 210, 0.5)', 'rgba(0, 204, 255, 0.5)', 'rgba(128, 0, 255, 0.5)', 'rgba(255, 77, 77, 0.5)', 'rgba(0, 179, 0, 0.5)', 'rgba(255, 255, 0, 0.5)', 'rgba(255, 0, 102, 0.5)', 'rgba(0, 115, 230, 0.5)'];
       var bordercolors = ['rgb(255, 0, 191)', 'rgb(0, 184, 230)', 'rgb(115, 0, 230)', 'rgb(255, 51, 51)', 'rgb(0, 153, 0)', 'rgb(230, 230, 0)', 'rgb(230, 0, 92)', 'rgb(0, 102, 204)'];
       var length = 8;
@@ -59,7 +56,6 @@ function () {
   }, {
     key: "determineData",
     value: function determineData(i) {
-      console.log("at data");
       var h = {};
 
       if (this.graphType == "Basic") {
@@ -82,7 +78,6 @@ function () {
   }, {
     key: "determineConfig",
     value: function determineConfig() {
-      console.log("at config");
       var config = {};
       config['type'] = this.determineType();
       var data = {};
@@ -110,7 +105,6 @@ function () {
   }, {
     key: "scales",
     value: function scales() {
-      console.log("at scales");
       var scales = {
         xAxes: [{
           display: true,
@@ -132,7 +126,6 @@ function () {
   }, {
     key: "saveAsImageFunction",
     value: function saveAsImageFunction(canvId) {
-      console.log("entered image");
       var newDate = new Date();
       var timestamp = newDate.getTime();
       var temp = canvId;
@@ -150,7 +143,6 @@ function () {
       saveImageButton.innerHTML = "Save as Image";
       saveImageButton.id = canvasId + "image";
       canvasDiv.appendChild(saveImageButton);
-      console.log(this, "this");
       var self = this;
 
       document.getElementById(saveImageButton.id).onclick = function (e) {
@@ -161,7 +153,6 @@ function () {
     key: "plotGraph",
     value: function plotGraph() {
       if (this.flag) {
-        console.log("at plotGraph");
         document.getElementById(this.canvasContainerId).innerHTML = "";
       }
 
