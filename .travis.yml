@@ -19,7 +19,6 @@ before_install:
 dist: trusty
 sudo: required
 
-before_script: npm update
 script: 
   - forever start ./node_modules/http-server/bin/http-server -p 8000
   - npm test 
