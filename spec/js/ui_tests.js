@@ -93,12 +93,6 @@ describe("csv string file upload test", function(){
         const val1=await (await col1.getProperty('checked')).jsonValue();
         assert.equal(val1,true);
     });
-    it("should select graph type", async function(){
-        const graph_type=await page.$("#graph_type2");
-        await graph_type.click();
-        const graph_val=await (await graph_type.getProperty('checked')).jsonValue();
-        assert.equal(graph_val,true);
-    });
     it("should check plotting the graph", async function(){
         const plot_graphButton=await page.$(".plotGraph");
         await plot_graphButton.click();
