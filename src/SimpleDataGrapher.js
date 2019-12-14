@@ -1,5 +1,5 @@
-"use strict";
-import { View } from "./View";
+'use strict';
+import { View } from './View';
 
 class SimpleDataGrapher {
   static elementIdSimpleDataGraphInstanceMap = {};
@@ -10,9 +10,6 @@ class SimpleDataGrapher {
     SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[
       this.elementId
     ] = this;
-    // console.log(
-    //   SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId]
-    // );
     this.view = new View(elementId);
   }
 }

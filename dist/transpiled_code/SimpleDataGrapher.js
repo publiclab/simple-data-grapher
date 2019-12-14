@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -19,10 +19,7 @@ var SimpleDataGrapher = function SimpleDataGrapher(elementId) {
   _defineProperty(this, "view", null);
 
   this.elementId = elementId;
-  SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId] = this; // console.log(
-  //   SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId]
-  // );
-
+  SimpleDataGrapher.elementIdSimpleDataGraphInstanceMap[this.elementId] = this;
   this.view = new _View.View(elementId);
 };
 
