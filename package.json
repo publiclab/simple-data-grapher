@@ -32,6 +32,7 @@
     "chartjs": "^0.3.24",
     "express": "^4.17.1",
     "file-system": "^2.2.2",
+    "forever": "^1.0.0",
     "googleapis": "^39.2.0",
     "http-server": "^0.11.1",
     "iframe-phone": "^1.2.0",

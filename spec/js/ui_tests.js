@@ -29,7 +29,7 @@ describe("heading tests", function(){
     });
     it ("should test main heading", async function(){
         const headingValue = await page.$eval('.main_heading', el => el.innerHTML);
-        assert.equal(headingValue," Simple Data Grapher");
+        assert.equal(headingValue,"Simple Data Grapher");
     });
     it ("should test sub heading", async function(){
         const headingValue = await page.$eval('.sub_heading', el => el.innerHTML);
