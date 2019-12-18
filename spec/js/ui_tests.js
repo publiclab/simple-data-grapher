@@ -32,7 +32,7 @@ describe("heading tests", function(){
         assert.equal(headingValue,"Simple Data Grapher");
     });
     it ("should test sub heading", async function(){
-        const headingValue = await page.$eval('.sub_heading', el => el.innerHTML);
+        const headingValue = await page.$eval('.sub_title', el => el.innerHTML);
         assert.equal(headingValue,"Plot and Export Graphs with CSV data");
     });
     it ("should test indicator-1 heading", async function(){
