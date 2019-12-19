@@ -96,6 +96,13 @@ describe("csv string file upload test", function(){
     it("should check plotting the graph", async function(){
         const plot_graphButton=await page.$(".plotGraph");
         await plot_graphButton.click();
+        assert.notEqual(plot_graphButton, undefined);
+    });
+    it('should check if graph exists', async function() {
+        const graph_container = await page.$('#first_chart_container_0');
+        assert.notEqual(graph_container, undefined);
+    });
+});
 describe('footer tests', function() {
   let page;
   before(async function() {
@@ -123,7 +130,7 @@ describe('footer tests', function() {
     ] = await page.$$eval('.footer-content p', elements =>
       elements.map(el => el.textContent)
     );
-    
+
     assert.equal(
       firstParagraph,
       'Post a link to this and ask for help from other community members on PublicLab.org'
