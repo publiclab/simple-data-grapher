@@ -32,7 +32,7 @@ describe("heading tests", function(){
         assert.equal(headingValue,"Simple Data Grapher");
     });
     it ("should test sub heading", async function(){
-        const headingValue = await page.$eval('.sub_title', el => el.innerHTML);
+        const headingValue = await page.$eval('.sub_heading', el => el.innerHTML);
         assert.equal(headingValue,"A JavaScript library that turns uploaded CSV files into customizable graphs within a few simple steps. Can be embedded on other websites!");
     });
     it ("should test indicator-1 heading", async function(){
