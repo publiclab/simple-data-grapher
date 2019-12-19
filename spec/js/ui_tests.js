@@ -29,11 +29,11 @@ describe("heading tests", function(){
     });
     it ("should test main heading", async function(){
         const headingValue = await page.$eval('.main_heading', el => el.innerHTML);
-        assert.equal(headingValue," Simple Data Grapher");
+        assert.equal(headingValue,"Simple Data Grapher");
     });
     it ("should test sub heading", async function(){
         const headingValue = await page.$eval('.sub_heading', el => el.innerHTML);
-        assert.equal(headingValue,"Plot and Export Graphs with CSV data");
+        assert.equal(headingValue,"A JavaScript library that turns uploaded CSV files into customizable graphs within a few simple steps. Can be embedded on other websites!");
     });
     it ("should test indicator-1 heading", async function(){
         const headingValue = await page.$eval('.item-1', el => el.innerHTML);
