@@ -96,12 +96,59 @@ describe("csv string file upload test", function(){
     it("should check plotting the graph", async function(){
         const plot_graphButton=await page.$(".plotGraph");
         await plot_graphButton.click();
-        assert.notEqual(plot_graphButton,undefined);
+        assert.notEqual(plot_graphButton, undefined);
     });
-    it("should check if graph exists", async function(){
-        const graph_container=await page.$("#first_chart_container_0");
-        assert.notEqual(graph_container,undefined);
+    it('should check if graph exists', async function() {
+        const graph_container = await page.$('#first_chart_container_0');
+        assert.notEqual(graph_container, undefined);
     });
-    
+});
+describe('footer tests', function() {
+  let page;
+  before(async function() {
+    page = await browser.newPage();
+    await page.goto('http://localhost:8000');
+  });
+  after(async function() {
+    await page.close();
+    });
+  it('should test footer headings', async function() {
+    const [
+      firstHeading,
+      secondHeading
+    ] = await page.$$eval('.footer-content h3', elements =>
+      elements.map(el => el.textContent)
+    );
 
+    assert.equal(firstHeading, 'Need help?');
+    assert.equal(secondHeading, 'Improve this tool');
+    });
+  it('should test footer paragraphs', async function() {
+    const [
+      firstParagraph,
+      secondParagraph
+    ] = await page.$$eval('.footer-content p', elements =>
+      elements.map(el => el.textContent)
+    );
+
+    assert.equal(
+      firstParagraph,
+      'Post a link to this and ask for help from other community members on PublicLab.org'
+    );
+    assert.equal(
+      secondParagraph,
+      'This is an open source toolkit which you can help add to and improve on GitHub'
+    );
+  });
+  it('should test footer buttons', async function() {
+    const [
+      firstButton,
+      secondButton
+    ] = await page.$$eval('.footer-content button', elements =>
+      elements.map(el => el.textContent.trim())
+    );
+
+    assert.equal(firstButton, 'Ask a question >>');
+    assert.equal(secondButton, 'View the code');
+  });
 });
