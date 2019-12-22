@@ -673,7 +673,7 @@ class View {
   //renders the entire HTML view
   drawHTMLView() {
     this.element.innerHTML =
-      '<div class="body_container"> <div class="main_heading_container"> <h2 class="main_heading">Simple Data Grapher</h2> <p class="sub_heading">A JavaScript library that turns uploaded CSV files into customizable graphs within a few simple steps. Can be embedded on other websites!</p> <p class="sub_heading"> Open Source <a href="https://github.com/publiclab/simple-data-grapher"> <i class="fab fa-github"></i> </a> by <a href="https://publiclab.org" title="Public Lab Website"><i class="fa fa-globe"></i> Public Lab</a> </p> </div> <div class="heading_container"> <ul class="headings"> <li class="item-1">Upload CSV Data</li> <li class="item-2">Select Columns & Graph Type</li> <li class="item-3">Plotted Graph & Export Options</li> </ul> </div> <div id=' +
+      '<div class="body_container"> <div class="main_heading_container"><h2 class="main_heading">Simple Data Grapher</h2> <p class="sub_heading">A JavaScript library that turns uploaded CSV files into customizable graphs within a few simple steps. Can be embedded on other websites!</p> <p class="sub_heading"> Open Source <a href="https://github.com/publiclab/simple-data-grapher"> <i class="fab fa-github"></i> </a> by <a href="https://publiclab.org" title="Public Lab Website"><i class="fa fa-globe"></i> Public Lab</a> </p> </div> <div class="heading_container"> <ul class="headings"> <li class="item-1">Upload CSV Data</li> <li class="item-2">Select Columns & Graph Type</li> <li class="item-3">Plotted Graph & Export Options</li> </ul> </div> <div id=' +
       this.carousalId +
       ' class="carousel ' +
       this.carousalClass +
