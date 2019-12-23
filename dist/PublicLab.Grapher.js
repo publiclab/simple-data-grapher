@@ -1,5 +1,5 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-"use strict";
+'use strict';
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -15,11 +15,12 @@ function () {
   _createClass(ChartjsPlotter, [{
     key: "determineType",
     value: function determineType() {
-      if (this.graphType == "Basic" || this.graphType == "Stepped" || this.graphType == "Point") {
+      // console.log("at type");
+      if (this.graphType == 'Basic' || this.graphType == 'Stepped' || this.graphType == 'Point') {
         return 'line';
-      } else if (this.graphType == "Horizontal") {
+      } else if (this.graphType == 'Horizontal') {
         return 'horizontalBar';
-      } else if (this.graphType == "Vertical") {
+      } else if (this.graphType == 'Vertical') {
         return 'bar';
       } else {
         return this.graphType.toLowerCase();
@@ -28,11 +29,12 @@ function () {
   }, {
     key: "colorGenerator",
     value: function colorGenerator(i, tb, count) {
+      // console.log("at color");
       var colors = ['rgba(255, 77, 210, 0.5)', 'rgba(0, 204, 255, 0.5)', 'rgba(128, 0, 255, 0.5)', 'rgba(255, 77, 77, 0.5)', 'rgba(0, 179, 0, 0.5)', 'rgba(255, 255, 0, 0.5)', 'rgba(255, 0, 102, 0.5)', 'rgba(0, 115, 230, 0.5)'];
       var bordercolors = ['rgb(255, 0, 191)', 'rgb(0, 184, 230)', 'rgb(115, 0, 230)', 'rgb(255, 51, 51)', 'rgb(0, 153, 0)', 'rgb(230, 230, 0)', 'rgb(230, 0, 92)', 'rgb(0, 102, 204)'];
       var length = 8;
 
-      if (this.graphType == "Pie" || this.graphType == "Doughnut") {
+      if (this.graphType == 'Pie' || this.graphType == 'Doughnut') {
         var colorSet = [];
         var borderColorSet = [];
 
@@ -41,13 +43,13 @@ function () {
           borderColorSet.push(bordercolors[j % length]);
         }
 
-        if (tb == "bg") {
+        if (tb == 'bg') {
           return colorSet;
         } else {
           return borderColorSet;
         }
       } else {
-        if (tb == "bg") {
+        if (tb == 'bg') {
           return colors[i % length];
         } else {
           return bordercolors[i % length];
@@ -57,20 +59,21 @@ function () {
   }, {
     key: "determineData",
     value: function determineData(i) {
+      // console.log("at data");
       var h = {};
 
-      if (this.graphType == "Basic") {
+      if (this.graphType == 'Basic') {
         h['fill'] = false;
-      } else if (this.graphType == "Stepped") {
+      } else if (this.graphType == 'Stepped') {
         h['steppedLine'] = true;
         h['fill'] = false;
-      } else if (this.graphType == "Point") {
+      } else if (this.graphType == 'Point') {
         h['showLine'] = false;
         h['pointRadius'] = 10;
       }
 
-      h['backgroundColor'] = this.colorGenerator(i, "bg", this.dataHash['y_axis_values' + i].length);
-      h['borderColor'] = this.colorGenerator(i, "bo", this.dataHash['y_axis_values' + i].length);
+      h['backgroundColor'] = this.colorGenerator(i, 'bg', this.dataHash['y_axis_values' + i].length);
+      h['borderColor'] = this.colorGenerator(i, 'bo', this.dataHash['y_axis_values' + i].length);
       h['borderWidth'] = 1;
       h['label'] = this.dataHash['labels'][1][i];
       h['data'] = this.dataHash['y_axis_values' + i];
@@ -79,6 +82,7 @@ function () {
   }, {
     key: "determineConfig",
     value: function determineConfig() {
+      // console.log("at config");
       var config = {};
       config['type'] = this.determineType();
       var data = {};
@@ -91,9 +95,9 @@ function () {
       }
 
       var options = {
-        'responsive': true,
-        'maintainAspectRatio': true,
-        'chartArea': {
+        responsive: true,
+        maintainAspectRatio: true,
+        chartArea: {
           backgroundColor: 'rgb(204, 102, 255)'
         }
       };
@@ -106,6 +110,7 @@ function () {
   }, {
     key: "scales",
     value: function scales() {
+      // console.log("at scales");
       var scales = {
         xAxes: [{
           display: true,
@@ -127,26 +132,28 @@ function () {
   }, {
     key: "saveAsImageFunction",
     value: function saveAsImageFunction(canvId) {
+      // console.log("entered image");
       var newDate = new Date();
       var timestamp = newDate.getTime();
       var temp = canvId;
-      temp = "#" + temp;
+      temp = '#' + temp;
       $(temp).get(0).toBlob(function (blob) {
-        saveAs(blob, "chart" + timestamp);
+        window.saveAs(blob, 'chart' + timestamp);
       });
     }
   }, {
     key: "createSaveAsImageButton",
     value: function createSaveAsImageButton(canvasDiv, canvasId) {
-      var saveImageButton = document.createElement("BUTTON");
-      saveImageButton.classList.add("btn");
-      saveImageButton.classList.add("btn-primary");
-      saveImageButton.innerHTML = "Save as Image";
-      saveImageButton.id = canvasId + "image";
-      canvasDiv.appendChild(saveImageButton);
+      var saveImageButton = document.createElement('BUTTON');
+      saveImageButton.classList.add('btn');
+      saveImageButton.classList.add('btn-primary');
+      saveImageButton.innerHTML = 'Save as Image';
+      saveImageButton.id = canvasId + 'image';
+      canvasDiv.appendChild(saveImageButton); // console.log(this, "this");
+
       var self = this;
 
-      document.getElementById(saveImageButton.id).onclick = function (e) {
+      document.getElementById(saveImageButton.id).onclick = function () {
         self.saveAsImageFunction(canvasId);
       };
     }
@@ -154,7 +161,8 @@ function () {
     key: "plotGraph",
     value: function plotGraph() {
       if (this.flag) {
-        document.getElementById(this.canvasContainerId).innerHTML = "";
+        //   console.log("at plotGraph");
+        document.getElementById(this.canvasContainerId).innerHTML = '';
       }
 
       var div = document.createElement('div');
@@ -165,15 +173,13 @@ function () {
       document.getElementById(this.canvasContainerId).appendChild(div);
       var ctx = canv.getContext('2d');
       var configuration = this.determineConfig();
-      new Chart(ctx, configuration);
+      new window.Chart(ctx, configuration);
       this.createSaveAsImageButton(div, canv.id); // $('.'+this.carousalClass).carousel(2);
     }
   }]);
 
   function ChartjsPlotter(hash, length, type, flag, canvasContainerId, elementId, graphCounting) {
     _classCallCheck(this, ChartjsPlotter);
-
-    _defineProperty(this, 'use strict', void 0);
 
     _defineProperty(this, "dataHash", {});
 
@@ -204,7 +210,7 @@ function () {
 
 module.exports = ChartjsPlotter;
 },{}],2:[function(require,module,exports){
-"use strict";
+'use strict'; // import {SimpleDataGrapher} from "./SimpleDataGrapher";
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -216,10 +222,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-// import {SimpleDataGrapher} from "./SimpleDataGrapher";
 var SimpleDataGrapher = require('./SimpleDataGrapher');
 
-var Papa = require("papaparse");
+var Papa = require('papaparse');
 
 var CsvParser =
 /*#__PURE__*/
@@ -227,8 +232,6 @@ function () {
   //start is variable that will be passed to the function to sort out the columns. start will tell if the existing CSV file has headers or not, therefore, to start the iteration from 0 or 1 Used in header determination
   function CsvParser(file, elementId, functionParameter) {
     _classCallCheck(this, CsvParser);
-
-    _defineProperty(this, 'use strict', void 0);
 
     _defineProperty(this, "csvFile", null);
 
@@ -255,7 +258,7 @@ function () {
     this.elementId = elementId;
     this.csvFile = file;
 
-    if (functionParameter == "prevfile") {
+    if (functionParameter == 'prevfile') {
       return this;
     } else {
       this.allFunctionHandler(functionParameter);
@@ -281,11 +284,11 @@ function () {
   }, {
     key: "allFunctionHandler",
     value: function allFunctionHandler(functionParameter) {
-      if (functionParameter == "local") {
+      if (functionParameter == 'local') {
         this.csvMatrix = this.parse();
       } else {
-        if (functionParameter == "csvstring" || functionParameter == "remote") {
-          this.csvFile = this.csvFile.split("\n");
+        if (functionParameter == 'csvstring' || functionParameter == 'remote') {
+          this.csvFile = this.csvFile.split('\n');
           this.csvMatrix = this.parseString();
           this.csvHeaders = this.determineHeaders();
           this.completeCsvMatrix = this.matrixForCompleteData();
@@ -310,8 +313,8 @@ function () {
       var _this = this;
 
       var csvMatrixLocal = [];
-      var count = 0;
-      var f = this.parseReturn;
+      var count = 0; // var f = this.parseReturn;
+
       Papa.parse(this.csvFile, {
         download: true,
         dynamicTyping: true,
@@ -332,7 +335,7 @@ function () {
       var mat = [];
 
       for (var i = 0; i < this.csvFile.length; i++) {
-        if (this.csvFile[i] == "" || this.csvFile[i] == " ") {
+        if (this.csvFile[i] == '' || this.csvFile[i] == ' ') {
           continue;
         }
 
@@ -372,25 +375,26 @@ function () {
         maxval = this.completeCsvMatrix[0].length;
       }
 
-      for (var i = 0; i < this.csvHeaders.length; i++) {
+      for (var _i = 0; _i < this.csvHeaders.length; _i++) {
         var counter = 0;
         var bool = false;
 
-        for (var j = 0; j < this.completeCsvMatrix[i].length; j++) {
+        for (var j = 0; j < this.completeCsvMatrix[_i].length; j++) {
           if (counter >= maxval) {
             break;
-          } else if (this.completeCsvMatrix[i][j] !== null || this.completeCsvMatrix[i][j] !== undefined) {
-            if (typeof this.completeCsvMatrix[i][j] === 'number') {
+          } else if (this.completeCsvMatrix[_i][j] !== null || this.completeCsvMatrix[_i][j] !== undefined) {
+            if (typeof this.completeCsvMatrix[_i][j] === 'number') {
               bool = true;
             }
 
             counter += 1;
-            csvSampleDataLocal[i].push(this.completeCsvMatrix[i][j]);
+
+            csvSampleDataLocal[_i].push(this.completeCsvMatrix[_i][j]);
           }
         }
 
         if (bool) {
-          csvValidForYAxisLocal.push(this.csvHeaders[i]);
+          csvValidForYAxisLocal.push(this.csvHeaders[_i]);
         }
       }
 
@@ -407,9 +411,9 @@ function () {
         completeCsvMatrixLocal[i] = [];
       }
 
-      for (var i = this.csvFileStart; i < this.csvMatrix.length; i++) {
+      for (var _i2 = this.csvFileStart; _i2 < this.csvMatrix.length; _i2++) {
         for (var j = 0; j < this.csvHeaders.length; j++) {
-          completeCsvMatrixLocal[j].push(this.csvMatrix[i][j]);
+          completeCsvMatrixLocal[j].push(this.csvMatrix[_i2][j]);
         }
       }
 
@@ -425,20 +429,20 @@ function () {
         matrixComplete[i] = [];
       }
 
-      for (var i = 0; i < this.csvHeaders.length; i++) {
+      for (var _i3 = 0; _i3 < this.csvHeaders.length; _i3++) {
         for (var key in this.csvFile) {
-          var valueCell = this.csvFile[key][this.csvHeaders[i]]["$t"];
+          var valueCell = this.csvFile[key][this.csvHeaders[_i3]]['$t'];
 
           if (!isNaN(valueCell)) {
-            matrixComplete[i].push(+valueCell);
+            matrixComplete[_i3].push(+valueCell);
           } else {
-            matrixComplete[i].push(valueCell);
+            matrixComplete[_i3].push(valueCell);
           }
         }
       }
 
-      for (var i = 0; i < this.csvHeaders.length; i++) {
-        this.csvHeaders[i] = this.csvHeaders[i].slice(4, this.csvHeaders[i].length);
+      for (var _i4 = 0; _i4 < this.csvHeaders.length; _i4++) {
+        this.csvHeaders[_i4] = this.csvHeaders[_i4].slice(4, this.csvHeaders[_i4].length);
       }
 
       return matrixComplete;
@@ -470,18 +474,18 @@ function () {
 
       for (var i = 0; i < this.csvMatrix[0].length; i++) {
         if (i == 0) {
-          if (typeof this.csvMatrix[0][i] == "string") {
+          if (typeof this.csvMatrix[0][i] == 'string') {
             csvHeadersLocal[i] = this.csvMatrix[0][i];
           } else {
             flag = true;
             break;
           }
         } else {
-          if (_typeof(this.csvMatrix[0][i]) == _typeof(this.csvMatrix[0][i - 1]) && _typeof(this.csvMatrix[0][i]) != 'object' || _typeof(this.csvMatrix[0][i]) != _typeof(this.csvMatrix[0][i - 1]) && csvHeadersLocal[i - 1].substring(0, 6) == "Column") {
+          if (_typeof(this.csvMatrix[0][i]) == _typeof(this.csvMatrix[0][i - 1]) && _typeof(this.csvMatrix[0][i]) != 'object' || _typeof(this.csvMatrix[0][i]) != _typeof(this.csvMatrix[0][i - 1]) && csvHeadersLocal[i - 1].substring(0, 6) == 'Column') {
             csvHeadersLocal[i] = this.csvMatrix[0][i];
           } //in case of an unnamed column
           else if (_typeof(this.csvMatrix[0][i]) == 'object') {
-              csvHeadersLocal[i] = "Column" + (i + 1);
+              csvHeadersLocal[i] = 'Column' + (i + 1);
             } else {
               flag = true;
               break;
@@ -493,8 +497,8 @@ function () {
       if (flag && csvHeadersLocal.length != this.csvMatrix[0].length) {
         this.csvFileStart = 0;
 
-        for (var i = 0; i < this.csvMatrix[0].length; i++) {
-          csvHeadersLocal[i] = "Column" + (i + 1);
+        for (var _i5 = 0; _i5 < this.csvMatrix[0].length; _i5++) {
+          csvHeadersLocal[_i5] = 'Column' + (_i5 + 1);
         }
       }
 
@@ -510,7 +514,7 @@ function () {
         var h = this.csvFile[key];
 
         for (var headKey in h) {
-          if (headKey.slice(0, 4) == "gsx$") {
+          if (headKey.slice(0, 4) == 'gsx$') {
             headers_sheet.push(headKey);
           }
         }
@@ -528,7 +532,7 @@ function () {
 
       for (var i = 0; i < this.csvHeaders.length; i++) {
         var element = {};
-        element["name"] = this.csvHeaders[i];
+        element['name'] = this.csvHeaders[i];
         codapHeaders.push(element);
       }
 
@@ -544,13 +548,13 @@ function () {
         completeCsvMatrixTransposeLocal[i] = [];
       }
 
-      for (var i = 0; i < this.completeCsvMatrix.length; i++) {
-        completeCsvMatrixTransposeLocal[0][i] = this.csvHeaders[i];
+      for (var _i6 = 0; _i6 < this.completeCsvMatrix.length; _i6++) {
+        completeCsvMatrixTransposeLocal[0][_i6] = this.csvHeaders[_i6];
       }
 
-      for (var i = 0; i < this.completeCsvMatrix.length; i++) {
+      for (var _i7 = 0; _i7 < this.completeCsvMatrix.length; _i7++) {
         for (var j = 0; j < this.completeCsvMatrix[0].length; j++) {
-          completeCsvMatrixTransposeLocal[j + 1][i] = this.completeCsvMatrix[i][j];
+          completeCsvMatrixTransposeLocal[j + 1][_i7] = this.completeCsvMatrix[_i7][j];
         }
       }
 
@@ -561,10 +565,9 @@ function () {
   return CsvParser;
 }();
 
-;
 module.exports = CsvParser;
 },{"./SimpleDataGrapher":4,"papaparse":11}],3:[function(require,module,exports){
-"use strict";
+'use strict';
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -580,12 +583,12 @@ function () {
   _createClass(PlotlyjsPlotter, [{
     key: "determineType2",
     value: function determineType2() {
-      if (this.graphType == "Horizontal" || this.graphType == "Vertical") {
-        return "bar";
-      } else if (this.graphType == "Pie" || this.graphType == "Doughnut" || this.graphType == "Radar") {
-        return "pie";
-      } else if (this.graphType == "Basic" || this.graphType == "Stepped" || this.graphType == "Point") {
-        return "scatter";
+      if (this.graphType == 'Horizontal' || this.graphType == 'Vertical') {
+        return 'bar';
+      } else if (this.graphType == 'Pie' || this.graphType == 'Doughnut' || this.graphType == 'Radar') {
+        return 'pie';
+      } else if (this.graphType == 'Basic' || this.graphType == 'Stepped' || this.graphType == 'Point') {
+        return 'scatter';
       }
     }
   }, {
@@ -593,8 +596,8 @@ function () {
     value: function layoutMaker() {
       var layout = {};
 
-      if (this.graphType == "Horizontal" || this.graphType == "Vertical") {
-        layout["barmode"] = "group";
+      if (this.graphType == 'Horizontal' || this.graphType == 'Vertical') {
+        layout['barmode'] = 'group';
       }
 
       return layout;
@@ -603,20 +606,20 @@ function () {
     key: "traceMaker",
     value: function traceMaker() {
       var trace = {};
-      trace["type"] = this.determineType2();
+      trace['type'] = this.determineType2();
 
-      if (this.graphType == "Horizontal") {
-        trace["orientation"] = "h";
-      } else if (this.graphType == "Doughnut") {
-        trace["hole"] = 0.5;
-      } else if (this.graphType == "Basic") {
-        trace["mode"] = "lines";
-      } else if (this.graphType == "Point") {
-        trace["mode"] = "markers";
-      } else if (this.graphType == "Stepped") {
-        trace["mode"] = "lines+markers";
-        trace["line"] = {
-          "shape": 'hv'
+      if (this.graphType == 'Horizontal') {
+        trace['orientation'] = 'h';
+      } else if (this.graphType == 'Doughnut') {
+        trace['hole'] = 0.5;
+      } else if (this.graphType == 'Basic') {
+        trace['mode'] = 'lines';
+      } else if (this.graphType == 'Point') {
+        trace['mode'] = 'markers';
+      } else if (this.graphType == 'Stepped') {
+        trace['mode'] = 'lines+markers';
+        trace['line'] = {
+          shape: 'hv'
         };
       }
 
@@ -625,14 +628,14 @@ function () {
   }, {
     key: "keyDeterminer",
     value: function keyDeterminer() {
-      var keys = ["x", "y"];
+      var keys = ['x', 'y'];
 
-      if (this.graphType == "Pie" || this.graphType == "Doughnut") {
-        keys[1] = "values";
-        keys[0] = "labels";
-      } else if (this.graphType == "Horizontal") {
-        keys[0] = "y";
-        keys[1] = "x";
+      if (this.graphType == 'Pie' || this.graphType == 'Doughnut') {
+        keys[1] = 'values';
+        keys[0] = 'labels';
+      } else if (this.graphType == 'Horizontal') {
+        keys[0] = 'y';
+        keys[1] = 'x';
       }
 
       return keys;
@@ -641,7 +644,8 @@ function () {
     key: "plotGraph2",
     value: function plotGraph2() {
       if (this.flag) {
-        document.getElementById(this.canvasContainerId).innerHTML = "";
+        //   console.log("at plotGraph");
+        document.getElementById(this.canvasContainerId).innerHTML = '';
       }
 
       var layout = this.layoutMaker();
@@ -652,21 +656,20 @@ function () {
         var new_trace = this.traceMaker();
         new_trace[keySet[0]] = this.dataHash['x_axis_labels'];
         new_trace[keySet[1]] = this.dataHash['y_axis_values' + i];
-        new_trace["name"] = this.dataHash['labels'][1][i];
+        new_trace['name'] = this.dataHash['labels'][1][i];
         data.push(new_trace);
-      }
+      } // console.log(data);
+
 
       var div = document.createElement('div');
       div.id = this.elementId + '_chart_container_' + this.graphCounting;
       document.getElementById(this.canvasContainerId).appendChild(div);
-      Plotly.newPlot(div.id, data, layout);
+      window.Plotly.newPlot(div.id, data, layout);
     }
   }]);
 
   function PlotlyjsPlotter(hash, length, type, flag, canvasContainerId, elementId, graphCounting) {
     _classCallCheck(this, PlotlyjsPlotter);
-
-    _defineProperty(this, 'use strict', void 0);
 
     _defineProperty(this, "dataHash", {});
 
@@ -697,7 +700,7 @@ function () {
 
 module.exports = PlotlyjsPlotter;
 },{}],4:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -713,8 +716,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var SimpleDataGrapher = function SimpleDataGrapher(elementId) {
   _classCallCheck(this, SimpleDataGrapher);
 
-  _defineProperty(this, 'use strict', void 0);
-
   _defineProperty(this, "elementId", null);
 
   _defineProperty(this, "view", null);
@@ -728,10 +729,11 @@ exports.SimpleDataGrapher = SimpleDataGrapher;
 
 _defineProperty(SimpleDataGrapher, "elementIdSimpleDataGraphInstanceMap", {});
 
-;
 window.SimpleDataGrapher = SimpleDataGrapher;
 },{"./View":5}],5:[function(require,module,exports){
-"use strict";
+/* moved to the top of file to fix linter error.
+ ref: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Strict_Non_Simple_Params*/
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -746,15 +748,16 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var CsvParser = require('./CsvParser');
+var CsvParser = require('./CsvParser'); // const SimpleDataGrapher = require('./SimpleDataGrapher');
 
-var SimpleDataGrapher = require('./SimpleDataGrapher');
 
 var ChartjsPlotter = require('./ChartjsPlotter');
 
 var PlotlyjsPlotter = require('./PlotlyjsPlotter');
 
 var iframe_phone = require('iframe-phone');
+
+var sheetLink;
 
 var View =
 /*#__PURE__*/
@@ -765,14 +768,14 @@ function () {
     value: function handleFileSelectlocal(event) {
       this.csvFile = event.target.files[0];
 
-      if (this.csvFile['name'].split(".")[1] != "csv") {
-        alert("Invalid file type");
+      if (this.csvFile['name'].split('.')[1] != 'csv') {
+        alert('Invalid file type');
       } else {
         $('#' + this.dragDropHeadingId).text(this.csvFile['name']);
         var self = this;
 
-        document.getElementById(this.uploadButtonId).onclick = function (e) {
-          self.csvParser = new CsvParser(self.csvFile, self.elementId, "local");
+        document.getElementById(this.uploadButtonId).onclick = function () {
+          self.csvParser = new CsvParser(self.csvFile, self.elementId, 'local');
         };
       }
     } //receives the string value and creates an object of CsvParser class with the string as one of the parameters
@@ -784,8 +787,8 @@ function () {
       this.csvFile = val;
       var self = this;
 
-      document.getElementById(this.uploadButtonId).onclick = function (e) {
-        self.csvParser = new CsvParser(self.csvFile, self.elementId, "csvstring");
+      document.getElementById(this.uploadButtonId).onclick = function () {
+        self.csvParser = new CsvParser(self.csvFile, self.elementId, 'csvstring');
       };
     } // function for using a previously uploaded and saved file from the data base
 
@@ -793,7 +796,7 @@ function () {
     key: "usingPreviouslyUploadedFile",
     value: function usingPreviouslyUploadedFile() {
       var self = this;
-      self.csvParser = new CsvParser("dummy", self.elementId, "prevfile");
+      self.csvParser = new CsvParser('dummy', self.elementId, 'prevfile');
     } //receives the JSON file value and creates an object of CsvParser class with the file as one of the parameters
 
   }, {
@@ -802,8 +805,8 @@ function () {
       this.csvFile = googleSheetData;
       var self = this;
 
-      document.getElementById(this.uploadButtonId).onclick = function (e) {
-        self.csvParser = new CsvParser(self.csvFile, self.elementId, "googleSheet");
+      document.getElementById(this.uploadButtonId).onclick = function () {
+        self.csvParser = new CsvParser(self.csvFile, self.elementId, 'googleSheet');
       };
     } // get's the JSON form of the Google Sheet through Google Sheet's URL and passes it to the handler
 
@@ -821,15 +824,13 @@ function () {
     value: function sendRemoteFileToHandler(val) {
       var _this = this;
 
-      var proxyurl = "https://cors-anywhere.herokuapp.com/";
+      var proxyurl = 'https://cors-anywhere.herokuapp.com/';
       var url = val;
       fetch(proxyurl + url).then(function (response) {
         return response.text();
       }).then(function (contents) {
         return _this.handleFileSelectremote(contents);
-      })["catch"](function (e) {
-        return console.log(e);
-      });
+      }); // .catch((e) => console.log(e)) ;
     } // callback function which receives the remote file's value and creates an object of CsvParser class with the file as one of the parameters
 
   }, {
@@ -838,15 +839,15 @@ function () {
       this.csvFile = remoteVal;
       var self = this;
 
-      document.getElementById(this.uploadButtonId).onclick = function (e) {
-        self.csvParser = new CsvParser(self.csvFile, self.elementId, "remote");
+      document.getElementById(this.uploadButtonId).onclick = function () {
+        self.csvParser = new CsvParser(self.csvFile, self.elementId, 'remote');
       };
     } // adapter function which switches between Plotly.js and Chart.js as a graph plotting library and creates theri respective objects which take over the graph plotting
 
   }, {
     key: "plotGraph",
     value: function plotGraph(hash, length, type, flag, library) {
-      if (library == "chartjs") {
+      if (library == 'chartjs') {
         this.chartjsPlotter = new ChartjsPlotter(hash, length, type, flag, this.canvasContinerId, this.elementId, this.graphCounting);
       } else {
         this.plotlyjsPlotter = new PlotlyjsPlotter(hash, length, type, flag, this.canvasContinerId, this.elementId, this.graphCounting);
@@ -858,43 +859,43 @@ function () {
   }, {
     key: "setTooltip",
     value: function setTooltip(importType) {
-      if (importType === "container_drag_drop") {
-        return "Select a local file from your system";
-      } else if (importType === "container_csv_string") {
-        var x = "Type in or Paste a CSV string. \r\n";
-        x += "Example: \r\n";
-        x += "A,B,C \r\n";
-        x += "1,2,3";
+      if (importType === 'container_drag_drop') {
+        return 'Select a local file from your system';
+      } else if (importType === 'container_csv_string') {
+        var x = 'Type in or Paste a CSV string. \r\n';
+        x += 'Example: \r\n';
+        x += 'A,B,C \r\n';
+        x += '1,2,3';
         return x;
-      } else if (importType === "container_remote_link") {
-        return "Type in or Paste the link of a remote CSV file. Example: \
-            http://example.com/example.csv";
-      } else if (importType === "container_google_sheet") {
-        return "Type in or Paste the link of a Published Google Sheet. To publish a Google Sheet: 1. File -> Publish to the web -> Publish 2. Share -> Get shareable link -> Anyone with the link can -> More -> On - Public on the web -> Save 3. Copy link";
+      } else if (importType === 'container_remote_link') {
+        return 'Type in or Paste the link of a remote CSV file. Example: \
+            http://example.com/example.csv';
+      } else if (importType === 'container_google_sheet') {
+        return 'Type in or Paste the link of a Published Google Sheet. To publish a Google Sheet: 1. File -> Publish to the web -> Publish 2. Share -> Get shareable link -> Anyone with the link can -> More -> On - Public on the web -> Save 3. Copy link';
       }
     } //set tool tip for graph tips
 
   }, {
     key: "setTooltipGraph",
     value: function setTooltipGraph(graphType) {
-      if (graphType == "Horizontal") {
-        return "Data is categorical and tells how many, widths proportional to the values";
-      } else if (graphType === "Vertical") {
-        return "Data is categorical and tells how many, heights proportional to the values";
-      } else if (graphType == "Stacked") {
-        return "Ideal for comparing the total amounts across each group/segmented bar";
-      } else if (graphType == "Basic") {
-        return "Used to visualize a trend in data over intervals of time or to see the growth of a quantity";
-      } else if (graphType == "Stepped") {
-        return "Vertical parts of a step chart denote changes in the data and their magnitude";
-      } else if (graphType == "Point") {
-        return "Used to show the relationship between two data variables";
-      } else if (graphType == "Pie") {
-        return "Used to show percentage or proportional data, should be used for less number of categories";
-      } else if (graphType == "Doughnut") {
-        return "Used to show percentage or proportional data, but have better data intensity ratio and space efficiency";
-      } else if (graphType == "Radar") {
-        return "Used to display multivariate observations with an arbitrary number of variables";
+      if (graphType == 'Horizontal') {
+        return 'Data is categorical and tells how many, widths proportional to the values';
+      } else if (graphType === 'Vertical') {
+        return 'Data is categorical and tells how many, heights proportional to the values';
+      } else if (graphType == 'Stacked') {
+        return 'Ideal for comparing the total amounts across each group/segmented bar';
+      } else if (graphType == 'Basic') {
+        return 'Used to visualize a trend in data over intervals of time or to see the growth of a quantity';
+      } else if (graphType == 'Stepped') {
+        return 'Vertical parts of a step chart denote changes in the data and their magnitude';
+      } else if (graphType == 'Point') {
+        return 'Used to show the relationship between two data variables';
+      } else if (graphType == 'Pie') {
+        return 'Used to show percentage or proportional data, should be used for less number of categories';
+      } else if (graphType == 'Doughnut') {
+        return 'Used to show percentage or proportional data, but have better data intensity ratio and space efficiency';
+      } else if (graphType == 'Radar') {
+        return 'Used to display multivariate observations with an arbitrary number of variables';
       }
     } // create a popover against each import method for adding a file title and description
 
@@ -902,7 +903,7 @@ function () {
     key: "createPopover",
     value: function createPopover(buttonId) {
       var self = this;
-      var html = '<div id="myForm" class="hide"><label for="title" class="popover_headings">File Title:</label><input type="text" name="title" id=' + "title" + buttonId + ' class="form-control input-md"><label for="desc" class="popover_headings">File Description:</label><textarea rows="3" name="desc" id=' + "desc" + buttonId + ' class="form-control input-md"></textarea><button type="button" class="btn btn-primary popover_headings" id="save"> Save</button></div>';
+      var html = '<div id="myForm" class="hide"><label for="title" class="popover_headings">File Title:</label><input type="text" name="title" id=' + 'title' + buttonId + ' class="form-control input-md"><label for="desc" class="popover_headings">File Description:</label><textarea rows="3" name="desc" id=' + 'desc' + buttonId + ' class="form-control input-md"></textarea><button type="button" class="btn btn-primary popover_headings" id="save"> Save</button></div>';
       $('#' + buttonId).popover({
         placement: 'bottom',
         title: 'Add Description',
@@ -911,8 +912,8 @@ function () {
       }).on('click', function () {
         $('#save').click(function (e) {
           e.preventDefault();
-          self.fileTitle = $('#' + "title" + buttonId).val();
-          self.fileDescription = $('#' + "desc" + buttonId).val();
+          self.fileTitle = $('#' + 'title' + buttonId).val();
+          self.fileDescription = $('#' + 'desc' + buttonId).val();
         });
       });
     } // renders the required buttons for saving the files if the use is logged in
@@ -922,22 +923,22 @@ function () {
     value: function createButtons(userLoginCheck) {
       this.listenersForIntegration();
 
-      if (userLoginCheck == "yes") {
+      if (userLoginCheck == 'yes') {
         var save_file_button = document.createElement('button');
-        save_file_button.classList.add("btn");
-        save_file_button.classList.add("btn-primary");
-        save_file_button.innerHTML = "Save CSV";
-        save_file_button.id = this.elementId + "_save_CSV";
+        save_file_button.classList.add('btn');
+        save_file_button.classList.add('btn-primary');
+        save_file_button.innerHTML = 'Save CSV';
+        save_file_button.id = this.elementId + '_save_CSV';
         var upload_prev_file = document.createElement('button');
-        upload_prev_file.classList.add("btn");
-        upload_prev_file.classList.add("btn-primary");
-        upload_prev_file.innerHTML = "Choose a previously uploaded file";
-        upload_prev_file.id = this.elementId + "_prev_file";
+        upload_prev_file.classList.add('btn');
+        upload_prev_file.classList.add('btn-primary');
+        upload_prev_file.innerHTML = 'Choose a previously uploaded file';
+        upload_prev_file.id = this.elementId + '_prev_file';
         var publish_research_button = document.createElement('button');
-        publish_research_button.classList.add("btn");
-        publish_research_button.classList.add("btn-primary");
-        publish_research_button.innerHTML = "Publish as a Research Note";
-        publish_research_button.id = this.elementId + "_publish";
+        publish_research_button.classList.add('btn');
+        publish_research_button.classList.add('btn-primary');
+        publish_research_button.innerHTML = 'Publish as a Research Note';
+        publish_research_button.id = this.elementId + '_publish';
         var container = document.getElementById(this.upload_button_container);
         var div_container = document.createElement('div');
         div_container.appendChild(save_file_button);
@@ -952,29 +953,29 @@ function () {
     key: "createDataset",
     value: function createDataset() {
       var dataset = {};
-      dataset["action"] = "create";
-      dataset["resource"] = "dataContext";
+      dataset['action'] = 'create';
+      dataset['resource'] = 'dataContext';
       var values = {};
-      values["name"] = "my dataset";
-      values["title"] = "Case Table";
+      values['name'] = 'my dataset';
+      values['title'] = 'Case Table';
       var collections = [];
       var hashCollections = {};
-      hashCollections["name"] = "cases";
-      hashCollections["attrs"] = this.csvParser.codapHeaders;
+      hashCollections['name'] = 'cases';
+      hashCollections['attrs'] = this.csvParser.codapHeaders;
       collections.push(hashCollections);
-      values["collections"] = collections;
-      dataset["values"] = values;
+      values['collections'] = collections;
+      dataset['values'] = values;
       var dataset2 = {};
-      dataset2["action"] = "create";
-      dataset2["resource"] = "dataContext[my dataset].item";
-      dataset2["values"] = this.csvParser.codapMatrix;
+      dataset2['action'] = 'create';
+      dataset2['resource'] = 'dataContext[my dataset].item';
+      dataset2['values'] = this.csvParser.codapMatrix;
       var dataset3 = {};
-      dataset3["action"] = "create";
-      dataset3["resource"] = "component";
+      dataset3['action'] = 'create';
+      dataset3['resource'] = 'component';
       var values3 = {};
-      values3["type"] = "caseTable";
-      values3["dataContext"] = "my dataset";
-      dataset3["values"] = values3;
+      values3['type'] = 'caseTable';
+      values3['dataContext'] = 'my dataset';
+      dataset3['values'] = values3;
       return [dataset, dataset2, dataset3];
     }
   }, {
@@ -987,23 +988,24 @@ function () {
     value: function codapExport() {
       var self = this;
       var iframeBody = '<iframe id="codap-iframe" src="https://codap.concord.org/releases/latest?embeddedServer=yes#shared=109578" ></iframe>';
-      var modal_body = document.getElementById("body_for_CODAP");
+      var modal_body = document.getElementById('body_for_CODAP');
       modal_body.innerHTML = iframeBody;
-      var iframe = document.getElementById("codap-iframe");
-      modal_body.style.height = "500px";
-      iframe.style.width = "750px";
-      iframe.style.height = "90%";
+      var iframe = document.getElementById('codap-iframe');
+      modal_body.style.height = '500px';
+      iframe.style.width = '750px';
+      iframe.style.height = '90%';
       var codapIframe = document.getElementById('codap-iframe');
-      var rpcHandler = new iframe_phone.IframePhoneRpcEndpoint(self.iframePhoneHandler, "data-interactive", codapIframe);
-      var createCodapButton = document.createElement("button");
-      createCodapButton.classList.add("btn");
-      createCodapButton.classList.add("btn-primary");
-      createCodapButton.innerHTML = "Go!";
-      createCodapButton.id = this.elementId + "_create_codap";
+      var rpcHandler = new iframe_phone.IframePhoneRpcEndpoint(self.iframePhoneHandler, 'data-interactive', codapIframe);
+      var createCodapButton = document.createElement('button');
+      createCodapButton.classList.add('btn');
+      createCodapButton.classList.add('btn-primary');
+      createCodapButton.innerHTML = 'Go!';
+      createCodapButton.id = this.elementId + '_create_codap';
       modal_body.prepend(createCodapButton);
       var apiCall = this.createDataset();
-      $("#" + this.elementId + "_create_codap").click(function () {
+      $('#' + this.elementId + '_create_codap').click(function () {
         rpcHandler.call(apiCall, function (resp) {
+          // eslint-disable-next-line no-console
           console.log('Response:' + JSON.stringify(resp));
         });
       });
@@ -1012,15 +1014,18 @@ function () {
   }, {
     key: "createSheet",
     value: function createSheet() {
+      // eslint-disable-next-line no-undef
       var wb = XLSX.utils.book_new();
       wb.Props = {
-        Title: "New Spreadsheet" + this.elementId,
+        Title: 'New Spreadsheet' + this.elementId,
         CreatedDate: new Date()
       };
-      wb.SheetNames.push("Sheet" + this.elementId);
-      var ws_data = this.csvParser.completeCsvMatrixTranspose;
+      wb.SheetNames.push('Sheet' + this.elementId);
+      var ws_data = this.csvParser.completeCsvMatrixTranspose; // eslint-disable-next-line no-undef
+
       var ws = XLSX.utils.aoa_to_sheet(ws_data);
-      wb.Sheets["Sheet" + this.elementId] = ws;
+      wb.Sheets['Sheet' + this.elementId] = ws; // eslint-disable-next-line no-undef
+
       var wbout = XLSX.write(wb, {
         bookType: 'xlsx',
         type: 'binary'
@@ -1031,17 +1036,19 @@ function () {
         var view = new Uint8Array(buf);
 
         for (var i = 0; i < s.length; i++) {
-          view[i] = s.charCodeAt(i) & 0xFF;
+          view[i] = s.charCodeAt(i) & 0xff;
         }
 
         return buf;
-      }
+      } // eslint-disable-next-line no-undef
+
 
       saveAs(new Blob([s2ab(wbout)], {
-        type: "application/octet-stream"
+        type: 'application/octet-stream'
       }), 'newSpreadsheet' + this.elementId + '.xlsx');
     } // creates a hash of the entire data in an accesible format for the charting libraries {labels: [legendx, [legendy0, legendy1 ... lengendyn]], x_axis_values: [...], y_axis_0: [...], y_axis_1: [...], ... y_axis_n: [...]} n: selected number of columns
     // flag is just for seeing if we're plotting the graph for the first time, if yes, we will have to clear the canvas.
+    // eslint-disable-next-line no-unused-vars
 
   }, {
     key: "afterSampleData",
@@ -1052,24 +1059,24 @@ function () {
         e.preventDefault();
         var hash = {};
         var ix = $('input[name=' + _this2.tableXInputName + ']:checked').val();
-        hash["x_axis_labels"] = _this2.csvParser.completeCsvMatrix[ix];
+        hash['x_axis_labels'] = _this2.csvParser.completeCsvMatrix[ix];
         var columns = new Array();
         var y_axis_names = new Array();
-        $("input:checkbox[name=" + _this2.tableYInputName + "]:checked").each(function (index, element) {
+        $('input:checkbox[name=' + _this2.tableYInputName + ']:checked').each(function (index, element) {
           columns.push(element.value);
         });
 
         for (var i = 0; i < columns.length; i++) {
-          hash["y_axis_values" + i] = _this2.csvParser.completeCsvMatrix[columns[i]];
+          hash['y_axis_values' + i] = _this2.csvParser.completeCsvMatrix[columns[i]];
           y_axis_names.push(_this2.csvParser.csvHeaders[columns[i]]);
         }
 
         var labels = [_this2.csvParser.csvHeaders[ix], y_axis_names];
-        hash["labels"] = labels;
+        hash['labels'] = labels;
         var selectedGraph = $('.selected');
         var type = selectedGraph.attr('data-value');
 
-        _this2.plotGraph(hash, columns.length, type, flag, "plotly");
+        _this2.plotGraph(hash, columns.length, type, flag, 'plotly');
       };
     } // generates a graph menu with different graph options
 
@@ -1078,26 +1085,26 @@ function () {
     value: function graphMenu(flag) {
       var self = this;
       $('.' + this.carousalClass).carousel(1);
-      var menuDiv = document.getElementById("menu_holder");
+      var menuDiv = document.getElementById('menu_holder');
       menuDiv.innerHTML = '<p id="graph_description"> blahhhhh </p> <div class="grid-container radio-group"> <div class="grid-item radio" data-value="Horizontal"> <img src="https://i.ibb.co/8gfR9d9/horizontal.png" height="100px" width="100px"> <div class="hmm" id="HorizontalType"> <p> Horizontal Bar </p> </div> </div> <div class="grid-item radio" data-value="Vertical"> <img src="https://i.ibb.co/tZVgrBw/vertical.png" height="100px" width="100px"> <div class="hmm" id="VerticalType"> <p> Vertical Bar </p> </div> </div> <div class="grid-item radio" data-value="Stacked"> <img src="https://i.ibb.co/9T2df0z/stacked.png" height="100px" width="100px"> <div class="hmm" id="StackedType"> <p> Stacked Bar </p> </div></div> <div class="grid-item radio" data-value="Basic"> <img src="https://i.ibb.co/S7rDsPV/basic.png" height="100px" width="100px"> <div class="hmm" id="BasicType"> <p> Basic Line </p> </div> </div> <div class="grid-item radio" data-value="Stepped"> <img src="https://i.ibb.co/FbB7yjg/stepped.png" height="100px" width="100px"> <div class="hmm" id="SteppedType"> <p> Stepped Line </p> </div> </div> <div class="grid-item radio" data-value="Point"> <img src="https://i.ibb.co/kqdQyqx/point.png" height="100px" width="100px"> <div class="hmm" id="PointType"> <p> Point </p> </div> </div> <div class="grid-item radio" data-value="Pie"> <img src="https://i.ibb.co/JcJ0tv3/pie.png" height="100px" width="110px"> <div class="hmm" id="PieType"> <p> Pie </p> </div> </div> <div class="grid-item radio" data-value="Doughnut"> <img src="https://i.ibb.co/SnLkwTv/doughnut.png" height="100px" width="110px"> <div class="hmm" id="DoughnutType"> <p> Doughnut </p> </div> </div> <div class="grid-item radio" data-value="Radar"> <img src="https://i.ibb.co/BCmQ2Tq/radar.png" height="100px" width="100px"> <div class="hmm" id="RadarType"> <p> Radar </p> </div> </div> </div> <p class="d"> blahhh </p>';
       $('.radio-group .radio').click(function () {
         $(this).parent().find('.radio').removeClass('selected');
         var l = document.getElementsByClassName('hmm');
 
         for (var i = 0; i < l.length; i++) {
-          l[i].style.backgroundColor = "#cccccc";
+          l[i].style.backgroundColor = '#cccccc';
         }
 
         $(this).addClass('selected');
         var type = $(this).attr('data-value');
-        $('#' + type + "Type").css('backgroundColor', '#1ad1ff');
+        $('#' + type + 'Type').css('backgroundColor', '#1ad1ff');
       });
       $('.radio').hover(function () {
         var tooltipVal = self.setTooltipGraph($(this).attr('data-value'));
         $('#graph_description').text(tooltipVal);
         $('#graph_description').css({
           opacity: 0.0,
-          visibility: "visible"
+          visibility: 'visible'
         }).animate({
           opacity: 1.0
         }, 800);
@@ -1110,7 +1117,7 @@ function () {
   }, {
     key: "tableGenerator",
     value: function tableGenerator(name, tableId, typeOfInput, validValues, flag, tableType, badgeType) {
-      document.getElementById(tableId).innerHTML = "";
+      document.getElementById(tableId).innerHTML = '';
       var trhead = document.createElement('tr');
 
       for (var i = 0; i < this.csvParser.csvHeaders.length; i++) {
@@ -1118,8 +1125,8 @@ function () {
         var span = document.createElement('span');
         var textnode = document.createTextNode(this.csvParser.csvHeaders[i]);
         span.appendChild(textnode);
-        span.classList.add("badge");
-        span.classList.add("badge-pill");
+        span.classList.add('badge');
+        span.classList.add('badge-pill');
         span.classList.add(badgeType);
         td.appendChild(span);
 
@@ -1130,7 +1137,7 @@ function () {
             checkbox.value = i;
             checkbox.name = name;
             checkbox.id = name + i;
-            checkbox.classList.add("check-inputs");
+            checkbox.classList.add('check-inputs');
             span.appendChild(checkbox);
           }
         }
@@ -1141,13 +1148,15 @@ function () {
       trhead.classList.add(tableType);
       document.getElementById(tableId).appendChild(trhead);
 
-      for (var i = 0; i < this.csvParser.csvSampleData[0].length; i++) {
+      for (var _i = 0; _i < this.csvParser.csvSampleData[0].length; _i++) {
         var tr = document.createElement('tr');
 
-        for (var j = 0; j < this.csvParser.csvHeaders.length; j++) {
-          var td = document.createElement('td');
-          td.appendChild(document.createTextNode(this.csvParser.csvSampleData[j][i]));
-          tr.appendChild(td);
+        for (var _j = 0; _j < this.csvParser.csvHeaders.length; _j++) {
+          var _td = document.createElement('td');
+
+          _td.appendChild(document.createTextNode(this.csvParser.csvSampleData[_j][_i]));
+
+          tr.appendChild(_td);
         }
 
         document.getElementById(tableId).appendChild(tr);
@@ -1161,7 +1170,7 @@ function () {
     value: function showSampleDataXandY() {
       var _this3 = this;
 
-      document.getElementById(this.addGraphButtonId).onclick = function (e) {
+      document.getElementById(this.addGraphButtonId).onclick = function () {
         _this3.graphCounting++;
         $('.' + _this3.carousalClass).carousel(1); /// ---------------> after
 
@@ -1180,7 +1189,7 @@ function () {
   }, {
     key: "continueViewManipulation",
     value: function continueViewManipulation(x) {
-      if (x != "prevfile") {
+      if (x != 'prevfile') {
         this.csvParser = x;
       }
 
@@ -1193,46 +1202,50 @@ function () {
     value: function listenersForIntegration() {
       var _this4 = this;
 
-      $("#" + this.fileUploadId).change(function (e) {
-        document.getElementById("popover" + _this4.fileUploadId).style.display = "inline";
-        document.getElementById("popover" + _this4.csvStringUploadId).style.display = "none";
-        document.getElementById("popover" + _this4.googleSheetUploadId).style.display = "none";
-        document.getElementById("popover" + _this4.remoteFileUploadId).style.display = "none";
+      $('#' + this.fileUploadId).change(function (e) {
+        // console.log("i am here23");
+        document.getElementById('popover' + _this4.fileUploadId).style.display = 'inline';
+        document.getElementById('popover' + _this4.csvStringUploadId).style.display = 'none';
+        document.getElementById('popover' + _this4.googleSheetUploadId).style.display = 'none';
+        document.getElementById('popover' + _this4.remoteFileUploadId).style.display = 'none';
 
-        _this4.createPopover("popover" + _this4.fileUploadId);
+        _this4.createPopover('popover' + _this4.fileUploadId);
 
         _this4.handleFileSelectlocal(e);
       });
-      $("#" + this.csvStringUploadId).change(function () {
-        document.getElementById("popover" + _this4.csvStringUploadId).style.display = "inline";
-        document.getElementById("popover" + _this4.googleSheetUploadId).style.display = "none";
-        document.getElementById("popover" + _this4.remoteFileUploadId).style.display = "none";
-        document.getElementById("popover" + _this4.fileUploadId).style.display = "none";
+      $('#' + this.csvStringUploadId).change(function () {
+        // console.log(document.getElementById(this.csvStringUploadId).value);
+        document.getElementById('popover' + _this4.csvStringUploadId).style.display = 'inline';
+        document.getElementById('popover' + _this4.googleSheetUploadId).style.display = 'none';
+        document.getElementById('popover' + _this4.remoteFileUploadId).style.display = 'none';
+        document.getElementById('popover' + _this4.fileUploadId).style.display = 'none';
 
-        _this4.createPopover("popover" + _this4.csvStringUploadId);
+        _this4.createPopover('popover' + _this4.csvStringUploadId);
 
         _this4.handleFileSelectstring(document.getElementById(_this4.csvStringUploadId).value);
       });
-      $("#" + this.googleSheetUploadId).change(function () {
-        document.getElementById("popover" + _this4.googleSheetUploadId).style.display = "inline";
-        document.getElementById("popover" + _this4.csvStringUploadId).style.display = "none";
-        document.getElementById("popover" + _this4.remoteFileUploadId).style.display = "none";
-        document.getElementById("popover" + _this4.fileUploadId).style.display = "none";
+      $('#' + this.googleSheetUploadId).change(function () {
+        // console.log(document.getElementById(this.googleSheetUploadId).value,"sheetlink");
+        document.getElementById('popover' + _this4.googleSheetUploadId).style.display = 'inline';
+        document.getElementById('popover' + _this4.csvStringUploadId).style.display = 'none';
+        document.getElementById('popover' + _this4.remoteFileUploadId).style.display = 'none';
+        document.getElementById('popover' + _this4.fileUploadId).style.display = 'none';
 
-        _this4.createPopover("popover" + _this4.googleSheetUploadId);
+        _this4.createPopover('popover' + _this4.googleSheetUploadId);
 
-        var sheetLink = document.getElementById(_this4.googleSheetUploadId).value;
-        var sheetURL = "https://spreadsheets.google.com/feeds/list/" + sheetLink.split("/")[5] + "/od6/public/values?alt=json";
+        sheetLink = document.getElementById(_this4.googleSheetUploadId).value;
+        var sheetURL = 'https://spreadsheets.google.com/feeds/list/' + sheetLink.split('/')[5] + '/od6/public/values?alt=json';
 
         _this4.getValueGoogleSheet(sheetURL);
       });
-      $("#" + this.remoteFileUploadId).change(function () {
-        document.getElementById("popover" + _this4.remoteFileUploadId).style.display = "inline";
-        document.getElementById("popover" + _this4.csvStringUploadId).style.display = "none";
-        document.getElementById("popover" + _this4.googleSheetUploadId).style.display = "none";
-        document.getElementById("popover" + _this4.fileUploadId).style.display = "none";
+      $('#' + this.remoteFileUploadId).change(function () {
+        // console.log(document.getElementById(this.remoteFileUploadId).value);
+        document.getElementById('popover' + _this4.remoteFileUploadId).style.display = 'inline';
+        document.getElementById('popover' + _this4.csvStringUploadId).style.display = 'none';
+        document.getElementById('popover' + _this4.googleSheetUploadId).style.display = 'none';
+        document.getElementById('popover' + _this4.fileUploadId).style.display = 'none';
 
-        _this4.createPopover("popover" + _this4.remoteFileUploadId);
+        _this4.createPopover('popover' + _this4.remoteFileUploadId);
 
         _this4.sendRemoteFileToHandler(document.getElementById(_this4.remoteFileUploadId).value);
       });
@@ -1243,8 +1256,6 @@ function () {
     var _this5 = this;
 
     _classCallCheck(this, View);
-
-    _defineProperty(this, 'use strict', void 0);
 
     _defineProperty(this, "elementId", null);
 
@@ -1304,9 +1315,9 @@ function () {
 
     _defineProperty(this, "upload_button_container", null);
 
-    _defineProperty(this, "fileTitle", "");
+    _defineProperty(this, "fileTitle", '');
 
-    _defineProperty(this, "fileDescription", "");
+    _defineProperty(this, "fileDescription", '');
 
     _defineProperty(this, "codapExportButton", null);
 
@@ -1314,34 +1325,34 @@ function () {
     this.element = document.getElementById(elementId);
 
     if (this.element == null) {
-      throw "No element exist with this id";
+      throw 'No element exist with this id';
     }
 
-    this.fileUploadId = elementId + "_csv_file";
-    this.remoteFileUploadId = elementId + "_remote_file";
-    this.csvStringUploadId = elementId + "_csv_string";
-    this.googleSheetUploadId = elementId + "_google_sheet";
-    this.dragDropHeadingId = elementId + "_drag_drop_heading";
-    this.uploadButtonId = elementId + "_file_upload_button";
-    this.addGraphButtonId = elementId + "_add_graph";
-    this.createSpreadsheetButtonId = elementId + "_save_as_spreadsheet";
-    this.tableXId = elementId + "_tableX";
-    this.tableYId = elementId + "_tableY";
-    this.tableXParentId = elementId + "_Xtable";
-    this.tableYParentId = elementId + "_Ytable";
-    this.tableXInputName = elementId + "_x_axis_input_columns";
-    this.tableYInputName = elementId + "_y_axis_input_columns";
-    this.carousalClass = elementId + "_carousal";
-    this.carousalId = elementId + "_carousalId";
-    this.graphMenuId = elementId + "_graph_menu";
-    this.plotGraphId = elementId + "_plot_graph";
-    this.graphMenuTypeInputName = elementId + "_types";
-    this.canvasContinerId = elementId + "_canvas_container";
-    this.xyToggleName = elementId + "_xytoggle";
-    this.saveAsImageId = elementId + "save-as-image";
-    this.upload_button_container = elementId + "upload_button_container";
-    this.feature_button_container = elementId + "feature_button_container";
-    this.codapExportButton = elementId + "codap_export_button";
+    this.fileUploadId = elementId + '_csv_file';
+    this.remoteFileUploadId = elementId + '_remote_file';
+    this.csvStringUploadId = elementId + '_csv_string';
+    this.googleSheetUploadId = elementId + '_google_sheet';
+    this.dragDropHeadingId = elementId + '_drag_drop_heading';
+    this.uploadButtonId = elementId + '_file_upload_button';
+    this.addGraphButtonId = elementId + '_add_graph';
+    this.createSpreadsheetButtonId = elementId + '_save_as_spreadsheet';
+    this.tableXId = elementId + '_tableX';
+    this.tableYId = elementId + '_tableY';
+    this.tableXParentId = elementId + '_Xtable';
+    this.tableYParentId = elementId + '_Ytable';
+    this.tableXInputName = elementId + '_x_axis_input_columns';
+    this.tableYInputName = elementId + '_y_axis_input_columns';
+    this.carousalClass = elementId + '_carousal';
+    this.carousalId = elementId + '_carousalId';
+    this.graphMenuId = elementId + '_graph_menu';
+    this.plotGraphId = elementId + '_plot_graph';
+    this.graphMenuTypeInputName = elementId + '_types';
+    this.canvasContinerId = elementId + '_canvas_container';
+    this.xyToggleName = elementId + '_xytoggle';
+    this.saveAsImageId = elementId + 'save-as-image';
+    this.upload_button_container = elementId + 'upload_button_container';
+    this.feature_button_container = elementId + 'feature_button_container';
+    this.codapExportButton = elementId + 'codap_export_button';
     this.drawHTMLView();
     this.addListeners();
     var self = this;
@@ -1365,7 +1376,7 @@ function () {
       $('#import_description').text(tooltipVal);
       $('#import_description').css({
         opacity: 0.0,
-        visibility: "visible"
+        visibility: 'visible'
       }).animate({
         opacity: 1.0
       }, 800);
@@ -1380,24 +1391,24 @@ function () {
     value: function addListeners() {
       var _this6 = this;
 
-      $("#" + this.fileUploadId).change(function (e) {
+      $('#' + this.fileUploadId).change(function (e) {
         _this6.handleFileSelectlocal(e);
       });
-      $("#" + this.csvStringUploadId).change(function () {
+      $('#' + this.csvStringUploadId).change(function () {
         _this6.handleFileSelectstring(document.getElementById(_this6.csvStringUploadId).value);
       });
-      $("#" + this.googleSheetUploadId).change(function () {
-        var sheetURL = "https://spreadsheets.google.com/feeds/list/" + sheetLink.split("/")[5] + "/od6/public/values?alt=json";
+      $('#' + this.googleSheetUploadId).change(function () {
+        var sheetURL = 'https://spreadsheets.google.com/feeds/list/' + sheetLink.split('/')[5] + '/od6/public/values?alt=json';
 
         _this6.getValueGoogleSheet(sheetURL);
       });
-      $("#" + this.remoteFileUploadId).change(function () {
+      $('#' + this.remoteFileUploadId).change(function () {
         _this6.sendRemoteFileToHandler(document.getElementById(_this6.remoteFileUploadId).value);
       });
-      $("#" + this.createSpreadsheetButtonId).click(function () {
+      $('#' + this.createSpreadsheetButtonId).click(function () {
         _this6.createSheet();
       });
-      $("#" + this.codapExportButton).click(function () {
+      $('#' + this.codapExportButton).click(function () {
         _this6.codapExport();
       });
     } //renders the entire HTML view
@@ -1413,7 +1424,7 @@ function () {
 }();
 
 exports.View = View;
-},{"./ChartjsPlotter":1,"./CsvParser":2,"./PlotlyjsPlotter":3,"./SimpleDataGrapher":4,"iframe-phone":10}],6:[function(require,module,exports){
+},{"./ChartjsPlotter":1,"./CsvParser":2,"./PlotlyjsPlotter":3,"iframe-phone":10}],6:[function(require,module,exports){
 var structuredClone = require('./structured-clone');
 var HELLO_INTERVAL_LENGTH = 200;
 var HELLO_TIMEOUT_LENGTH = 60000;

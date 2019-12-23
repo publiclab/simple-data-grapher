@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -14,12 +14,12 @@ function () {
   _createClass(PlotlyjsPlotter, [{
     key: "determineType2",
     value: function determineType2() {
-      if (this.graphType == "Horizontal" || this.graphType == "Vertical") {
-        return "bar";
-      } else if (this.graphType == "Pie" || this.graphType == "Doughnut" || this.graphType == "Radar") {
-        return "pie";
-      } else if (this.graphType == "Basic" || this.graphType == "Stepped" || this.graphType == "Point") {
-        return "scatter";
+      if (this.graphType == 'Horizontal' || this.graphType == 'Vertical') {
+        return 'bar';
+      } else if (this.graphType == 'Pie' || this.graphType == 'Doughnut' || this.graphType == 'Radar') {
+        return 'pie';
+      } else if (this.graphType == 'Basic' || this.graphType == 'Stepped' || this.graphType == 'Point') {
+        return 'scatter';
       }
     }
   }, {
@@ -27,8 +27,8 @@ function () {
     value: function layoutMaker() {
       var layout = {};
 
-      if (this.graphType == "Horizontal" || this.graphType == "Vertical") {
-        layout["barmode"] = "group";
+      if (this.graphType == 'Horizontal' || this.graphType == 'Vertical') {
+        layout['barmode'] = 'group';
       }
 
       return layout;
@@ -37,20 +37,20 @@ function () {
     key: "traceMaker",
     value: function traceMaker() {
       var trace = {};
-      trace["type"] = this.determineType2();
+      trace['type'] = this.determineType2();
 
-      if (this.graphType == "Horizontal") {
-        trace["orientation"] = "h";
-      } else if (this.graphType == "Doughnut") {
-        trace["hole"] = 0.5;
-      } else if (this.graphType == "Basic") {
-        trace["mode"] = "lines";
-      } else if (this.graphType == "Point") {
-        trace["mode"] = "markers";
-      } else if (this.graphType == "Stepped") {
-        trace["mode"] = "lines+markers";
-        trace["line"] = {
-          "shape": 'hv'
+      if (this.graphType == 'Horizontal') {
+        trace['orientation'] = 'h';
+      } else if (this.graphType == 'Doughnut') {
+        trace['hole'] = 0.5;
+      } else if (this.graphType == 'Basic') {
+        trace['mode'] = 'lines';
+      } else if (this.graphType == 'Point') {
+        trace['mode'] = 'markers';
+      } else if (this.graphType == 'Stepped') {
+        trace['mode'] = 'lines+markers';
+        trace['line'] = {
+          shape: 'hv'
         };
       }
 
@@ -59,14 +59,14 @@ function () {
   }, {
     key: "keyDeterminer",
     value: function keyDeterminer() {
-      var keys = ["x", "y"];
+      var keys = ['x', 'y'];
 
-      if (this.graphType == "Pie" || this.graphType == "Doughnut") {
-        keys[1] = "values";
-        keys[0] = "labels";
-      } else if (this.graphType == "Horizontal") {
-        keys[0] = "y";
-        keys[1] = "x";
+      if (this.graphType == 'Pie' || this.graphType == 'Doughnut') {
+        keys[1] = 'values';
+        keys[0] = 'labels';
+      } else if (this.graphType == 'Horizontal') {
+        keys[0] = 'y';
+        keys[1] = 'x';
       }
 
       return keys;
@@ -75,7 +75,8 @@ function () {
     key: "plotGraph2",
     value: function plotGraph2() {
       if (this.flag) {
-        document.getElementById(this.canvasContainerId).innerHTML = "";
+        //   console.log("at plotGraph");
+        document.getElementById(this.canvasContainerId).innerHTML = '';
       }
 
       var layout = this.layoutMaker();
@@ -86,21 +87,20 @@ function () {
         var new_trace = this.traceMaker();
         new_trace[keySet[0]] = this.dataHash['x_axis_labels'];
         new_trace[keySet[1]] = this.dataHash['y_axis_values' + i];
-        new_trace["name"] = this.dataHash['labels'][1][i];
+        new_trace['name'] = this.dataHash['labels'][1][i];
         data.push(new_trace);
-      }
+      } // console.log(data);
+
 
       var div = document.createElement('div');
       div.id = this.elementId + '_chart_container_' + this.graphCounting;
       document.getElementById(this.canvasContainerId).appendChild(div);
-      Plotly.newPlot(div.id, data, layout);
+      window.Plotly.newPlot(div.id, data, layout);
     }
   }]);
 
   function PlotlyjsPlotter(hash, length, type, flag, canvasContainerId, elementId, graphCounting) {
     _classCallCheck(this, PlotlyjsPlotter);
-
-    _defineProperty(this, 'use strict', void 0);
 
     _defineProperty(this, "dataHash", {});
 

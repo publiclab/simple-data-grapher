@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -14,8 +14,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var SimpleDataGrapher = function SimpleDataGrapher(elementId) {
   _classCallCheck(this, SimpleDataGrapher);
 
-  _defineProperty(this, 'use strict', void 0);
-
   _defineProperty(this, "elementId", null);
 
   _defineProperty(this, "view", null);
@@ -29,5 +27,4 @@ exports.SimpleDataGrapher = SimpleDataGrapher;
 
 _defineProperty(SimpleDataGrapher, "elementIdSimpleDataGraphInstanceMap", {});
 
-;
 window.SimpleDataGrapher = SimpleDataGrapher;

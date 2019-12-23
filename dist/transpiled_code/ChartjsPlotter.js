@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -14,11 +14,12 @@ function () {
   _createClass(ChartjsPlotter, [{
     key: "determineType",
     value: function determineType() {
-      if (this.graphType == "Basic" || this.graphType == "Stepped" || this.graphType == "Point") {
+      // console.log("at type");
+      if (this.graphType == 'Basic' || this.graphType == 'Stepped' || this.graphType == 'Point') {
         return 'line';
-      } else if (this.graphType == "Horizontal") {
+      } else if (this.graphType == 'Horizontal') {
         return 'horizontalBar';
-      } else if (this.graphType == "Vertical") {
+      } else if (this.graphType == 'Vertical') {
         return 'bar';
       } else {
         return this.graphType.toLowerCase();
@@ -27,11 +28,12 @@ function () {
   }, {
     key: "colorGenerator",
     value: function colorGenerator(i, tb, count) {
+      // console.log("at color");
       var colors = ['rgba(255, 77, 210, 0.5)', 'rgba(0, 204, 255, 0.5)', 'rgba(128, 0, 255, 0.5)', 'rgba(255, 77, 77, 0.5)', 'rgba(0, 179, 0, 0.5)', 'rgba(255, 255, 0, 0.5)', 'rgba(255, 0, 102, 0.5)', 'rgba(0, 115, 230, 0.5)'];
       var bordercolors = ['rgb(255, 0, 191)', 'rgb(0, 184, 230)', 'rgb(115, 0, 230)', 'rgb(255, 51, 51)', 'rgb(0, 153, 0)', 'rgb(230, 230, 0)', 'rgb(230, 0, 92)', 'rgb(0, 102, 204)'];
       var length = 8;
 
-      if (this.graphType == "Pie" || this.graphType == "Doughnut") {
+      if (this.graphType == 'Pie' || this.graphType == 'Doughnut') {
         var colorSet = [];
         var borderColorSet = [];
 
@@ -40,13 +42,13 @@ function () {
           borderColorSet.push(bordercolors[j % length]);
         }
 
-        if (tb == "bg") {
+        if (tb == 'bg') {
           return colorSet;
         } else {
           return borderColorSet;
         }
       } else {
-        if (tb == "bg") {
+        if (tb == 'bg') {
           return colors[i % length];
         } else {
           return bordercolors[i % length];
@@ -56,20 +58,21 @@ function () {
   }, {
     key: "determineData",
     value: function determineData(i) {
+      // console.log("at data");
       var h = {};
 
-      if (this.graphType == "Basic") {
+      if (this.graphType == 'Basic') {
         h['fill'] = false;
-      } else if (this.graphType == "Stepped") {
+      } else if (this.graphType == 'Stepped') {
         h['steppedLine'] = true;
         h['fill'] = false;
-      } else if (this.graphType == "Point") {
+      } else if (this.graphType == 'Point') {
         h['showLine'] = false;
         h['pointRadius'] = 10;
       }
 
-      h['backgroundColor'] = this.colorGenerator(i, "bg", this.dataHash['y_axis_values' + i].length);
-      h['borderColor'] = this.colorGenerator(i, "bo", this.dataHash['y_axis_values' + i].length);
+      h['backgroundColor'] = this.colorGenerator(i, 'bg', this.dataHash['y_axis_values' + i].length);
+      h['borderColor'] = this.colorGenerator(i, 'bo', this.dataHash['y_axis_values' + i].length);
       h['borderWidth'] = 1;
       h['label'] = this.dataHash['labels'][1][i];
       h['data'] = this.dataHash['y_axis_values' + i];
@@ -78,6 +81,7 @@ function () {
   }, {
     key: "determineConfig",
     value: function determineConfig() {
+      // console.log("at config");
       var config = {};
       config['type'] = this.determineType();
       var data = {};
@@ -90,9 +94,9 @@ function () {
       }
 
       var options = {
-        'responsive': true,
-        'maintainAspectRatio': true,
-        'chartArea': {
+        responsive: true,
+        maintainAspectRatio: true,
+        chartArea: {
           backgroundColor: 'rgb(204, 102, 255)'
         }
       };
@@ -105,6 +109,7 @@ function () {
   }, {
     key: "scales",
     value: function scales() {
+      // console.log("at scales");
       var scales = {
         xAxes: [{
           display: true,
@@ -126,26 +131,28 @@ function () {
   }, {
     key: "saveAsImageFunction",
     value: function saveAsImageFunction(canvId) {
+      // console.log("entered image");
       var newDate = new Date();
       var timestamp = newDate.getTime();
       var temp = canvId;
-      temp = "#" + temp;
+      temp = '#' + temp;
       $(temp).get(0).toBlob(function (blob) {
-        saveAs(blob, "chart" + timestamp);
+        window.saveAs(blob, 'chart' + timestamp);
       });
     }
   }, {
     key: "createSaveAsImageButton",
     value: function createSaveAsImageButton(canvasDiv, canvasId) {
-      var saveImageButton = document.createElement("BUTTON");
-      saveImageButton.classList.add("btn");
-      saveImageButton.classList.add("btn-primary");
-      saveImageButton.innerHTML = "Save as Image";
-      saveImageButton.id = canvasId + "image";
-      canvasDiv.appendChild(saveImageButton);
+      var saveImageButton = document.createElement('BUTTON');
+      saveImageButton.classList.add('btn');
+      saveImageButton.classList.add('btn-primary');
+      saveImageButton.innerHTML = 'Save as Image';
+      saveImageButton.id = canvasId + 'image';
+      canvasDiv.appendChild(saveImageButton); // console.log(this, "this");
+
       var self = this;
 
-      document.getElementById(saveImageButton.id).onclick = function (e) {
+      document.getElementById(saveImageButton.id).onclick = function () {
         self.saveAsImageFunction(canvasId);
       };
     }
@@ -153,7 +160,8 @@ function () {
     key: "plotGraph",
     value: function plotGraph() {
       if (this.flag) {
-        document.getElementById(this.canvasContainerId).innerHTML = "";
+        //   console.log("at plotGraph");
+        document.getElementById(this.canvasContainerId).innerHTML = '';
       }
 
       var div = document.createElement('div');
@@ -164,15 +172,13 @@ function () {
       document.getElementById(this.canvasContainerId).appendChild(div);
       var ctx = canv.getContext('2d');
       var configuration = this.determineConfig();
-      new Chart(ctx, configuration);
+      new window.Chart(ctx, configuration);
       this.createSaveAsImageButton(div, canv.id); // $('.'+this.carousalClass).carousel(2);
     }
   }]);
 
   function ChartjsPlotter(hash, length, type, flag, canvasContainerId, elementId, graphCounting) {
     _classCallCheck(this, ChartjsPlotter);
-
-    _defineProperty(this, 'use strict', void 0);
 
     _defineProperty(this, "dataHash", {});
 

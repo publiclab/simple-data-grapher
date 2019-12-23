@@ -1,4 +1,4 @@
-"use strict";
+'use strict'; // import {SimpleDataGrapher} from "./SimpleDataGrapher";
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -10,10 +10,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-// import {SimpleDataGrapher} from "./SimpleDataGrapher";
 var SimpleDataGrapher = require('./SimpleDataGrapher');
 
-var Papa = require("papaparse");
+var Papa = require('papaparse');
 
 var CsvParser =
 /*#__PURE__*/
@@ -21,8 +20,6 @@ function () {
   //start is variable that will be passed to the function to sort out the columns. start will tell if the existing CSV file has headers or not, therefore, to start the iteration from 0 or 1 Used in header determination
   function CsvParser(file, elementId, functionParameter) {
     _classCallCheck(this, CsvParser);
-
-    _defineProperty(this, 'use strict', void 0);
 
     _defineProperty(this, "csvFile", null);
 
@@ -49,7 +46,7 @@ function () {
     this.elementId = elementId;
     this.csvFile = file;
 
-    if (functionParameter == "prevfile") {
+    if (functionParameter == 'prevfile') {
       return this;
     } else {
       this.allFunctionHandler(functionParameter);
@@ -75,11 +72,11 @@ function () {
   }, {
     key: "allFunctionHandler",
     value: function allFunctionHandler(functionParameter) {
-      if (functionParameter == "local") {
+      if (functionParameter == 'local') {
         this.csvMatrix = this.parse();
       } else {
-        if (functionParameter == "csvstring" || functionParameter == "remote") {
-          this.csvFile = this.csvFile.split("\n");
+        if (functionParameter == 'csvstring' || functionParameter == 'remote') {
+          this.csvFile = this.csvFile.split('\n');
           this.csvMatrix = this.parseString();
           this.csvHeaders = this.determineHeaders();
           this.completeCsvMatrix = this.matrixForCompleteData();
@@ -104,8 +101,8 @@ function () {
       var _this = this;
 
       var csvMatrixLocal = [];
-      var count = 0;
-      var f = this.parseReturn;
+      var count = 0; // var f = this.parseReturn;
+
       Papa.parse(this.csvFile, {
         download: true,
         dynamicTyping: true,
@@ -126,7 +123,7 @@ function () {
       var mat = [];
 
       for (var i = 0; i < this.csvFile.length; i++) {
-        if (this.csvFile[i] == "" || this.csvFile[i] == " ") {
+        if (this.csvFile[i] == '' || this.csvFile[i] == ' ') {
           continue;
         }
 
@@ -166,25 +163,26 @@ function () {
         maxval = this.completeCsvMatrix[0].length;
       }
 
-      for (var i = 0; i < this.csvHeaders.length; i++) {
+      for (var _i = 0; _i < this.csvHeaders.length; _i++) {
         var counter = 0;
         var bool = false;
 
-        for (var j = 0; j < this.completeCsvMatrix[i].length; j++) {
+        for (var j = 0; j < this.completeCsvMatrix[_i].length; j++) {
           if (counter >= maxval) {
             break;
-          } else if (this.completeCsvMatrix[i][j] !== null || this.completeCsvMatrix[i][j] !== undefined) {
-            if (typeof this.completeCsvMatrix[i][j] === 'number') {
+          } else if (this.completeCsvMatrix[_i][j] !== null || this.completeCsvMatrix[_i][j] !== undefined) {
+            if (typeof this.completeCsvMatrix[_i][j] === 'number') {
               bool = true;
             }
 
             counter += 1;
-            csvSampleDataLocal[i].push(this.completeCsvMatrix[i][j]);
+
+            csvSampleDataLocal[_i].push(this.completeCsvMatrix[_i][j]);
           }
         }
 
         if (bool) {
-          csvValidForYAxisLocal.push(this.csvHeaders[i]);
+          csvValidForYAxisLocal.push(this.csvHeaders[_i]);
         }
       }
 
@@ -201,9 +199,9 @@ function () {
         completeCsvMatrixLocal[i] = [];
       }
 
-      for (var i = this.csvFileStart; i < this.csvMatrix.length; i++) {
+      for (var _i2 = this.csvFileStart; _i2 < this.csvMatrix.length; _i2++) {
         for (var j = 0; j < this.csvHeaders.length; j++) {
-          completeCsvMatrixLocal[j].push(this.csvMatrix[i][j]);
+          completeCsvMatrixLocal[j].push(this.csvMatrix[_i2][j]);
         }
       }
 
@@ -219,20 +217,20 @@ function () {
         matrixComplete[i] = [];
       }
 
-      for (var i = 0; i < this.csvHeaders.length; i++) {
+      for (var _i3 = 0; _i3 < this.csvHeaders.length; _i3++) {
         for (var key in this.csvFile) {
-          var valueCell = this.csvFile[key][this.csvHeaders[i]]["$t"];
+          var valueCell = this.csvFile[key][this.csvHeaders[_i3]]['$t'];
 
           if (!isNaN(valueCell)) {
-            matrixComplete[i].push(+valueCell);
+            matrixComplete[_i3].push(+valueCell);
           } else {
-            matrixComplete[i].push(valueCell);
+            matrixComplete[_i3].push(valueCell);
           }
         }
       }
 
-      for (var i = 0; i < this.csvHeaders.length; i++) {
-        this.csvHeaders[i] = this.csvHeaders[i].slice(4, this.csvHeaders[i].length);
+      for (var _i4 = 0; _i4 < this.csvHeaders.length; _i4++) {
+        this.csvHeaders[_i4] = this.csvHeaders[_i4].slice(4, this.csvHeaders[_i4].length);
       }
 
       return matrixComplete;
@@ -264,18 +262,18 @@ function () {
 
       for (var i = 0; i < this.csvMatrix[0].length; i++) {
         if (i == 0) {
-          if (typeof this.csvMatrix[0][i] == "string") {
+          if (typeof this.csvMatrix[0][i] == 'string') {
             csvHeadersLocal[i] = this.csvMatrix[0][i];
           } else {
             flag = true;
             break;
           }
         } else {
-          if (_typeof(this.csvMatrix[0][i]) == _typeof(this.csvMatrix[0][i - 1]) && _typeof(this.csvMatrix[0][i]) != 'object' || _typeof(this.csvMatrix[0][i]) != _typeof(this.csvMatrix[0][i - 1]) && csvHeadersLocal[i - 1].substring(0, 6) == "Column") {
+          if (_typeof(this.csvMatrix[0][i]) == _typeof(this.csvMatrix[0][i - 1]) && _typeof(this.csvMatrix[0][i]) != 'object' || _typeof(this.csvMatrix[0][i]) != _typeof(this.csvMatrix[0][i - 1]) && csvHeadersLocal[i - 1].substring(0, 6) == 'Column') {
             csvHeadersLocal[i] = this.csvMatrix[0][i];
           } //in case of an unnamed column
           else if (_typeof(this.csvMatrix[0][i]) == 'object') {
-              csvHeadersLocal[i] = "Column" + (i + 1);
+              csvHeadersLocal[i] = 'Column' + (i + 1);
             } else {
               flag = true;
               break;
@@ -287,8 +285,8 @@ function () {
       if (flag && csvHeadersLocal.length != this.csvMatrix[0].length) {
         this.csvFileStart = 0;
 
-        for (var i = 0; i < this.csvMatrix[0].length; i++) {
-          csvHeadersLocal[i] = "Column" + (i + 1);
+        for (var _i5 = 0; _i5 < this.csvMatrix[0].length; _i5++) {
+          csvHeadersLocal[_i5] = 'Column' + (_i5 + 1);
         }
       }
 
@@ -304,7 +302,7 @@ function () {
         var h = this.csvFile[key];
 
         for (var headKey in h) {
-          if (headKey.slice(0, 4) == "gsx$") {
+          if (headKey.slice(0, 4) == 'gsx$') {
             headers_sheet.push(headKey);
           }
         }
@@ -322,7 +320,7 @@ function () {
 
       for (var i = 0; i < this.csvHeaders.length; i++) {
         var element = {};
-        element["name"] = this.csvHeaders[i];
+        element['name'] = this.csvHeaders[i];
         codapHeaders.push(element);
       }
 
@@ -338,13 +336,13 @@ function () {
         completeCsvMatrixTransposeLocal[i] = [];
       }
 
-      for (var i = 0; i < this.completeCsvMatrix.length; i++) {
-        completeCsvMatrixTransposeLocal[0][i] = this.csvHeaders[i];
+      for (var _i6 = 0; _i6 < this.completeCsvMatrix.length; _i6++) {
+        completeCsvMatrixTransposeLocal[0][_i6] = this.csvHeaders[_i6];
       }
 
-      for (var i = 0; i < this.completeCsvMatrix.length; i++) {
+      for (var _i7 = 0; _i7 < this.completeCsvMatrix.length; _i7++) {
         for (var j = 0; j < this.completeCsvMatrix[0].length; j++) {
-          completeCsvMatrixTransposeLocal[j + 1][i] = this.completeCsvMatrix[i][j];
+          completeCsvMatrixTransposeLocal[j + 1][_i7] = this.completeCsvMatrix[_i7][j];
         }
       }
 
@@ -355,5 +353,4 @@ function () {
   return CsvParser;
 }();
 
-;
 module.exports = CsvParser;
