@@ -1,4 +1,4 @@
-# simple-data-grapher
+# Simple-Data-Grapher
 Turns CSVs into graphs in a few simple steps; embeds onto other websites!
 
 ## Quick Setup :
