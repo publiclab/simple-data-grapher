@@ -253,7 +253,6 @@ function () {
         codapMatrix.push(element);
       }
 
-      console.log("matrix codap", codapMatrix);
       return codapMatrix;
     } //checks if the first row has most of the potential header names, if not, assign dummy headers to the file.
 
@@ -349,7 +348,6 @@ function () {
         }
       }
 
-      console.log("transpose", completeCsvMatrixTransposeLocal);
       return completeCsvMatrixTransposeLocal;
     }
   }]);
