@@ -1,5 +1,6 @@
 # simple-data-grapher
 [![Code of Conduct](https://img.shields.io/badge/code-of%20conduct-green.svg)](https://publiclab.org/conduct) [![Build Status](https://travis-ci.com/publiclab/simple-data-grapher.svg?branch=main)](https://travis-ci.com/publiclab/simple-data-grapher)
+
 Turns CSVs into graphs in a few simple steps; embeds onto other websites!
 
 ## Quick Setup :
