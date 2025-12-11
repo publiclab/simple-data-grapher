@@ -29,5 +29,5 @@ exports.SimpleDataGrapher = SimpleDataGrapher;
 
 _defineProperty(SimpleDataGrapher, "elementIdSimpleDataGraphInstanceMap", {});
 
-;
+
 window.SimpleDataGrapher = SimpleDataGrapher;

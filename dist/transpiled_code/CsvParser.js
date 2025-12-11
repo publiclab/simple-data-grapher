@@ -355,5 +355,5 @@ function () {
   return CsvParser;
 }();
 
-;
+
 module.exports = CsvParser;
