@@ -561,7 +561,7 @@ function () {
   return CsvParser;
 }();
 
-;
+
 module.exports = CsvParser;
 },{"./SimpleDataGrapher":4,"papaparse":11}],3:[function(require,module,exports){
 "use strict";
@@ -728,7 +728,7 @@ exports.SimpleDataGrapher = SimpleDataGrapher;
 
 _defineProperty(SimpleDataGrapher, "elementIdSimpleDataGraphInstanceMap", {});
 
-;
+
 window.SimpleDataGrapher = SimpleDataGrapher;
 },{"./View":5}],5:[function(require,module,exports){
 "use strict";
@@ -1835,7 +1835,7 @@ var featureSupported = false;
 (function () {
   var result = 0;
 
-  if (!!window.postMessage) {
+  if (window.postMessage) {
     try {
       // Safari 5.1 will sometimes throw an exception and sometimes won't, lolwut?
       // When it doesn't we capture the message event and check the
